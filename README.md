@@ -1,4 +1,4 @@
-# Calvin
+# Calvin WASP
 
 ## What is this?
 

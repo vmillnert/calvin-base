@@ -563,6 +563,11 @@ class AppManager(object):
         if cb:
             cb(status=response.CalvinResponse(all([s for s in app._migrated_actors.values()])))
 
+
+    def set_health(self, value):
+        print "We set the health of the node to " + str(value)
+
+
 class Deployer(object):
 
     """
@@ -793,4 +798,9 @@ class Deployer(object):
 
         self.node.app_manager.finalize(self.app_id, migrate=True if self.deploy_info else False,
                                        cb=CalvinCB(self.cb, deployer=self))
+
+
+
+
+        
 

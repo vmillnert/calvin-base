@@ -605,3 +605,23 @@ def handle_disconnect_cb(self, handle, connection, **kwargs):
     status = kwargs.get('status', None)
     _log.analyze(self.node.id, "+ DISCONNECTED", {'status': status.status}, tb=True)
     self.send_response(handle, connection, None, status=status.status)
+
+
+    
+@handler(r"POST /node/resource/healthMetric\sHTTP/1")
+@authentication_decorator
+def handle_node_health_metric(self, handle, connection, match, data, hdr):
+    """
+    POST /node/resource/healthMetric
+    Updates the health metric of the current node
+    Body:
+    {
+        "value": <Health (between 0 and 1)>
+    }
+    Response status code: OK or INTERNAL_ERROR
+    Response: none
+    """
+
+    # _log.critical("The new health was set to " + str(data['value']))
+
+    self.node.am.set_health(data['value'], CalvinCB(self.index_cb, handle, connection))

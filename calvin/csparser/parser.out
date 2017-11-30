@@ -1,0 +1,3947 @@
+Created by PLY version 3.8 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> script
+Rule 1     script -> opt_constdefs opt_compdefs opt_program
+Rule 2     empty -> <empty>
+Rule 3     opt_constdefs -> constdefs
+Rule 4     opt_constdefs -> empty
+Rule 5     constdefs -> constdefs constdef
+Rule 6     constdefs -> constdef
+Rule 7     constdef -> DEFINE identifier EQ argument
+Rule 8     opt_compdefs -> compdefs
+Rule 9     opt_compdefs -> empty
+Rule 10    compdefs -> compdefs compdef
+Rule 11    compdefs -> compdef
+Rule 12    compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE
+Rule 13    docstring -> DOCSTRING
+Rule 14    docstring -> empty
+Rule 15    comp_statements -> comp_statements comp_statement
+Rule 16    comp_statements -> comp_statement
+Rule 17    comp_statement -> assignment
+Rule 18    comp_statement -> port_property
+Rule 19    comp_statement -> internal_port_property
+Rule 20    comp_statement -> link
+Rule 21    opt_program -> program
+Rule 22    opt_program -> empty
+Rule 23    program -> program statement
+Rule 24    program -> statement
+Rule 25    statement -> assignment
+Rule 26    statement -> port_property
+Rule 27    statement -> link
+Rule 28    statement -> define_rule
+Rule 29    statement -> group
+Rule 30    statement -> apply
+Rule 31    assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN
+Rule 32    opt_direction -> LBRACK IDENTIFIER RBRACK
+Rule 33    opt_direction -> empty
+Rule 34    port_property -> qualified_port opt_direction LPAREN named_args RPAREN
+Rule 35    internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN
+Rule 36    link -> void GT void
+Rule 37    link -> real_outport GT void
+Rule 38    link -> void GT real_inport_list
+Rule 39    link -> real_outport GT inport_list
+Rule 40    link -> implicit_outport GT inport_list
+Rule 41    link -> internal_outport GT inport_list
+Rule 42    void -> VOIDPORT
+Rule 43    inport_list -> inport_list COMMA inport
+Rule 44    inport_list -> inport
+Rule 45    real_inport_list -> inport_list COMMA real_inport
+Rule 46    real_inport_list -> real_inport
+Rule 47    inport -> real_or_internal_inport
+Rule 48    inport -> transformed_inport
+Rule 49    transformed_inport -> port_transform real_or_internal_inport
+Rule 50    implicit_outport -> argument
+Rule 51    implicit_outport -> label argument
+Rule 52    real_or_internal_inport -> real_inport
+Rule 53    real_or_internal_inport -> internal_inport
+Rule 54    opt_tag -> AT tag_value
+Rule 55    opt_tag -> empty
+Rule 56    tag_value -> NUMBER
+Rule 57    tag_value -> STRING
+Rule 58    real_inport -> opt_tag qualified_port
+Rule 59    real_outport -> qualified_port
+Rule 60    internal_inport -> unqualified_port
+Rule 61    internal_outport -> unqualified_port
+Rule 62    port_transform -> SLASH argument SLASH
+Rule 63    port_transform -> SLASH label argument SLASH
+Rule 64    qualified_port -> IDENTIFIER DOT IDENTIFIER
+Rule 65    unqualified_port -> DOT IDENTIFIER
+Rule 66    label -> COLON identifier
+Rule 67    named_args -> named_args named_arg COMMA
+Rule 68    named_args -> named_args named_arg
+Rule 69    named_args -> empty
+Rule 70    named_arg -> identifier EQ argument
+Rule 71    argument -> value
+Rule 72    argument -> identifier
+Rule 73    opt_argnames -> argnames
+Rule 74    opt_argnames -> empty
+Rule 75    argnames -> argnames COMMA IDENTIFIER
+Rule 76    argnames -> IDENTIFIER
+Rule 77    identifiers -> identifiers COMMA identifier
+Rule 78    identifiers -> identifier
+Rule 79    identifier -> IDENTIFIER
+Rule 80    string -> STRING
+Rule 81    string -> string STRING
+Rule 82    value -> dictionary
+Rule 83    value -> array
+Rule 84    value -> bool
+Rule 85    value -> null
+Rule 86    value -> NUMBER
+Rule 87    value -> string
+Rule 88    bool -> TRUE
+Rule 89    bool -> FALSE
+Rule 90    null -> NULL
+Rule 91    dictionary -> LBRACE members RBRACE
+Rule 92    members -> members member COMMA
+Rule 93    members -> members member
+Rule 94    members -> empty
+Rule 95    member -> string COLON value
+Rule 96    values -> values value COMMA
+Rule 97    values -> values value
+Rule 98    values -> empty
+Rule 99    array -> LBRACK values RBRACK
+Rule 100   qualified_name -> qualified_name DOT IDENTIFIER
+Rule 101   qualified_name -> IDENTIFIER
+Rule 102   define_rule -> RULE identifier COLON rule
+Rule 103   rule -> rule AND rule
+Rule 104   rule -> rule OR rule
+Rule 105   rule -> UNOT rule
+Rule 106   rule -> LPAREN rule RPAREN
+Rule 107   rule -> identifier
+Rule 108   rule -> predicate
+Rule 109   predicate -> identifier LPAREN named_args RPAREN
+Rule 110   apply -> APPLY identifiers COLON rule
+Rule 111   group -> GROUP identifier COLON identifiers
+
+Terminals, with rules where they appear
+
+AND                  : 103
+APPLY                : 110
+AT                   : 54
+COLON                : 31 66 95 102 110 111
+COMMA                : 43 45 67 75 77 92 96
+COMPONENT            : 12
+DEFINE               : 7
+DOCSTRING            : 13
+DOT                  : 64 65 100
+EQ                   : 7 70
+FALSE                : 89
+GROUP                : 111
+GT                   : 36 37 38 39 40 41
+IDENTIFIER           : 31 32 64 64 65 75 76 79 100 101
+LBRACE               : 12 91
+LBRACK               : 32 99
+LPAREN               : 12 31 34 35 106 109
+NULL                 : 90
+NUMBER               : 56 86
+OR                   : 104
+RARROW               : 12
+RBRACE               : 12 91
+RBRACK               : 32 99
+RPAREN               : 12 31 34 35 106 109
+RULE                 : 102
+SLASH                : 62 62 63 63
+STRING               : 57 80 81
+TRUE                 : 88
+UNOT                 : 105
+VOIDPORT             : 42
+error                : 
+
+Nonterminals, with rules where they appear
+
+apply                : 30
+argnames             : 73 75
+argument             : 7 50 51 62 63 70
+array                : 83
+assignment           : 17 25
+bool                 : 84
+comp_statement       : 15 16
+comp_statements      : 12 15
+compdef              : 10 11
+compdefs             : 8 10
+constdef             : 5 6
+constdefs            : 3 5
+define_rule          : 28
+dictionary           : 82
+docstring            : 12
+empty                : 4 9 14 22 33 55 69 74 94 98
+group                : 29
+identifier           : 7 66 70 72 77 78 102 107 109 111
+identifiers          : 77 110 111
+implicit_outport     : 40
+inport               : 43 44
+inport_list          : 39 40 41 43 45
+internal_inport      : 53
+internal_outport     : 41
+internal_port_property : 19
+label                : 51 63
+link                 : 20 27
+member               : 92 93
+members              : 91 92 93
+named_arg            : 67 68
+named_args           : 31 34 35 67 68 109
+null                 : 85
+opt_argnames         : 12 12 12
+opt_compdefs         : 1
+opt_constdefs        : 1
+opt_direction        : 34 35
+opt_program          : 1
+opt_tag              : 58
+port_property        : 18 26
+port_transform       : 49
+predicate            : 108
+program              : 21 23
+qualified_name       : 12 31 100
+qualified_port       : 34 58 59
+real_inport          : 45 46 52
+real_inport_list     : 38
+real_or_internal_inport : 47 49
+real_outport         : 37 39
+rule                 : 102 103 103 104 104 105 106 110
+script               : 0
+statement            : 23 24
+string               : 81 87 95
+tag_value            : 54
+transformed_inport   : 48
+unqualified_port     : 35 60 61
+value                : 71 95 96 97
+values               : 96 97 99
+void                 : 36 36 37 38
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . script
+    (1) script -> . opt_constdefs opt_compdefs opt_program
+    (3) opt_constdefs -> . constdefs
+    (4) opt_constdefs -> . empty
+    (5) constdefs -> . constdefs constdef
+    (6) constdefs -> . constdef
+    (2) empty -> .
+    (7) constdef -> . DEFINE identifier EQ argument
+
+    COMPONENT       reduce using rule 2 (empty -> .)
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+    RULE            reduce using rule 2 (empty -> .)
+    GROUP           reduce using rule 2 (empty -> .)
+    APPLY           reduce using rule 2 (empty -> .)
+    VOIDPORT        reduce using rule 2 (empty -> .)
+    COLON           reduce using rule 2 (empty -> .)
+    DOT             reduce using rule 2 (empty -> .)
+    NUMBER          reduce using rule 2 (empty -> .)
+    LBRACE          reduce using rule 2 (empty -> .)
+    LBRACK          reduce using rule 2 (empty -> .)
+    TRUE            reduce using rule 2 (empty -> .)
+    FALSE           reduce using rule 2 (empty -> .)
+    NULL            reduce using rule 2 (empty -> .)
+    STRING          reduce using rule 2 (empty -> .)
+    $end            reduce using rule 2 (empty -> .)
+    DEFINE          shift and go to state 6
+
+    script                         shift and go to state 1
+    opt_constdefs                  shift and go to state 2
+    constdef                       shift and go to state 3
+    constdefs                      shift and go to state 4
+    empty                          shift and go to state 5
+
+state 1
+
+    (0) S' -> script .
+
+
+
+state 2
+
+    (1) script -> opt_constdefs . opt_compdefs opt_program
+    (8) opt_compdefs -> . compdefs
+    (9) opt_compdefs -> . empty
+    (10) compdefs -> . compdefs compdef
+    (11) compdefs -> . compdef
+    (2) empty -> .
+    (12) compdef -> . COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE
+
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+    RULE            reduce using rule 2 (empty -> .)
+    GROUP           reduce using rule 2 (empty -> .)
+    APPLY           reduce using rule 2 (empty -> .)
+    VOIDPORT        reduce using rule 2 (empty -> .)
+    COLON           reduce using rule 2 (empty -> .)
+    DOT             reduce using rule 2 (empty -> .)
+    NUMBER          reduce using rule 2 (empty -> .)
+    LBRACE          reduce using rule 2 (empty -> .)
+    LBRACK          reduce using rule 2 (empty -> .)
+    TRUE            reduce using rule 2 (empty -> .)
+    FALSE           reduce using rule 2 (empty -> .)
+    NULL            reduce using rule 2 (empty -> .)
+    STRING          reduce using rule 2 (empty -> .)
+    $end            reduce using rule 2 (empty -> .)
+    COMPONENT       shift and go to state 8
+
+    compdef                        shift and go to state 7
+    opt_compdefs                   shift and go to state 9
+    compdefs                       shift and go to state 10
+    empty                          shift and go to state 11
+
+state 3
+
+    (6) constdefs -> constdef .
+
+    DEFINE          reduce using rule 6 (constdefs -> constdef .)
+    COMPONENT       reduce using rule 6 (constdefs -> constdef .)
+    IDENTIFIER      reduce using rule 6 (constdefs -> constdef .)
+    RULE            reduce using rule 6 (constdefs -> constdef .)
+    GROUP           reduce using rule 6 (constdefs -> constdef .)
+    APPLY           reduce using rule 6 (constdefs -> constdef .)
+    VOIDPORT        reduce using rule 6 (constdefs -> constdef .)
+    COLON           reduce using rule 6 (constdefs -> constdef .)
+    DOT             reduce using rule 6 (constdefs -> constdef .)
+    NUMBER          reduce using rule 6 (constdefs -> constdef .)
+    LBRACE          reduce using rule 6 (constdefs -> constdef .)
+    LBRACK          reduce using rule 6 (constdefs -> constdef .)
+    TRUE            reduce using rule 6 (constdefs -> constdef .)
+    FALSE           reduce using rule 6 (constdefs -> constdef .)
+    NULL            reduce using rule 6 (constdefs -> constdef .)
+    STRING          reduce using rule 6 (constdefs -> constdef .)
+    $end            reduce using rule 6 (constdefs -> constdef .)
+
+
+state 4
+
+    (3) opt_constdefs -> constdefs .
+    (5) constdefs -> constdefs . constdef
+    (7) constdef -> . DEFINE identifier EQ argument
+
+    COMPONENT       reduce using rule 3 (opt_constdefs -> constdefs .)
+    IDENTIFIER      reduce using rule 3 (opt_constdefs -> constdefs .)
+    RULE            reduce using rule 3 (opt_constdefs -> constdefs .)
+    GROUP           reduce using rule 3 (opt_constdefs -> constdefs .)
+    APPLY           reduce using rule 3 (opt_constdefs -> constdefs .)
+    VOIDPORT        reduce using rule 3 (opt_constdefs -> constdefs .)
+    COLON           reduce using rule 3 (opt_constdefs -> constdefs .)
+    DOT             reduce using rule 3 (opt_constdefs -> constdefs .)
+    NUMBER          reduce using rule 3 (opt_constdefs -> constdefs .)
+    LBRACE          reduce using rule 3 (opt_constdefs -> constdefs .)
+    LBRACK          reduce using rule 3 (opt_constdefs -> constdefs .)
+    TRUE            reduce using rule 3 (opt_constdefs -> constdefs .)
+    FALSE           reduce using rule 3 (opt_constdefs -> constdefs .)
+    NULL            reduce using rule 3 (opt_constdefs -> constdefs .)
+    STRING          reduce using rule 3 (opt_constdefs -> constdefs .)
+    $end            reduce using rule 3 (opt_constdefs -> constdefs .)
+    DEFINE          shift and go to state 6
+
+    constdef                       shift and go to state 12
+
+state 5
+
+    (4) opt_constdefs -> empty .
+
+    COMPONENT       reduce using rule 4 (opt_constdefs -> empty .)
+    IDENTIFIER      reduce using rule 4 (opt_constdefs -> empty .)
+    RULE            reduce using rule 4 (opt_constdefs -> empty .)
+    GROUP           reduce using rule 4 (opt_constdefs -> empty .)
+    APPLY           reduce using rule 4 (opt_constdefs -> empty .)
+    VOIDPORT        reduce using rule 4 (opt_constdefs -> empty .)
+    COLON           reduce using rule 4 (opt_constdefs -> empty .)
+    DOT             reduce using rule 4 (opt_constdefs -> empty .)
+    NUMBER          reduce using rule 4 (opt_constdefs -> empty .)
+    LBRACE          reduce using rule 4 (opt_constdefs -> empty .)
+    LBRACK          reduce using rule 4 (opt_constdefs -> empty .)
+    TRUE            reduce using rule 4 (opt_constdefs -> empty .)
+    FALSE           reduce using rule 4 (opt_constdefs -> empty .)
+    NULL            reduce using rule 4 (opt_constdefs -> empty .)
+    STRING          reduce using rule 4 (opt_constdefs -> empty .)
+    $end            reduce using rule 4 (opt_constdefs -> empty .)
+
+
+state 6
+
+    (7) constdef -> DEFINE . identifier EQ argument
+    (79) identifier -> . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 13
+
+    identifier                     shift and go to state 14
+
+state 7
+
+    (11) compdefs -> compdef .
+
+    COMPONENT       reduce using rule 11 (compdefs -> compdef .)
+    IDENTIFIER      reduce using rule 11 (compdefs -> compdef .)
+    RULE            reduce using rule 11 (compdefs -> compdef .)
+    GROUP           reduce using rule 11 (compdefs -> compdef .)
+    APPLY           reduce using rule 11 (compdefs -> compdef .)
+    VOIDPORT        reduce using rule 11 (compdefs -> compdef .)
+    COLON           reduce using rule 11 (compdefs -> compdef .)
+    DOT             reduce using rule 11 (compdefs -> compdef .)
+    NUMBER          reduce using rule 11 (compdefs -> compdef .)
+    LBRACE          reduce using rule 11 (compdefs -> compdef .)
+    LBRACK          reduce using rule 11 (compdefs -> compdef .)
+    TRUE            reduce using rule 11 (compdefs -> compdef .)
+    FALSE           reduce using rule 11 (compdefs -> compdef .)
+    NULL            reduce using rule 11 (compdefs -> compdef .)
+    STRING          reduce using rule 11 (compdefs -> compdef .)
+    $end            reduce using rule 11 (compdefs -> compdef .)
+
+
+state 8
+
+    (12) compdef -> COMPONENT . qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE
+    (100) qualified_name -> . qualified_name DOT IDENTIFIER
+    (101) qualified_name -> . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 16
+
+    qualified_name                 shift and go to state 15
+
+state 9
+
+    (1) script -> opt_constdefs opt_compdefs . opt_program
+    (21) opt_program -> . program
+    (22) opt_program -> . empty
+    (23) program -> . program statement
+    (24) program -> . statement
+    (2) empty -> .
+    (25) statement -> . assignment
+    (26) statement -> . port_property
+    (27) statement -> . link
+    (28) statement -> . define_rule
+    (29) statement -> . group
+    (30) statement -> . apply
+    (31) assignment -> . IDENTIFIER COLON qualified_name LPAREN named_args RPAREN
+    (34) port_property -> . qualified_port opt_direction LPAREN named_args RPAREN
+    (36) link -> . void GT void
+    (37) link -> . real_outport GT void
+    (38) link -> . void GT real_inport_list
+    (39) link -> . real_outport GT inport_list
+    (40) link -> . implicit_outport GT inport_list
+    (41) link -> . internal_outport GT inport_list
+    (102) define_rule -> . RULE identifier COLON rule
+    (111) group -> . GROUP identifier COLON identifiers
+    (110) apply -> . APPLY identifiers COLON rule
+    (64) qualified_port -> . IDENTIFIER DOT IDENTIFIER
+    (42) void -> . VOIDPORT
+    (59) real_outport -> . qualified_port
+    (50) implicit_outport -> . argument
+    (51) implicit_outport -> . label argument
+    (61) internal_outport -> . unqualified_port
+    (71) argument -> . value
+    (72) argument -> . identifier
+    (66) label -> . COLON identifier
+    (65) unqualified_port -> . DOT IDENTIFIER
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (79) identifier -> . IDENTIFIER
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    $end            reduce using rule 2 (empty -> .)
+    IDENTIFIER      shift and go to state 39
+    RULE            shift and go to state 31
+    GROUP           shift and go to state 18
+    APPLY           shift and go to state 37
+    VOIDPORT        shift and go to state 46
+    COLON           shift and go to state 34
+    DOT             shift and go to state 35
+    NUMBER          shift and go to state 43
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    unqualified_port               shift and go to state 17
+    argument                       shift and go to state 19
+    value                          shift and go to state 21
+    apply                          shift and go to state 22
+    array                          shift and go to state 23
+    null                           shift and go to state 27
+    define_rule                    shift and go to state 26
+    group                          shift and go to state 28
+    dictionary                     shift and go to state 29
+    label                          shift and go to state 32
+    program                        shift and go to state 33
+    bool                           shift and go to state 24
+    statement                      shift and go to state 36
+    qualified_port                 shift and go to state 38
+    opt_program                    shift and go to state 40
+    empty                          shift and go to state 41
+    string                         shift and go to state 42
+    assignment                     shift and go to state 44
+    void                           shift and go to state 45
+    port_property                  shift and go to state 47
+    link                           shift and go to state 49
+    internal_outport               shift and go to state 50
+    implicit_outport               shift and go to state 53
+    real_outport                   shift and go to state 54
+    identifier                     shift and go to state 55
+
+state 10
+
+    (8) opt_compdefs -> compdefs .
+    (10) compdefs -> compdefs . compdef
+    (12) compdef -> . COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE
+
+    IDENTIFIER      reduce using rule 8 (opt_compdefs -> compdefs .)
+    RULE            reduce using rule 8 (opt_compdefs -> compdefs .)
+    GROUP           reduce using rule 8 (opt_compdefs -> compdefs .)
+    APPLY           reduce using rule 8 (opt_compdefs -> compdefs .)
+    VOIDPORT        reduce using rule 8 (opt_compdefs -> compdefs .)
+    COLON           reduce using rule 8 (opt_compdefs -> compdefs .)
+    DOT             reduce using rule 8 (opt_compdefs -> compdefs .)
+    NUMBER          reduce using rule 8 (opt_compdefs -> compdefs .)
+    LBRACE          reduce using rule 8 (opt_compdefs -> compdefs .)
+    LBRACK          reduce using rule 8 (opt_compdefs -> compdefs .)
+    TRUE            reduce using rule 8 (opt_compdefs -> compdefs .)
+    FALSE           reduce using rule 8 (opt_compdefs -> compdefs .)
+    NULL            reduce using rule 8 (opt_compdefs -> compdefs .)
+    STRING          reduce using rule 8 (opt_compdefs -> compdefs .)
+    $end            reduce using rule 8 (opt_compdefs -> compdefs .)
+    COMPONENT       shift and go to state 8
+
+    compdef                        shift and go to state 56
+
+state 11
+
+    (9) opt_compdefs -> empty .
+
+    IDENTIFIER      reduce using rule 9 (opt_compdefs -> empty .)
+    RULE            reduce using rule 9 (opt_compdefs -> empty .)
+    GROUP           reduce using rule 9 (opt_compdefs -> empty .)
+    APPLY           reduce using rule 9 (opt_compdefs -> empty .)
+    VOIDPORT        reduce using rule 9 (opt_compdefs -> empty .)
+    COLON           reduce using rule 9 (opt_compdefs -> empty .)
+    DOT             reduce using rule 9 (opt_compdefs -> empty .)
+    NUMBER          reduce using rule 9 (opt_compdefs -> empty .)
+    LBRACE          reduce using rule 9 (opt_compdefs -> empty .)
+    LBRACK          reduce using rule 9 (opt_compdefs -> empty .)
+    TRUE            reduce using rule 9 (opt_compdefs -> empty .)
+    FALSE           reduce using rule 9 (opt_compdefs -> empty .)
+    NULL            reduce using rule 9 (opt_compdefs -> empty .)
+    STRING          reduce using rule 9 (opt_compdefs -> empty .)
+    $end            reduce using rule 9 (opt_compdefs -> empty .)
+
+
+state 12
+
+    (5) constdefs -> constdefs constdef .
+
+    DEFINE          reduce using rule 5 (constdefs -> constdefs constdef .)
+    COMPONENT       reduce using rule 5 (constdefs -> constdefs constdef .)
+    IDENTIFIER      reduce using rule 5 (constdefs -> constdefs constdef .)
+    RULE            reduce using rule 5 (constdefs -> constdefs constdef .)
+    GROUP           reduce using rule 5 (constdefs -> constdefs constdef .)
+    APPLY           reduce using rule 5 (constdefs -> constdefs constdef .)
+    VOIDPORT        reduce using rule 5 (constdefs -> constdefs constdef .)
+    COLON           reduce using rule 5 (constdefs -> constdefs constdef .)
+    DOT             reduce using rule 5 (constdefs -> constdefs constdef .)
+    NUMBER          reduce using rule 5 (constdefs -> constdefs constdef .)
+    LBRACE          reduce using rule 5 (constdefs -> constdefs constdef .)
+    LBRACK          reduce using rule 5 (constdefs -> constdefs constdef .)
+    TRUE            reduce using rule 5 (constdefs -> constdefs constdef .)
+    FALSE           reduce using rule 5 (constdefs -> constdefs constdef .)
+    NULL            reduce using rule 5 (constdefs -> constdefs constdef .)
+    STRING          reduce using rule 5 (constdefs -> constdefs constdef .)
+    $end            reduce using rule 5 (constdefs -> constdefs constdef .)
+
+
+state 13
+
+    (79) identifier -> IDENTIFIER .
+
+    COLON           reduce using rule 79 (identifier -> IDENTIFIER .)
+    EQ              reduce using rule 79 (identifier -> IDENTIFIER .)
+    NUMBER          reduce using rule 79 (identifier -> IDENTIFIER .)
+    IDENTIFIER      reduce using rule 79 (identifier -> IDENTIFIER .)
+    LBRACE          reduce using rule 79 (identifier -> IDENTIFIER .)
+    LBRACK          reduce using rule 79 (identifier -> IDENTIFIER .)
+    TRUE            reduce using rule 79 (identifier -> IDENTIFIER .)
+    FALSE           reduce using rule 79 (identifier -> IDENTIFIER .)
+    NULL            reduce using rule 79 (identifier -> IDENTIFIER .)
+    STRING          reduce using rule 79 (identifier -> IDENTIFIER .)
+    COMMA           reduce using rule 79 (identifier -> IDENTIFIER .)
+    RULE            reduce using rule 79 (identifier -> IDENTIFIER .)
+    GROUP           reduce using rule 79 (identifier -> IDENTIFIER .)
+    APPLY           reduce using rule 79 (identifier -> IDENTIFIER .)
+    VOIDPORT        reduce using rule 79 (identifier -> IDENTIFIER .)
+    DOT             reduce using rule 79 (identifier -> IDENTIFIER .)
+    $end            reduce using rule 79 (identifier -> IDENTIFIER .)
+    SLASH           reduce using rule 79 (identifier -> IDENTIFIER .)
+    LPAREN          reduce using rule 79 (identifier -> IDENTIFIER .)
+    AND             reduce using rule 79 (identifier -> IDENTIFIER .)
+    OR              reduce using rule 79 (identifier -> IDENTIFIER .)
+    RPAREN          reduce using rule 79 (identifier -> IDENTIFIER .)
+    GT              reduce using rule 79 (identifier -> IDENTIFIER .)
+    DEFINE          reduce using rule 79 (identifier -> IDENTIFIER .)
+    COMPONENT       reduce using rule 79 (identifier -> IDENTIFIER .)
+
+
+state 14
+
+    (7) constdef -> DEFINE identifier . EQ argument
+
+    EQ              shift and go to state 57
+
+
+state 15
+
+    (12) compdef -> COMPONENT qualified_name . LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE
+    (100) qualified_name -> qualified_name . DOT IDENTIFIER
+
+    LPAREN          shift and go to state 58
+    DOT             shift and go to state 59
+
+
+state 16
+
+    (101) qualified_name -> IDENTIFIER .
+
+    LPAREN          reduce using rule 101 (qualified_name -> IDENTIFIER .)
+    DOT             reduce using rule 101 (qualified_name -> IDENTIFIER .)
+
+
+state 17
+
+    (61) internal_outport -> unqualified_port .
+
+    GT              reduce using rule 61 (internal_outport -> unqualified_port .)
+
+
+state 18
+
+    (111) group -> GROUP . identifier COLON identifiers
+    (79) identifier -> . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 13
+
+    identifier                     shift and go to state 60
+
+state 19
+
+    (50) implicit_outport -> argument .
+
+    GT              reduce using rule 50 (implicit_outport -> argument .)
+
+
+state 20
+
+    (80) string -> STRING .
+
+    STRING          reduce using rule 80 (string -> STRING .)
+    SLASH           reduce using rule 80 (string -> STRING .)
+    COMMA           reduce using rule 80 (string -> STRING .)
+    RBRACK          reduce using rule 80 (string -> STRING .)
+    NUMBER          reduce using rule 80 (string -> STRING .)
+    LBRACE          reduce using rule 80 (string -> STRING .)
+    LBRACK          reduce using rule 80 (string -> STRING .)
+    TRUE            reduce using rule 80 (string -> STRING .)
+    FALSE           reduce using rule 80 (string -> STRING .)
+    NULL            reduce using rule 80 (string -> STRING .)
+    GT              reduce using rule 80 (string -> STRING .)
+    RBRACE          reduce using rule 80 (string -> STRING .)
+    DEFINE          reduce using rule 80 (string -> STRING .)
+    COMPONENT       reduce using rule 80 (string -> STRING .)
+    IDENTIFIER      reduce using rule 80 (string -> STRING .)
+    RULE            reduce using rule 80 (string -> STRING .)
+    GROUP           reduce using rule 80 (string -> STRING .)
+    APPLY           reduce using rule 80 (string -> STRING .)
+    VOIDPORT        reduce using rule 80 (string -> STRING .)
+    COLON           reduce using rule 80 (string -> STRING .)
+    DOT             reduce using rule 80 (string -> STRING .)
+    $end            reduce using rule 80 (string -> STRING .)
+    RPAREN          reduce using rule 80 (string -> STRING .)
+
+
+state 21
+
+    (71) argument -> value .
+
+    COMMA           reduce using rule 71 (argument -> value .)
+    RPAREN          reduce using rule 71 (argument -> value .)
+    IDENTIFIER      reduce using rule 71 (argument -> value .)
+    SLASH           reduce using rule 71 (argument -> value .)
+    DEFINE          reduce using rule 71 (argument -> value .)
+    COMPONENT       reduce using rule 71 (argument -> value .)
+    RULE            reduce using rule 71 (argument -> value .)
+    GROUP           reduce using rule 71 (argument -> value .)
+    APPLY           reduce using rule 71 (argument -> value .)
+    VOIDPORT        reduce using rule 71 (argument -> value .)
+    COLON           reduce using rule 71 (argument -> value .)
+    DOT             reduce using rule 71 (argument -> value .)
+    NUMBER          reduce using rule 71 (argument -> value .)
+    LBRACE          reduce using rule 71 (argument -> value .)
+    LBRACK          reduce using rule 71 (argument -> value .)
+    TRUE            reduce using rule 71 (argument -> value .)
+    FALSE           reduce using rule 71 (argument -> value .)
+    NULL            reduce using rule 71 (argument -> value .)
+    STRING          reduce using rule 71 (argument -> value .)
+    $end            reduce using rule 71 (argument -> value .)
+    GT              reduce using rule 71 (argument -> value .)
+
+
+state 22
+
+    (30) statement -> apply .
+
+    IDENTIFIER      reduce using rule 30 (statement -> apply .)
+    RULE            reduce using rule 30 (statement -> apply .)
+    GROUP           reduce using rule 30 (statement -> apply .)
+    APPLY           reduce using rule 30 (statement -> apply .)
+    VOIDPORT        reduce using rule 30 (statement -> apply .)
+    COLON           reduce using rule 30 (statement -> apply .)
+    DOT             reduce using rule 30 (statement -> apply .)
+    NUMBER          reduce using rule 30 (statement -> apply .)
+    LBRACE          reduce using rule 30 (statement -> apply .)
+    LBRACK          reduce using rule 30 (statement -> apply .)
+    TRUE            reduce using rule 30 (statement -> apply .)
+    FALSE           reduce using rule 30 (statement -> apply .)
+    NULL            reduce using rule 30 (statement -> apply .)
+    STRING          reduce using rule 30 (statement -> apply .)
+    $end            reduce using rule 30 (statement -> apply .)
+
+
+state 23
+
+    (83) value -> array .
+
+    GT              reduce using rule 83 (value -> array .)
+    SLASH           reduce using rule 83 (value -> array .)
+    COMMA           reduce using rule 83 (value -> array .)
+    RBRACK          reduce using rule 83 (value -> array .)
+    NUMBER          reduce using rule 83 (value -> array .)
+    LBRACE          reduce using rule 83 (value -> array .)
+    LBRACK          reduce using rule 83 (value -> array .)
+    TRUE            reduce using rule 83 (value -> array .)
+    FALSE           reduce using rule 83 (value -> array .)
+    NULL            reduce using rule 83 (value -> array .)
+    STRING          reduce using rule 83 (value -> array .)
+    RPAREN          reduce using rule 83 (value -> array .)
+    IDENTIFIER      reduce using rule 83 (value -> array .)
+    RBRACE          reduce using rule 83 (value -> array .)
+    DEFINE          reduce using rule 83 (value -> array .)
+    COMPONENT       reduce using rule 83 (value -> array .)
+    RULE            reduce using rule 83 (value -> array .)
+    GROUP           reduce using rule 83 (value -> array .)
+    APPLY           reduce using rule 83 (value -> array .)
+    VOIDPORT        reduce using rule 83 (value -> array .)
+    COLON           reduce using rule 83 (value -> array .)
+    DOT             reduce using rule 83 (value -> array .)
+    $end            reduce using rule 83 (value -> array .)
+
+
+state 24
+
+    (84) value -> bool .
+
+    GT              reduce using rule 84 (value -> bool .)
+    SLASH           reduce using rule 84 (value -> bool .)
+    COMMA           reduce using rule 84 (value -> bool .)
+    RBRACK          reduce using rule 84 (value -> bool .)
+    NUMBER          reduce using rule 84 (value -> bool .)
+    LBRACE          reduce using rule 84 (value -> bool .)
+    LBRACK          reduce using rule 84 (value -> bool .)
+    TRUE            reduce using rule 84 (value -> bool .)
+    FALSE           reduce using rule 84 (value -> bool .)
+    NULL            reduce using rule 84 (value -> bool .)
+    STRING          reduce using rule 84 (value -> bool .)
+    RPAREN          reduce using rule 84 (value -> bool .)
+    IDENTIFIER      reduce using rule 84 (value -> bool .)
+    RBRACE          reduce using rule 84 (value -> bool .)
+    DEFINE          reduce using rule 84 (value -> bool .)
+    COMPONENT       reduce using rule 84 (value -> bool .)
+    RULE            reduce using rule 84 (value -> bool .)
+    GROUP           reduce using rule 84 (value -> bool .)
+    APPLY           reduce using rule 84 (value -> bool .)
+    VOIDPORT        reduce using rule 84 (value -> bool .)
+    COLON           reduce using rule 84 (value -> bool .)
+    DOT             reduce using rule 84 (value -> bool .)
+    $end            reduce using rule 84 (value -> bool .)
+
+
+state 25
+
+    (88) bool -> TRUE .
+
+    COMMA           reduce using rule 88 (bool -> TRUE .)
+    RBRACE          reduce using rule 88 (bool -> TRUE .)
+    STRING          reduce using rule 88 (bool -> TRUE .)
+    RPAREN          reduce using rule 88 (bool -> TRUE .)
+    IDENTIFIER      reduce using rule 88 (bool -> TRUE .)
+    GT              reduce using rule 88 (bool -> TRUE .)
+    SLASH           reduce using rule 88 (bool -> TRUE .)
+    DEFINE          reduce using rule 88 (bool -> TRUE .)
+    COMPONENT       reduce using rule 88 (bool -> TRUE .)
+    RULE            reduce using rule 88 (bool -> TRUE .)
+    GROUP           reduce using rule 88 (bool -> TRUE .)
+    APPLY           reduce using rule 88 (bool -> TRUE .)
+    VOIDPORT        reduce using rule 88 (bool -> TRUE .)
+    COLON           reduce using rule 88 (bool -> TRUE .)
+    DOT             reduce using rule 88 (bool -> TRUE .)
+    NUMBER          reduce using rule 88 (bool -> TRUE .)
+    LBRACE          reduce using rule 88 (bool -> TRUE .)
+    LBRACK          reduce using rule 88 (bool -> TRUE .)
+    TRUE            reduce using rule 88 (bool -> TRUE .)
+    FALSE           reduce using rule 88 (bool -> TRUE .)
+    NULL            reduce using rule 88 (bool -> TRUE .)
+    $end            reduce using rule 88 (bool -> TRUE .)
+    RBRACK          reduce using rule 88 (bool -> TRUE .)
+
+
+state 26
+
+    (28) statement -> define_rule .
+
+    IDENTIFIER      reduce using rule 28 (statement -> define_rule .)
+    RULE            reduce using rule 28 (statement -> define_rule .)
+    GROUP           reduce using rule 28 (statement -> define_rule .)
+    APPLY           reduce using rule 28 (statement -> define_rule .)
+    VOIDPORT        reduce using rule 28 (statement -> define_rule .)
+    COLON           reduce using rule 28 (statement -> define_rule .)
+    DOT             reduce using rule 28 (statement -> define_rule .)
+    NUMBER          reduce using rule 28 (statement -> define_rule .)
+    LBRACE          reduce using rule 28 (statement -> define_rule .)
+    LBRACK          reduce using rule 28 (statement -> define_rule .)
+    TRUE            reduce using rule 28 (statement -> define_rule .)
+    FALSE           reduce using rule 28 (statement -> define_rule .)
+    NULL            reduce using rule 28 (statement -> define_rule .)
+    STRING          reduce using rule 28 (statement -> define_rule .)
+    $end            reduce using rule 28 (statement -> define_rule .)
+
+
+state 27
+
+    (85) value -> null .
+
+    GT              reduce using rule 85 (value -> null .)
+    SLASH           reduce using rule 85 (value -> null .)
+    COMMA           reduce using rule 85 (value -> null .)
+    RBRACK          reduce using rule 85 (value -> null .)
+    NUMBER          reduce using rule 85 (value -> null .)
+    LBRACE          reduce using rule 85 (value -> null .)
+    LBRACK          reduce using rule 85 (value -> null .)
+    TRUE            reduce using rule 85 (value -> null .)
+    FALSE           reduce using rule 85 (value -> null .)
+    NULL            reduce using rule 85 (value -> null .)
+    STRING          reduce using rule 85 (value -> null .)
+    RPAREN          reduce using rule 85 (value -> null .)
+    IDENTIFIER      reduce using rule 85 (value -> null .)
+    RBRACE          reduce using rule 85 (value -> null .)
+    DEFINE          reduce using rule 85 (value -> null .)
+    COMPONENT       reduce using rule 85 (value -> null .)
+    RULE            reduce using rule 85 (value -> null .)
+    GROUP           reduce using rule 85 (value -> null .)
+    APPLY           reduce using rule 85 (value -> null .)
+    VOIDPORT        reduce using rule 85 (value -> null .)
+    COLON           reduce using rule 85 (value -> null .)
+    DOT             reduce using rule 85 (value -> null .)
+    $end            reduce using rule 85 (value -> null .)
+
+
+state 28
+
+    (29) statement -> group .
+
+    IDENTIFIER      reduce using rule 29 (statement -> group .)
+    RULE            reduce using rule 29 (statement -> group .)
+    GROUP           reduce using rule 29 (statement -> group .)
+    APPLY           reduce using rule 29 (statement -> group .)
+    VOIDPORT        reduce using rule 29 (statement -> group .)
+    COLON           reduce using rule 29 (statement -> group .)
+    DOT             reduce using rule 29 (statement -> group .)
+    NUMBER          reduce using rule 29 (statement -> group .)
+    LBRACE          reduce using rule 29 (statement -> group .)
+    LBRACK          reduce using rule 29 (statement -> group .)
+    TRUE            reduce using rule 29 (statement -> group .)
+    FALSE           reduce using rule 29 (statement -> group .)
+    NULL            reduce using rule 29 (statement -> group .)
+    STRING          reduce using rule 29 (statement -> group .)
+    $end            reduce using rule 29 (statement -> group .)
+
+
+state 29
+
+    (82) value -> dictionary .
+
+    GT              reduce using rule 82 (value -> dictionary .)
+    SLASH           reduce using rule 82 (value -> dictionary .)
+    COMMA           reduce using rule 82 (value -> dictionary .)
+    RBRACK          reduce using rule 82 (value -> dictionary .)
+    NUMBER          reduce using rule 82 (value -> dictionary .)
+    LBRACE          reduce using rule 82 (value -> dictionary .)
+    LBRACK          reduce using rule 82 (value -> dictionary .)
+    TRUE            reduce using rule 82 (value -> dictionary .)
+    FALSE           reduce using rule 82 (value -> dictionary .)
+    NULL            reduce using rule 82 (value -> dictionary .)
+    STRING          reduce using rule 82 (value -> dictionary .)
+    RPAREN          reduce using rule 82 (value -> dictionary .)
+    IDENTIFIER      reduce using rule 82 (value -> dictionary .)
+    RBRACE          reduce using rule 82 (value -> dictionary .)
+    DEFINE          reduce using rule 82 (value -> dictionary .)
+    COMPONENT       reduce using rule 82 (value -> dictionary .)
+    RULE            reduce using rule 82 (value -> dictionary .)
+    GROUP           reduce using rule 82 (value -> dictionary .)
+    APPLY           reduce using rule 82 (value -> dictionary .)
+    VOIDPORT        reduce using rule 82 (value -> dictionary .)
+    COLON           reduce using rule 82 (value -> dictionary .)
+    DOT             reduce using rule 82 (value -> dictionary .)
+    $end            reduce using rule 82 (value -> dictionary .)
+
+
+state 30
+
+    (90) null -> NULL .
+
+    DEFINE          reduce using rule 90 (null -> NULL .)
+    COMPONENT       reduce using rule 90 (null -> NULL .)
+    IDENTIFIER      reduce using rule 90 (null -> NULL .)
+    RULE            reduce using rule 90 (null -> NULL .)
+    GROUP           reduce using rule 90 (null -> NULL .)
+    APPLY           reduce using rule 90 (null -> NULL .)
+    VOIDPORT        reduce using rule 90 (null -> NULL .)
+    COLON           reduce using rule 90 (null -> NULL .)
+    DOT             reduce using rule 90 (null -> NULL .)
+    NUMBER          reduce using rule 90 (null -> NULL .)
+    LBRACE          reduce using rule 90 (null -> NULL .)
+    LBRACK          reduce using rule 90 (null -> NULL .)
+    TRUE            reduce using rule 90 (null -> NULL .)
+    FALSE           reduce using rule 90 (null -> NULL .)
+    NULL            reduce using rule 90 (null -> NULL .)
+    STRING          reduce using rule 90 (null -> NULL .)
+    $end            reduce using rule 90 (null -> NULL .)
+    SLASH           reduce using rule 90 (null -> NULL .)
+    COMMA           reduce using rule 90 (null -> NULL .)
+    RPAREN          reduce using rule 90 (null -> NULL .)
+    GT              reduce using rule 90 (null -> NULL .)
+    RBRACK          reduce using rule 90 (null -> NULL .)
+    RBRACE          reduce using rule 90 (null -> NULL .)
+
+
+state 31
+
+    (102) define_rule -> RULE . identifier COLON rule
+    (79) identifier -> . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 13
+
+    identifier                     shift and go to state 61
+
+state 32
+
+    (51) implicit_outport -> label . argument
+    (71) argument -> . value
+    (72) argument -> . identifier
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (79) identifier -> . IDENTIFIER
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    NUMBER          shift and go to state 43
+    IDENTIFIER      shift and go to state 13
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    null                           shift and go to state 27
+    string                         shift and go to state 42
+    dictionary                     shift and go to state 29
+    argument                       shift and go to state 62
+    value                          shift and go to state 21
+    bool                           shift and go to state 24
+    array                          shift and go to state 23
+    identifier                     shift and go to state 55
+
+state 33
+
+    (21) opt_program -> program .
+    (23) program -> program . statement
+    (25) statement -> . assignment
+    (26) statement -> . port_property
+    (27) statement -> . link
+    (28) statement -> . define_rule
+    (29) statement -> . group
+    (30) statement -> . apply
+    (31) assignment -> . IDENTIFIER COLON qualified_name LPAREN named_args RPAREN
+    (34) port_property -> . qualified_port opt_direction LPAREN named_args RPAREN
+    (36) link -> . void GT void
+    (37) link -> . real_outport GT void
+    (38) link -> . void GT real_inport_list
+    (39) link -> . real_outport GT inport_list
+    (40) link -> . implicit_outport GT inport_list
+    (41) link -> . internal_outport GT inport_list
+    (102) define_rule -> . RULE identifier COLON rule
+    (111) group -> . GROUP identifier COLON identifiers
+    (110) apply -> . APPLY identifiers COLON rule
+    (64) qualified_port -> . IDENTIFIER DOT IDENTIFIER
+    (42) void -> . VOIDPORT
+    (59) real_outport -> . qualified_port
+    (50) implicit_outport -> . argument
+    (51) implicit_outport -> . label argument
+    (61) internal_outport -> . unqualified_port
+    (71) argument -> . value
+    (72) argument -> . identifier
+    (66) label -> . COLON identifier
+    (65) unqualified_port -> . DOT IDENTIFIER
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (79) identifier -> . IDENTIFIER
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    $end            reduce using rule 21 (opt_program -> program .)
+    IDENTIFIER      shift and go to state 39
+    RULE            shift and go to state 31
+    GROUP           shift and go to state 18
+    APPLY           shift and go to state 37
+    VOIDPORT        shift and go to state 46
+    COLON           shift and go to state 34
+    DOT             shift and go to state 35
+    NUMBER          shift and go to state 43
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    unqualified_port               shift and go to state 17
+    argument                       shift and go to state 19
+    value                          shift and go to state 21
+    apply                          shift and go to state 22
+    array                          shift and go to state 23
+    null                           shift and go to state 27
+    define_rule                    shift and go to state 26
+    group                          shift and go to state 28
+    dictionary                     shift and go to state 29
+    label                          shift and go to state 32
+    bool                           shift and go to state 24
+    statement                      shift and go to state 63
+    qualified_port                 shift and go to state 38
+    string                         shift and go to state 42
+    assignment                     shift and go to state 44
+    void                           shift and go to state 45
+    port_property                  shift and go to state 47
+    link                           shift and go to state 49
+    internal_outport               shift and go to state 50
+    implicit_outport               shift and go to state 53
+    real_outport                   shift and go to state 54
+    identifier                     shift and go to state 55
+
+state 34
+
+    (66) label -> COLON . identifier
+    (79) identifier -> . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 13
+
+    identifier                     shift and go to state 64
+
+state 35
+
+    (65) unqualified_port -> DOT . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 65
+
+
+state 36
+
+    (24) program -> statement .
+
+    IDENTIFIER      reduce using rule 24 (program -> statement .)
+    RULE            reduce using rule 24 (program -> statement .)
+    GROUP           reduce using rule 24 (program -> statement .)
+    APPLY           reduce using rule 24 (program -> statement .)
+    VOIDPORT        reduce using rule 24 (program -> statement .)
+    COLON           reduce using rule 24 (program -> statement .)
+    DOT             reduce using rule 24 (program -> statement .)
+    NUMBER          reduce using rule 24 (program -> statement .)
+    LBRACE          reduce using rule 24 (program -> statement .)
+    LBRACK          reduce using rule 24 (program -> statement .)
+    TRUE            reduce using rule 24 (program -> statement .)
+    FALSE           reduce using rule 24 (program -> statement .)
+    NULL            reduce using rule 24 (program -> statement .)
+    STRING          reduce using rule 24 (program -> statement .)
+    $end            reduce using rule 24 (program -> statement .)
+
+
+state 37
+
+    (110) apply -> APPLY . identifiers COLON rule
+    (77) identifiers -> . identifiers COMMA identifier
+    (78) identifiers -> . identifier
+    (79) identifier -> . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 13
+
+    identifier                     shift and go to state 67
+    identifiers                    shift and go to state 66
+
+state 38
+
+    (34) port_property -> qualified_port . opt_direction LPAREN named_args RPAREN
+    (59) real_outport -> qualified_port .
+    (32) opt_direction -> . LBRACK IDENTIFIER RBRACK
+    (33) opt_direction -> . empty
+    (2) empty -> .
+
+    GT              reduce using rule 59 (real_outport -> qualified_port .)
+    LBRACK          shift and go to state 68
+    LPAREN          reduce using rule 2 (empty -> .)
+
+    opt_direction                  shift and go to state 69
+    empty                          shift and go to state 70
+
+state 39
+
+    (31) assignment -> IDENTIFIER . COLON qualified_name LPAREN named_args RPAREN
+    (64) qualified_port -> IDENTIFIER . DOT IDENTIFIER
+    (79) identifier -> IDENTIFIER .
+
+    COLON           shift and go to state 71
+    DOT             shift and go to state 72
+    GT              reduce using rule 79 (identifier -> IDENTIFIER .)
+
+
+state 40
+
+    (1) script -> opt_constdefs opt_compdefs opt_program .
+
+    $end            reduce using rule 1 (script -> opt_constdefs opt_compdefs opt_program .)
+
+
+state 41
+
+    (22) opt_program -> empty .
+
+    $end            reduce using rule 22 (opt_program -> empty .)
+
+
+state 42
+
+    (87) value -> string .
+    (81) string -> string . STRING
+
+  ! shift/reduce conflict for STRING resolved as shift
+    GT              reduce using rule 87 (value -> string .)
+    SLASH           reduce using rule 87 (value -> string .)
+    COMMA           reduce using rule 87 (value -> string .)
+    RBRACK          reduce using rule 87 (value -> string .)
+    NUMBER          reduce using rule 87 (value -> string .)
+    LBRACE          reduce using rule 87 (value -> string .)
+    LBRACK          reduce using rule 87 (value -> string .)
+    TRUE            reduce using rule 87 (value -> string .)
+    FALSE           reduce using rule 87 (value -> string .)
+    NULL            reduce using rule 87 (value -> string .)
+    RPAREN          reduce using rule 87 (value -> string .)
+    IDENTIFIER      reduce using rule 87 (value -> string .)
+    RBRACE          reduce using rule 87 (value -> string .)
+    DEFINE          reduce using rule 87 (value -> string .)
+    COMPONENT       reduce using rule 87 (value -> string .)
+    RULE            reduce using rule 87 (value -> string .)
+    GROUP           reduce using rule 87 (value -> string .)
+    APPLY           reduce using rule 87 (value -> string .)
+    VOIDPORT        reduce using rule 87 (value -> string .)
+    COLON           reduce using rule 87 (value -> string .)
+    DOT             reduce using rule 87 (value -> string .)
+    $end            reduce using rule 87 (value -> string .)
+    STRING          shift and go to state 73
+
+  ! STRING          [ reduce using rule 87 (value -> string .) ]
+
+
+state 43
+
+    (86) value -> NUMBER .
+
+    GT              reduce using rule 86 (value -> NUMBER .)
+    SLASH           reduce using rule 86 (value -> NUMBER .)
+    COMMA           reduce using rule 86 (value -> NUMBER .)
+    RBRACK          reduce using rule 86 (value -> NUMBER .)
+    NUMBER          reduce using rule 86 (value -> NUMBER .)
+    LBRACE          reduce using rule 86 (value -> NUMBER .)
+    LBRACK          reduce using rule 86 (value -> NUMBER .)
+    TRUE            reduce using rule 86 (value -> NUMBER .)
+    FALSE           reduce using rule 86 (value -> NUMBER .)
+    NULL            reduce using rule 86 (value -> NUMBER .)
+    STRING          reduce using rule 86 (value -> NUMBER .)
+    RPAREN          reduce using rule 86 (value -> NUMBER .)
+    IDENTIFIER      reduce using rule 86 (value -> NUMBER .)
+    RBRACE          reduce using rule 86 (value -> NUMBER .)
+    DEFINE          reduce using rule 86 (value -> NUMBER .)
+    COMPONENT       reduce using rule 86 (value -> NUMBER .)
+    RULE            reduce using rule 86 (value -> NUMBER .)
+    GROUP           reduce using rule 86 (value -> NUMBER .)
+    APPLY           reduce using rule 86 (value -> NUMBER .)
+    VOIDPORT        reduce using rule 86 (value -> NUMBER .)
+    COLON           reduce using rule 86 (value -> NUMBER .)
+    DOT             reduce using rule 86 (value -> NUMBER .)
+    $end            reduce using rule 86 (value -> NUMBER .)
+
+
+state 44
+
+    (25) statement -> assignment .
+
+    IDENTIFIER      reduce using rule 25 (statement -> assignment .)
+    RULE            reduce using rule 25 (statement -> assignment .)
+    GROUP           reduce using rule 25 (statement -> assignment .)
+    APPLY           reduce using rule 25 (statement -> assignment .)
+    VOIDPORT        reduce using rule 25 (statement -> assignment .)
+    COLON           reduce using rule 25 (statement -> assignment .)
+    DOT             reduce using rule 25 (statement -> assignment .)
+    NUMBER          reduce using rule 25 (statement -> assignment .)
+    LBRACE          reduce using rule 25 (statement -> assignment .)
+    LBRACK          reduce using rule 25 (statement -> assignment .)
+    TRUE            reduce using rule 25 (statement -> assignment .)
+    FALSE           reduce using rule 25 (statement -> assignment .)
+    NULL            reduce using rule 25 (statement -> assignment .)
+    STRING          reduce using rule 25 (statement -> assignment .)
+    $end            reduce using rule 25 (statement -> assignment .)
+
+
+state 45
+
+    (36) link -> void . GT void
+    (38) link -> void . GT real_inport_list
+
+    GT              shift and go to state 74
+
+
+state 46
+
+    (42) void -> VOIDPORT .
+
+    GT              reduce using rule 42 (void -> VOIDPORT .)
+    IDENTIFIER      reduce using rule 42 (void -> VOIDPORT .)
+    RULE            reduce using rule 42 (void -> VOIDPORT .)
+    GROUP           reduce using rule 42 (void -> VOIDPORT .)
+    APPLY           reduce using rule 42 (void -> VOIDPORT .)
+    VOIDPORT        reduce using rule 42 (void -> VOIDPORT .)
+    COLON           reduce using rule 42 (void -> VOIDPORT .)
+    DOT             reduce using rule 42 (void -> VOIDPORT .)
+    NUMBER          reduce using rule 42 (void -> VOIDPORT .)
+    LBRACE          reduce using rule 42 (void -> VOIDPORT .)
+    LBRACK          reduce using rule 42 (void -> VOIDPORT .)
+    TRUE            reduce using rule 42 (void -> VOIDPORT .)
+    FALSE           reduce using rule 42 (void -> VOIDPORT .)
+    NULL            reduce using rule 42 (void -> VOIDPORT .)
+    STRING          reduce using rule 42 (void -> VOIDPORT .)
+    $end            reduce using rule 42 (void -> VOIDPORT .)
+    RBRACE          reduce using rule 42 (void -> VOIDPORT .)
+
+
+state 47
+
+    (26) statement -> port_property .
+
+    IDENTIFIER      reduce using rule 26 (statement -> port_property .)
+    RULE            reduce using rule 26 (statement -> port_property .)
+    GROUP           reduce using rule 26 (statement -> port_property .)
+    APPLY           reduce using rule 26 (statement -> port_property .)
+    VOIDPORT        reduce using rule 26 (statement -> port_property .)
+    COLON           reduce using rule 26 (statement -> port_property .)
+    DOT             reduce using rule 26 (statement -> port_property .)
+    NUMBER          reduce using rule 26 (statement -> port_property .)
+    LBRACE          reduce using rule 26 (statement -> port_property .)
+    LBRACK          reduce using rule 26 (statement -> port_property .)
+    TRUE            reduce using rule 26 (statement -> port_property .)
+    FALSE           reduce using rule 26 (statement -> port_property .)
+    NULL            reduce using rule 26 (statement -> port_property .)
+    STRING          reduce using rule 26 (statement -> port_property .)
+    $end            reduce using rule 26 (statement -> port_property .)
+
+
+state 48
+
+    (91) dictionary -> LBRACE . members RBRACE
+    (92) members -> . members member COMMA
+    (93) members -> . members member
+    (94) members -> . empty
+    (2) empty -> .
+
+    RBRACE          reduce using rule 2 (empty -> .)
+    STRING          reduce using rule 2 (empty -> .)
+
+    empty                          shift and go to state 76
+    members                        shift and go to state 75
+
+state 49
+
+    (27) statement -> link .
+
+    IDENTIFIER      reduce using rule 27 (statement -> link .)
+    RULE            reduce using rule 27 (statement -> link .)
+    GROUP           reduce using rule 27 (statement -> link .)
+    APPLY           reduce using rule 27 (statement -> link .)
+    VOIDPORT        reduce using rule 27 (statement -> link .)
+    COLON           reduce using rule 27 (statement -> link .)
+    DOT             reduce using rule 27 (statement -> link .)
+    NUMBER          reduce using rule 27 (statement -> link .)
+    LBRACE          reduce using rule 27 (statement -> link .)
+    LBRACK          reduce using rule 27 (statement -> link .)
+    TRUE            reduce using rule 27 (statement -> link .)
+    FALSE           reduce using rule 27 (statement -> link .)
+    NULL            reduce using rule 27 (statement -> link .)
+    STRING          reduce using rule 27 (statement -> link .)
+    $end            reduce using rule 27 (statement -> link .)
+
+
+state 50
+
+    (41) link -> internal_outport . GT inport_list
+
+    GT              shift and go to state 77
+
+
+state 51
+
+    (89) bool -> FALSE .
+
+    COMMA           reduce using rule 89 (bool -> FALSE .)
+    RBRACE          reduce using rule 89 (bool -> FALSE .)
+    STRING          reduce using rule 89 (bool -> FALSE .)
+    RPAREN          reduce using rule 89 (bool -> FALSE .)
+    IDENTIFIER      reduce using rule 89 (bool -> FALSE .)
+    GT              reduce using rule 89 (bool -> FALSE .)
+    SLASH           reduce using rule 89 (bool -> FALSE .)
+    DEFINE          reduce using rule 89 (bool -> FALSE .)
+    COMPONENT       reduce using rule 89 (bool -> FALSE .)
+    RULE            reduce using rule 89 (bool -> FALSE .)
+    GROUP           reduce using rule 89 (bool -> FALSE .)
+    APPLY           reduce using rule 89 (bool -> FALSE .)
+    VOIDPORT        reduce using rule 89 (bool -> FALSE .)
+    COLON           reduce using rule 89 (bool -> FALSE .)
+    DOT             reduce using rule 89 (bool -> FALSE .)
+    NUMBER          reduce using rule 89 (bool -> FALSE .)
+    LBRACE          reduce using rule 89 (bool -> FALSE .)
+    LBRACK          reduce using rule 89 (bool -> FALSE .)
+    TRUE            reduce using rule 89 (bool -> FALSE .)
+    FALSE           reduce using rule 89 (bool -> FALSE .)
+    NULL            reduce using rule 89 (bool -> FALSE .)
+    $end            reduce using rule 89 (bool -> FALSE .)
+    RBRACK          reduce using rule 89 (bool -> FALSE .)
+
+
+state 52
+
+    (99) array -> LBRACK . values RBRACK
+    (96) values -> . values value COMMA
+    (97) values -> . values value
+    (98) values -> . empty
+    (2) empty -> .
+
+    RBRACK          reduce using rule 2 (empty -> .)
+    NUMBER          reduce using rule 2 (empty -> .)
+    LBRACE          reduce using rule 2 (empty -> .)
+    LBRACK          reduce using rule 2 (empty -> .)
+    TRUE            reduce using rule 2 (empty -> .)
+    FALSE           reduce using rule 2 (empty -> .)
+    NULL            reduce using rule 2 (empty -> .)
+    STRING          reduce using rule 2 (empty -> .)
+
+    values                         shift and go to state 78
+    empty                          shift and go to state 79
+
+state 53
+
+    (40) link -> implicit_outport . GT inport_list
+
+    GT              shift and go to state 80
+
+
+state 54
+
+    (37) link -> real_outport . GT void
+    (39) link -> real_outport . GT inport_list
+
+    GT              shift and go to state 81
+
+
+state 55
+
+    (72) argument -> identifier .
+
+    COMMA           reduce using rule 72 (argument -> identifier .)
+    RPAREN          reduce using rule 72 (argument -> identifier .)
+    IDENTIFIER      reduce using rule 72 (argument -> identifier .)
+    SLASH           reduce using rule 72 (argument -> identifier .)
+    DEFINE          reduce using rule 72 (argument -> identifier .)
+    COMPONENT       reduce using rule 72 (argument -> identifier .)
+    RULE            reduce using rule 72 (argument -> identifier .)
+    GROUP           reduce using rule 72 (argument -> identifier .)
+    APPLY           reduce using rule 72 (argument -> identifier .)
+    VOIDPORT        reduce using rule 72 (argument -> identifier .)
+    COLON           reduce using rule 72 (argument -> identifier .)
+    DOT             reduce using rule 72 (argument -> identifier .)
+    NUMBER          reduce using rule 72 (argument -> identifier .)
+    LBRACE          reduce using rule 72 (argument -> identifier .)
+    LBRACK          reduce using rule 72 (argument -> identifier .)
+    TRUE            reduce using rule 72 (argument -> identifier .)
+    FALSE           reduce using rule 72 (argument -> identifier .)
+    NULL            reduce using rule 72 (argument -> identifier .)
+    STRING          reduce using rule 72 (argument -> identifier .)
+    $end            reduce using rule 72 (argument -> identifier .)
+    GT              reduce using rule 72 (argument -> identifier .)
+
+
+state 56
+
+    (10) compdefs -> compdefs compdef .
+
+    COMPONENT       reduce using rule 10 (compdefs -> compdefs compdef .)
+    IDENTIFIER      reduce using rule 10 (compdefs -> compdefs compdef .)
+    RULE            reduce using rule 10 (compdefs -> compdefs compdef .)
+    GROUP           reduce using rule 10 (compdefs -> compdefs compdef .)
+    APPLY           reduce using rule 10 (compdefs -> compdefs compdef .)
+    VOIDPORT        reduce using rule 10 (compdefs -> compdefs compdef .)
+    COLON           reduce using rule 10 (compdefs -> compdefs compdef .)
+    DOT             reduce using rule 10 (compdefs -> compdefs compdef .)
+    NUMBER          reduce using rule 10 (compdefs -> compdefs compdef .)
+    LBRACE          reduce using rule 10 (compdefs -> compdefs compdef .)
+    LBRACK          reduce using rule 10 (compdefs -> compdefs compdef .)
+    TRUE            reduce using rule 10 (compdefs -> compdefs compdef .)
+    FALSE           reduce using rule 10 (compdefs -> compdefs compdef .)
+    NULL            reduce using rule 10 (compdefs -> compdefs compdef .)
+    STRING          reduce using rule 10 (compdefs -> compdefs compdef .)
+    $end            reduce using rule 10 (compdefs -> compdefs compdef .)
+
+
+state 57
+
+    (7) constdef -> DEFINE identifier EQ . argument
+    (71) argument -> . value
+    (72) argument -> . identifier
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (79) identifier -> . IDENTIFIER
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    NUMBER          shift and go to state 43
+    IDENTIFIER      shift and go to state 13
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    null                           shift and go to state 27
+    string                         shift and go to state 42
+    dictionary                     shift and go to state 29
+    argument                       shift and go to state 82
+    value                          shift and go to state 21
+    bool                           shift and go to state 24
+    array                          shift and go to state 23
+    identifier                     shift and go to state 55
+
+state 58
+
+    (12) compdef -> COMPONENT qualified_name LPAREN . opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE
+    (73) opt_argnames -> . argnames
+    (74) opt_argnames -> . empty
+    (75) argnames -> . argnames COMMA IDENTIFIER
+    (76) argnames -> . IDENTIFIER
+    (2) empty -> .
+
+    IDENTIFIER      shift and go to state 85
+    RPAREN          reduce using rule 2 (empty -> .)
+
+    argnames                       shift and go to state 83
+    opt_argnames                   shift and go to state 84
+    empty                          shift and go to state 86
+
+state 59
+
+    (100) qualified_name -> qualified_name DOT . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 87
+
+
+state 60
+
+    (111) group -> GROUP identifier . COLON identifiers
+
+    COLON           shift and go to state 88
+
+
+state 61
+
+    (102) define_rule -> RULE identifier . COLON rule
+
+    COLON           shift and go to state 89
+
+
+state 62
+
+    (51) implicit_outport -> label argument .
+
+    GT              reduce using rule 51 (implicit_outport -> label argument .)
+
+
+state 63
+
+    (23) program -> program statement .
+
+    IDENTIFIER      reduce using rule 23 (program -> program statement .)
+    RULE            reduce using rule 23 (program -> program statement .)
+    GROUP           reduce using rule 23 (program -> program statement .)
+    APPLY           reduce using rule 23 (program -> program statement .)
+    VOIDPORT        reduce using rule 23 (program -> program statement .)
+    COLON           reduce using rule 23 (program -> program statement .)
+    DOT             reduce using rule 23 (program -> program statement .)
+    NUMBER          reduce using rule 23 (program -> program statement .)
+    LBRACE          reduce using rule 23 (program -> program statement .)
+    LBRACK          reduce using rule 23 (program -> program statement .)
+    TRUE            reduce using rule 23 (program -> program statement .)
+    FALSE           reduce using rule 23 (program -> program statement .)
+    NULL            reduce using rule 23 (program -> program statement .)
+    STRING          reduce using rule 23 (program -> program statement .)
+    $end            reduce using rule 23 (program -> program statement .)
+
+
+state 64
+
+    (66) label -> COLON identifier .
+
+    NUMBER          reduce using rule 66 (label -> COLON identifier .)
+    IDENTIFIER      reduce using rule 66 (label -> COLON identifier .)
+    LBRACE          reduce using rule 66 (label -> COLON identifier .)
+    LBRACK          reduce using rule 66 (label -> COLON identifier .)
+    TRUE            reduce using rule 66 (label -> COLON identifier .)
+    FALSE           reduce using rule 66 (label -> COLON identifier .)
+    NULL            reduce using rule 66 (label -> COLON identifier .)
+    STRING          reduce using rule 66 (label -> COLON identifier .)
+
+
+state 65
+
+    (65) unqualified_port -> DOT IDENTIFIER .
+
+    COMMA           reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    IDENTIFIER      reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    RULE            reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    GROUP           reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    APPLY           reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    VOIDPORT        reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    COLON           reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    DOT             reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    NUMBER          reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    LBRACE          reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    LBRACK          reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    TRUE            reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    FALSE           reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    NULL            reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    STRING          reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    $end            reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    RBRACE          reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    GT              reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+    LPAREN          reduce using rule 65 (unqualified_port -> DOT IDENTIFIER .)
+
+
+state 66
+
+    (110) apply -> APPLY identifiers . COLON rule
+    (77) identifiers -> identifiers . COMMA identifier
+
+    COLON           shift and go to state 90
+    COMMA           shift and go to state 91
+
+
+state 67
+
+    (78) identifiers -> identifier .
+
+    COMMA           reduce using rule 78 (identifiers -> identifier .)
+    IDENTIFIER      reduce using rule 78 (identifiers -> identifier .)
+    RULE            reduce using rule 78 (identifiers -> identifier .)
+    GROUP           reduce using rule 78 (identifiers -> identifier .)
+    APPLY           reduce using rule 78 (identifiers -> identifier .)
+    VOIDPORT        reduce using rule 78 (identifiers -> identifier .)
+    COLON           reduce using rule 78 (identifiers -> identifier .)
+    DOT             reduce using rule 78 (identifiers -> identifier .)
+    NUMBER          reduce using rule 78 (identifiers -> identifier .)
+    LBRACE          reduce using rule 78 (identifiers -> identifier .)
+    LBRACK          reduce using rule 78 (identifiers -> identifier .)
+    TRUE            reduce using rule 78 (identifiers -> identifier .)
+    FALSE           reduce using rule 78 (identifiers -> identifier .)
+    NULL            reduce using rule 78 (identifiers -> identifier .)
+    STRING          reduce using rule 78 (identifiers -> identifier .)
+    $end            reduce using rule 78 (identifiers -> identifier .)
+
+
+state 68
+
+    (32) opt_direction -> LBRACK . IDENTIFIER RBRACK
+
+    IDENTIFIER      shift and go to state 92
+
+
+state 69
+
+    (34) port_property -> qualified_port opt_direction . LPAREN named_args RPAREN
+
+    LPAREN          shift and go to state 93
+
+
+state 70
+
+    (33) opt_direction -> empty .
+
+    LPAREN          reduce using rule 33 (opt_direction -> empty .)
+
+
+state 71
+
+    (31) assignment -> IDENTIFIER COLON . qualified_name LPAREN named_args RPAREN
+    (100) qualified_name -> . qualified_name DOT IDENTIFIER
+    (101) qualified_name -> . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 16
+
+    qualified_name                 shift and go to state 94
+
+state 72
+
+    (64) qualified_port -> IDENTIFIER DOT . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 95
+
+
+state 73
+
+    (81) string -> string STRING .
+
+    STRING          reduce using rule 81 (string -> string STRING .)
+    SLASH           reduce using rule 81 (string -> string STRING .)
+    COMMA           reduce using rule 81 (string -> string STRING .)
+    RBRACK          reduce using rule 81 (string -> string STRING .)
+    NUMBER          reduce using rule 81 (string -> string STRING .)
+    LBRACE          reduce using rule 81 (string -> string STRING .)
+    LBRACK          reduce using rule 81 (string -> string STRING .)
+    TRUE            reduce using rule 81 (string -> string STRING .)
+    FALSE           reduce using rule 81 (string -> string STRING .)
+    NULL            reduce using rule 81 (string -> string STRING .)
+    GT              reduce using rule 81 (string -> string STRING .)
+    RBRACE          reduce using rule 81 (string -> string STRING .)
+    DEFINE          reduce using rule 81 (string -> string STRING .)
+    COMPONENT       reduce using rule 81 (string -> string STRING .)
+    IDENTIFIER      reduce using rule 81 (string -> string STRING .)
+    RULE            reduce using rule 81 (string -> string STRING .)
+    GROUP           reduce using rule 81 (string -> string STRING .)
+    APPLY           reduce using rule 81 (string -> string STRING .)
+    VOIDPORT        reduce using rule 81 (string -> string STRING .)
+    COLON           reduce using rule 81 (string -> string STRING .)
+    DOT             reduce using rule 81 (string -> string STRING .)
+    $end            reduce using rule 81 (string -> string STRING .)
+    RPAREN          reduce using rule 81 (string -> string STRING .)
+
+
+state 74
+
+    (36) link -> void GT . void
+    (38) link -> void GT . real_inport_list
+    (42) void -> . VOIDPORT
+    (45) real_inport_list -> . inport_list COMMA real_inport
+    (46) real_inport_list -> . real_inport
+    (43) inport_list -> . inport_list COMMA inport
+    (44) inport_list -> . inport
+    (58) real_inport -> . opt_tag qualified_port
+    (47) inport -> . real_or_internal_inport
+    (48) inport -> . transformed_inport
+    (54) opt_tag -> . AT tag_value
+    (55) opt_tag -> . empty
+    (52) real_or_internal_inport -> . real_inport
+    (53) real_or_internal_inport -> . internal_inport
+    (49) transformed_inport -> . port_transform real_or_internal_inport
+    (2) empty -> .
+    (60) internal_inport -> . unqualified_port
+    (62) port_transform -> . SLASH argument SLASH
+    (63) port_transform -> . SLASH label argument SLASH
+    (65) unqualified_port -> . DOT IDENTIFIER
+
+    VOIDPORT        shift and go to state 46
+    AT              shift and go to state 105
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+    SLASH           shift and go to state 106
+    DOT             shift and go to state 35
+
+    inport_list                    shift and go to state 96
+    unqualified_port               shift and go to state 97
+    transformed_inport             shift and go to state 98
+    real_or_internal_inport        shift and go to state 103
+    opt_tag                        shift and go to state 99
+    void                           shift and go to state 104
+    internal_inport                shift and go to state 107
+    inport                         shift and go to state 100
+    empty                          shift and go to state 102
+    port_transform                 shift and go to state 108
+    real_inport                    shift and go to state 109
+    real_inport_list               shift and go to state 101
+
+state 75
+
+    (91) dictionary -> LBRACE members . RBRACE
+    (92) members -> members . member COMMA
+    (93) members -> members . member
+    (95) member -> . string COLON value
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    RBRACE          shift and go to state 110
+    STRING          shift and go to state 20
+
+    member                         shift and go to state 111
+    string                         shift and go to state 112
+
+state 76
+
+    (94) members -> empty .
+
+    RBRACE          reduce using rule 94 (members -> empty .)
+    STRING          reduce using rule 94 (members -> empty .)
+
+
+state 77
+
+    (41) link -> internal_outport GT . inport_list
+    (43) inport_list -> . inport_list COMMA inport
+    (44) inport_list -> . inport
+    (47) inport -> . real_or_internal_inport
+    (48) inport -> . transformed_inport
+    (52) real_or_internal_inport -> . real_inport
+    (53) real_or_internal_inport -> . internal_inport
+    (49) transformed_inport -> . port_transform real_or_internal_inport
+    (58) real_inport -> . opt_tag qualified_port
+    (60) internal_inport -> . unqualified_port
+    (62) port_transform -> . SLASH argument SLASH
+    (63) port_transform -> . SLASH label argument SLASH
+    (54) opt_tag -> . AT tag_value
+    (55) opt_tag -> . empty
+    (65) unqualified_port -> . DOT IDENTIFIER
+    (2) empty -> .
+
+    SLASH           shift and go to state 106
+    AT              shift and go to state 105
+    DOT             shift and go to state 35
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    inport_list                    shift and go to state 113
+    unqualified_port               shift and go to state 97
+    real_or_internal_inport        shift and go to state 103
+    real_inport                    shift and go to state 114
+    internal_inport                shift and go to state 107
+    inport                         shift and go to state 100
+    empty                          shift and go to state 102
+    port_transform                 shift and go to state 108
+    opt_tag                        shift and go to state 99
+    transformed_inport             shift and go to state 98
+
+state 78
+
+    (99) array -> LBRACK values . RBRACK
+    (96) values -> values . value COMMA
+    (97) values -> values . value
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    RBRACK          shift and go to state 115
+    NUMBER          shift and go to state 43
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    string                         shift and go to state 42
+    dictionary                     shift and go to state 29
+    value                          shift and go to state 116
+    bool                           shift and go to state 24
+    array                          shift and go to state 23
+    null                           shift and go to state 27
+
+state 79
+
+    (98) values -> empty .
+
+    RBRACK          reduce using rule 98 (values -> empty .)
+    NUMBER          reduce using rule 98 (values -> empty .)
+    LBRACE          reduce using rule 98 (values -> empty .)
+    LBRACK          reduce using rule 98 (values -> empty .)
+    TRUE            reduce using rule 98 (values -> empty .)
+    FALSE           reduce using rule 98 (values -> empty .)
+    NULL            reduce using rule 98 (values -> empty .)
+    STRING          reduce using rule 98 (values -> empty .)
+
+
+state 80
+
+    (40) link -> implicit_outport GT . inport_list
+    (43) inport_list -> . inport_list COMMA inport
+    (44) inport_list -> . inport
+    (47) inport -> . real_or_internal_inport
+    (48) inport -> . transformed_inport
+    (52) real_or_internal_inport -> . real_inport
+    (53) real_or_internal_inport -> . internal_inport
+    (49) transformed_inport -> . port_transform real_or_internal_inport
+    (58) real_inport -> . opt_tag qualified_port
+    (60) internal_inport -> . unqualified_port
+    (62) port_transform -> . SLASH argument SLASH
+    (63) port_transform -> . SLASH label argument SLASH
+    (54) opt_tag -> . AT tag_value
+    (55) opt_tag -> . empty
+    (65) unqualified_port -> . DOT IDENTIFIER
+    (2) empty -> .
+
+    SLASH           shift and go to state 106
+    AT              shift and go to state 105
+    DOT             shift and go to state 35
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    inport_list                    shift and go to state 117
+    unqualified_port               shift and go to state 97
+    real_or_internal_inport        shift and go to state 103
+    real_inport                    shift and go to state 114
+    internal_inport                shift and go to state 107
+    inport                         shift and go to state 100
+    empty                          shift and go to state 102
+    port_transform                 shift and go to state 108
+    opt_tag                        shift and go to state 99
+    transformed_inport             shift and go to state 98
+
+state 81
+
+    (37) link -> real_outport GT . void
+    (39) link -> real_outport GT . inport_list
+    (42) void -> . VOIDPORT
+    (43) inport_list -> . inport_list COMMA inport
+    (44) inport_list -> . inport
+    (47) inport -> . real_or_internal_inport
+    (48) inport -> . transformed_inport
+    (52) real_or_internal_inport -> . real_inport
+    (53) real_or_internal_inport -> . internal_inport
+    (49) transformed_inport -> . port_transform real_or_internal_inport
+    (58) real_inport -> . opt_tag qualified_port
+    (60) internal_inport -> . unqualified_port
+    (62) port_transform -> . SLASH argument SLASH
+    (63) port_transform -> . SLASH label argument SLASH
+    (54) opt_tag -> . AT tag_value
+    (55) opt_tag -> . empty
+    (65) unqualified_port -> . DOT IDENTIFIER
+    (2) empty -> .
+
+    VOIDPORT        shift and go to state 46
+    SLASH           shift and go to state 106
+    AT              shift and go to state 105
+    DOT             shift and go to state 35
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    inport_list                    shift and go to state 118
+    unqualified_port               shift and go to state 97
+    real_or_internal_inport        shift and go to state 103
+    real_inport                    shift and go to state 114
+    void                           shift and go to state 119
+    internal_inport                shift and go to state 107
+    inport                         shift and go to state 100
+    empty                          shift and go to state 102
+    port_transform                 shift and go to state 108
+    opt_tag                        shift and go to state 99
+    transformed_inport             shift and go to state 98
+
+state 82
+
+    (7) constdef -> DEFINE identifier EQ argument .
+
+    DEFINE          reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    COMPONENT       reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    IDENTIFIER      reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    RULE            reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    GROUP           reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    APPLY           reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    VOIDPORT        reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    COLON           reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    DOT             reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    NUMBER          reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    LBRACE          reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    LBRACK          reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    TRUE            reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    FALSE           reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    NULL            reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    STRING          reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+    $end            reduce using rule 7 (constdef -> DEFINE identifier EQ argument .)
+
+
+state 83
+
+    (73) opt_argnames -> argnames .
+    (75) argnames -> argnames . COMMA IDENTIFIER
+
+    LBRACE          reduce using rule 73 (opt_argnames -> argnames .)
+    RARROW          reduce using rule 73 (opt_argnames -> argnames .)
+    RPAREN          reduce using rule 73 (opt_argnames -> argnames .)
+    COMMA           shift and go to state 120
+
+
+state 84
+
+    (12) compdef -> COMPONENT qualified_name LPAREN opt_argnames . RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE
+
+    RPAREN          shift and go to state 121
+
+
+state 85
+
+    (76) argnames -> IDENTIFIER .
+
+    COMMA           reduce using rule 76 (argnames -> IDENTIFIER .)
+    LBRACE          reduce using rule 76 (argnames -> IDENTIFIER .)
+    RPAREN          reduce using rule 76 (argnames -> IDENTIFIER .)
+    RARROW          reduce using rule 76 (argnames -> IDENTIFIER .)
+
+
+state 86
+
+    (74) opt_argnames -> empty .
+
+    LBRACE          reduce using rule 74 (opt_argnames -> empty .)
+    RARROW          reduce using rule 74 (opt_argnames -> empty .)
+    RPAREN          reduce using rule 74 (opt_argnames -> empty .)
+
+
+state 87
+
+    (100) qualified_name -> qualified_name DOT IDENTIFIER .
+
+    LPAREN          reduce using rule 100 (qualified_name -> qualified_name DOT IDENTIFIER .)
+    DOT             reduce using rule 100 (qualified_name -> qualified_name DOT IDENTIFIER .)
+
+
+state 88
+
+    (111) group -> GROUP identifier COLON . identifiers
+    (77) identifiers -> . identifiers COMMA identifier
+    (78) identifiers -> . identifier
+    (79) identifier -> . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 13
+
+    identifier                     shift and go to state 67
+    identifiers                    shift and go to state 122
+
+state 89
+
+    (102) define_rule -> RULE identifier COLON . rule
+    (103) rule -> . rule AND rule
+    (104) rule -> . rule OR rule
+    (105) rule -> . UNOT rule
+    (106) rule -> . LPAREN rule RPAREN
+    (107) rule -> . identifier
+    (108) rule -> . predicate
+    (79) identifier -> . IDENTIFIER
+    (109) predicate -> . identifier LPAREN named_args RPAREN
+
+    UNOT            shift and go to state 124
+    LPAREN          shift and go to state 126
+    IDENTIFIER      shift and go to state 13
+
+    predicate                      shift and go to state 123
+    identifier                     shift and go to state 127
+    rule                           shift and go to state 125
+
+state 90
+
+    (110) apply -> APPLY identifiers COLON . rule
+    (103) rule -> . rule AND rule
+    (104) rule -> . rule OR rule
+    (105) rule -> . UNOT rule
+    (106) rule -> . LPAREN rule RPAREN
+    (107) rule -> . identifier
+    (108) rule -> . predicate
+    (79) identifier -> . IDENTIFIER
+    (109) predicate -> . identifier LPAREN named_args RPAREN
+
+    UNOT            shift and go to state 124
+    LPAREN          shift and go to state 126
+    IDENTIFIER      shift and go to state 13
+
+    identifier                     shift and go to state 127
+    predicate                      shift and go to state 123
+    rule                           shift and go to state 128
+
+state 91
+
+    (77) identifiers -> identifiers COMMA . identifier
+    (79) identifier -> . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 13
+
+    identifier                     shift and go to state 129
+
+state 92
+
+    (32) opt_direction -> LBRACK IDENTIFIER . RBRACK
+
+    RBRACK          shift and go to state 130
+
+
+state 93
+
+    (34) port_property -> qualified_port opt_direction LPAREN . named_args RPAREN
+    (67) named_args -> . named_args named_arg COMMA
+    (68) named_args -> . named_args named_arg
+    (69) named_args -> . empty
+    (2) empty -> .
+
+    RPAREN          reduce using rule 2 (empty -> .)
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    empty                          shift and go to state 132
+    named_args                     shift and go to state 131
+
+state 94
+
+    (31) assignment -> IDENTIFIER COLON qualified_name . LPAREN named_args RPAREN
+    (100) qualified_name -> qualified_name . DOT IDENTIFIER
+
+    LPAREN          shift and go to state 133
+    DOT             shift and go to state 59
+
+
+state 95
+
+    (64) qualified_port -> IDENTIFIER DOT IDENTIFIER .
+
+    LBRACK          reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    LPAREN          reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    GT              reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    IDENTIFIER      reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    RULE            reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    GROUP           reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    APPLY           reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    VOIDPORT        reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    COLON           reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    DOT             reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    NUMBER          reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    LBRACE          reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    TRUE            reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    FALSE           reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    NULL            reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    STRING          reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    $end            reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    RBRACE          reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+    COMMA           reduce using rule 64 (qualified_port -> IDENTIFIER DOT IDENTIFIER .)
+
+
+state 96
+
+    (45) real_inport_list -> inport_list . COMMA real_inport
+    (43) inport_list -> inport_list . COMMA inport
+
+    COMMA           shift and go to state 134
+
+
+state 97
+
+    (60) internal_inport -> unqualified_port .
+
+    COMMA           reduce using rule 60 (internal_inport -> unqualified_port .)
+    IDENTIFIER      reduce using rule 60 (internal_inport -> unqualified_port .)
+    RULE            reduce using rule 60 (internal_inport -> unqualified_port .)
+    GROUP           reduce using rule 60 (internal_inport -> unqualified_port .)
+    APPLY           reduce using rule 60 (internal_inport -> unqualified_port .)
+    VOIDPORT        reduce using rule 60 (internal_inport -> unqualified_port .)
+    COLON           reduce using rule 60 (internal_inport -> unqualified_port .)
+    DOT             reduce using rule 60 (internal_inport -> unqualified_port .)
+    NUMBER          reduce using rule 60 (internal_inport -> unqualified_port .)
+    LBRACE          reduce using rule 60 (internal_inport -> unqualified_port .)
+    LBRACK          reduce using rule 60 (internal_inport -> unqualified_port .)
+    TRUE            reduce using rule 60 (internal_inport -> unqualified_port .)
+    FALSE           reduce using rule 60 (internal_inport -> unqualified_port .)
+    NULL            reduce using rule 60 (internal_inport -> unqualified_port .)
+    STRING          reduce using rule 60 (internal_inport -> unqualified_port .)
+    $end            reduce using rule 60 (internal_inport -> unqualified_port .)
+    RBRACE          reduce using rule 60 (internal_inport -> unqualified_port .)
+
+
+state 98
+
+    (48) inport -> transformed_inport .
+
+    COMMA           reduce using rule 48 (inport -> transformed_inport .)
+    IDENTIFIER      reduce using rule 48 (inport -> transformed_inport .)
+    RULE            reduce using rule 48 (inport -> transformed_inport .)
+    GROUP           reduce using rule 48 (inport -> transformed_inport .)
+    APPLY           reduce using rule 48 (inport -> transformed_inport .)
+    VOIDPORT        reduce using rule 48 (inport -> transformed_inport .)
+    COLON           reduce using rule 48 (inport -> transformed_inport .)
+    DOT             reduce using rule 48 (inport -> transformed_inport .)
+    NUMBER          reduce using rule 48 (inport -> transformed_inport .)
+    LBRACE          reduce using rule 48 (inport -> transformed_inport .)
+    LBRACK          reduce using rule 48 (inport -> transformed_inport .)
+    TRUE            reduce using rule 48 (inport -> transformed_inport .)
+    FALSE           reduce using rule 48 (inport -> transformed_inport .)
+    NULL            reduce using rule 48 (inport -> transformed_inport .)
+    STRING          reduce using rule 48 (inport -> transformed_inport .)
+    $end            reduce using rule 48 (inport -> transformed_inport .)
+    RBRACE          reduce using rule 48 (inport -> transformed_inport .)
+
+
+state 99
+
+    (58) real_inport -> opt_tag . qualified_port
+    (64) qualified_port -> . IDENTIFIER DOT IDENTIFIER
+
+    IDENTIFIER      shift and go to state 136
+
+    qualified_port                 shift and go to state 135
+
+state 100
+
+    (44) inport_list -> inport .
+
+    COMMA           reduce using rule 44 (inport_list -> inport .)
+    IDENTIFIER      reduce using rule 44 (inport_list -> inport .)
+    RULE            reduce using rule 44 (inport_list -> inport .)
+    GROUP           reduce using rule 44 (inport_list -> inport .)
+    APPLY           reduce using rule 44 (inport_list -> inport .)
+    VOIDPORT        reduce using rule 44 (inport_list -> inport .)
+    COLON           reduce using rule 44 (inport_list -> inport .)
+    DOT             reduce using rule 44 (inport_list -> inport .)
+    NUMBER          reduce using rule 44 (inport_list -> inport .)
+    LBRACE          reduce using rule 44 (inport_list -> inport .)
+    LBRACK          reduce using rule 44 (inport_list -> inport .)
+    TRUE            reduce using rule 44 (inport_list -> inport .)
+    FALSE           reduce using rule 44 (inport_list -> inport .)
+    NULL            reduce using rule 44 (inport_list -> inport .)
+    STRING          reduce using rule 44 (inport_list -> inport .)
+    $end            reduce using rule 44 (inport_list -> inport .)
+    RBRACE          reduce using rule 44 (inport_list -> inport .)
+
+
+state 101
+
+    (38) link -> void GT real_inport_list .
+
+    RBRACE          reduce using rule 38 (link -> void GT real_inport_list .)
+    IDENTIFIER      reduce using rule 38 (link -> void GT real_inport_list .)
+    DOT             reduce using rule 38 (link -> void GT real_inport_list .)
+    VOIDPORT        reduce using rule 38 (link -> void GT real_inport_list .)
+    COLON           reduce using rule 38 (link -> void GT real_inport_list .)
+    NUMBER          reduce using rule 38 (link -> void GT real_inport_list .)
+    LBRACE          reduce using rule 38 (link -> void GT real_inport_list .)
+    LBRACK          reduce using rule 38 (link -> void GT real_inport_list .)
+    TRUE            reduce using rule 38 (link -> void GT real_inport_list .)
+    FALSE           reduce using rule 38 (link -> void GT real_inport_list .)
+    NULL            reduce using rule 38 (link -> void GT real_inport_list .)
+    STRING          reduce using rule 38 (link -> void GT real_inport_list .)
+    RULE            reduce using rule 38 (link -> void GT real_inport_list .)
+    GROUP           reduce using rule 38 (link -> void GT real_inport_list .)
+    APPLY           reduce using rule 38 (link -> void GT real_inport_list .)
+    $end            reduce using rule 38 (link -> void GT real_inport_list .)
+
+
+state 102
+
+    (55) opt_tag -> empty .
+
+    IDENTIFIER      reduce using rule 55 (opt_tag -> empty .)
+
+
+state 103
+
+    (47) inport -> real_or_internal_inport .
+
+    COMMA           reduce using rule 47 (inport -> real_or_internal_inport .)
+    IDENTIFIER      reduce using rule 47 (inport -> real_or_internal_inport .)
+    RULE            reduce using rule 47 (inport -> real_or_internal_inport .)
+    GROUP           reduce using rule 47 (inport -> real_or_internal_inport .)
+    APPLY           reduce using rule 47 (inport -> real_or_internal_inport .)
+    VOIDPORT        reduce using rule 47 (inport -> real_or_internal_inport .)
+    COLON           reduce using rule 47 (inport -> real_or_internal_inport .)
+    DOT             reduce using rule 47 (inport -> real_or_internal_inport .)
+    NUMBER          reduce using rule 47 (inport -> real_or_internal_inport .)
+    LBRACE          reduce using rule 47 (inport -> real_or_internal_inport .)
+    LBRACK          reduce using rule 47 (inport -> real_or_internal_inport .)
+    TRUE            reduce using rule 47 (inport -> real_or_internal_inport .)
+    FALSE           reduce using rule 47 (inport -> real_or_internal_inport .)
+    NULL            reduce using rule 47 (inport -> real_or_internal_inport .)
+    STRING          reduce using rule 47 (inport -> real_or_internal_inport .)
+    $end            reduce using rule 47 (inport -> real_or_internal_inport .)
+    RBRACE          reduce using rule 47 (inport -> real_or_internal_inport .)
+
+
+state 104
+
+    (36) link -> void GT void .
+
+    RBRACE          reduce using rule 36 (link -> void GT void .)
+    IDENTIFIER      reduce using rule 36 (link -> void GT void .)
+    DOT             reduce using rule 36 (link -> void GT void .)
+    VOIDPORT        reduce using rule 36 (link -> void GT void .)
+    COLON           reduce using rule 36 (link -> void GT void .)
+    NUMBER          reduce using rule 36 (link -> void GT void .)
+    LBRACE          reduce using rule 36 (link -> void GT void .)
+    LBRACK          reduce using rule 36 (link -> void GT void .)
+    TRUE            reduce using rule 36 (link -> void GT void .)
+    FALSE           reduce using rule 36 (link -> void GT void .)
+    NULL            reduce using rule 36 (link -> void GT void .)
+    STRING          reduce using rule 36 (link -> void GT void .)
+    RULE            reduce using rule 36 (link -> void GT void .)
+    GROUP           reduce using rule 36 (link -> void GT void .)
+    APPLY           reduce using rule 36 (link -> void GT void .)
+    $end            reduce using rule 36 (link -> void GT void .)
+
+
+state 105
+
+    (54) opt_tag -> AT . tag_value
+    (56) tag_value -> . NUMBER
+    (57) tag_value -> . STRING
+
+    NUMBER          shift and go to state 137
+    STRING          shift and go to state 138
+
+    tag_value                      shift and go to state 139
+
+state 106
+
+    (62) port_transform -> SLASH . argument SLASH
+    (63) port_transform -> SLASH . label argument SLASH
+    (71) argument -> . value
+    (72) argument -> . identifier
+    (66) label -> . COLON identifier
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (79) identifier -> . IDENTIFIER
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    COLON           shift and go to state 34
+    NUMBER          shift and go to state 43
+    IDENTIFIER      shift and go to state 13
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    null                           shift and go to state 27
+    string                         shift and go to state 42
+    dictionary                     shift and go to state 29
+    argument                       shift and go to state 141
+    value                          shift and go to state 21
+    label                          shift and go to state 140
+    bool                           shift and go to state 24
+    array                          shift and go to state 23
+    identifier                     shift and go to state 55
+
+state 107
+
+    (53) real_or_internal_inport -> internal_inport .
+
+    COMMA           reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    IDENTIFIER      reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    RULE            reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    GROUP           reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    APPLY           reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    VOIDPORT        reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    COLON           reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    DOT             reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    NUMBER          reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    LBRACE          reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    LBRACK          reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    TRUE            reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    FALSE           reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    NULL            reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    STRING          reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    $end            reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+    RBRACE          reduce using rule 53 (real_or_internal_inport -> internal_inport .)
+
+
+state 108
+
+    (49) transformed_inport -> port_transform . real_or_internal_inport
+    (52) real_or_internal_inport -> . real_inport
+    (53) real_or_internal_inport -> . internal_inport
+    (58) real_inport -> . opt_tag qualified_port
+    (60) internal_inport -> . unqualified_port
+    (54) opt_tag -> . AT tag_value
+    (55) opt_tag -> . empty
+    (65) unqualified_port -> . DOT IDENTIFIER
+    (2) empty -> .
+
+    AT              shift and go to state 105
+    DOT             shift and go to state 35
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    unqualified_port               shift and go to state 97
+    real_or_internal_inport        shift and go to state 142
+    opt_tag                        shift and go to state 99
+    internal_inport                shift and go to state 107
+    real_inport                    shift and go to state 114
+    empty                          shift and go to state 102
+
+state 109
+
+    (46) real_inport_list -> real_inport .
+    (52) real_or_internal_inport -> real_inport .
+
+    IDENTIFIER      reduce using rule 46 (real_inport_list -> real_inport .)
+    RULE            reduce using rule 46 (real_inport_list -> real_inport .)
+    GROUP           reduce using rule 46 (real_inport_list -> real_inport .)
+    APPLY           reduce using rule 46 (real_inport_list -> real_inport .)
+    VOIDPORT        reduce using rule 46 (real_inport_list -> real_inport .)
+    COLON           reduce using rule 46 (real_inport_list -> real_inport .)
+    DOT             reduce using rule 46 (real_inport_list -> real_inport .)
+    NUMBER          reduce using rule 46 (real_inport_list -> real_inport .)
+    LBRACE          reduce using rule 46 (real_inport_list -> real_inport .)
+    LBRACK          reduce using rule 46 (real_inport_list -> real_inport .)
+    TRUE            reduce using rule 46 (real_inport_list -> real_inport .)
+    FALSE           reduce using rule 46 (real_inport_list -> real_inport .)
+    NULL            reduce using rule 46 (real_inport_list -> real_inport .)
+    STRING          reduce using rule 46 (real_inport_list -> real_inport .)
+    $end            reduce using rule 46 (real_inport_list -> real_inport .)
+    RBRACE          reduce using rule 46 (real_inport_list -> real_inport .)
+    COMMA           reduce using rule 52 (real_or_internal_inport -> real_inport .)
+
+
+state 110
+
+    (91) dictionary -> LBRACE members RBRACE .
+
+    SLASH           reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    GT              reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    COMMA           reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    RBRACE          reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    STRING          reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    RPAREN          reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    IDENTIFIER      reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    DEFINE          reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    COMPONENT       reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    RULE            reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    GROUP           reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    APPLY           reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    VOIDPORT        reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    COLON           reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    DOT             reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    NUMBER          reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    LBRACE          reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    LBRACK          reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    TRUE            reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    FALSE           reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    NULL            reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    $end            reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+    RBRACK          reduce using rule 91 (dictionary -> LBRACE members RBRACE .)
+
+
+state 111
+
+    (92) members -> members member . COMMA
+    (93) members -> members member .
+
+    COMMA           shift and go to state 143
+    RBRACE          reduce using rule 93 (members -> members member .)
+    STRING          reduce using rule 93 (members -> members member .)
+
+
+state 112
+
+    (95) member -> string . COLON value
+    (81) string -> string . STRING
+
+    COLON           shift and go to state 144
+    STRING          shift and go to state 73
+
+
+state 113
+
+    (41) link -> internal_outport GT inport_list .
+    (43) inport_list -> inport_list . COMMA inport
+
+    RBRACE          reduce using rule 41 (link -> internal_outport GT inport_list .)
+    IDENTIFIER      reduce using rule 41 (link -> internal_outport GT inport_list .)
+    DOT             reduce using rule 41 (link -> internal_outport GT inport_list .)
+    VOIDPORT        reduce using rule 41 (link -> internal_outport GT inport_list .)
+    COLON           reduce using rule 41 (link -> internal_outport GT inport_list .)
+    NUMBER          reduce using rule 41 (link -> internal_outport GT inport_list .)
+    LBRACE          reduce using rule 41 (link -> internal_outport GT inport_list .)
+    LBRACK          reduce using rule 41 (link -> internal_outport GT inport_list .)
+    TRUE            reduce using rule 41 (link -> internal_outport GT inport_list .)
+    FALSE           reduce using rule 41 (link -> internal_outport GT inport_list .)
+    NULL            reduce using rule 41 (link -> internal_outport GT inport_list .)
+    STRING          reduce using rule 41 (link -> internal_outport GT inport_list .)
+    RULE            reduce using rule 41 (link -> internal_outport GT inport_list .)
+    GROUP           reduce using rule 41 (link -> internal_outport GT inport_list .)
+    APPLY           reduce using rule 41 (link -> internal_outport GT inport_list .)
+    $end            reduce using rule 41 (link -> internal_outport GT inport_list .)
+    COMMA           shift and go to state 145
+
+
+state 114
+
+    (52) real_or_internal_inport -> real_inport .
+
+    COMMA           reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    IDENTIFIER      reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    RULE            reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    GROUP           reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    APPLY           reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    VOIDPORT        reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    COLON           reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    DOT             reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    NUMBER          reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    LBRACE          reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    LBRACK          reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    TRUE            reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    FALSE           reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    NULL            reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    STRING          reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    $end            reduce using rule 52 (real_or_internal_inport -> real_inport .)
+    RBRACE          reduce using rule 52 (real_or_internal_inport -> real_inport .)
+
+
+state 115
+
+    (99) array -> LBRACK values RBRACK .
+
+    GT              reduce using rule 99 (array -> LBRACK values RBRACK .)
+    DEFINE          reduce using rule 99 (array -> LBRACK values RBRACK .)
+    COMPONENT       reduce using rule 99 (array -> LBRACK values RBRACK .)
+    IDENTIFIER      reduce using rule 99 (array -> LBRACK values RBRACK .)
+    RULE            reduce using rule 99 (array -> LBRACK values RBRACK .)
+    GROUP           reduce using rule 99 (array -> LBRACK values RBRACK .)
+    APPLY           reduce using rule 99 (array -> LBRACK values RBRACK .)
+    VOIDPORT        reduce using rule 99 (array -> LBRACK values RBRACK .)
+    COLON           reduce using rule 99 (array -> LBRACK values RBRACK .)
+    DOT             reduce using rule 99 (array -> LBRACK values RBRACK .)
+    NUMBER          reduce using rule 99 (array -> LBRACK values RBRACK .)
+    LBRACE          reduce using rule 99 (array -> LBRACK values RBRACK .)
+    LBRACK          reduce using rule 99 (array -> LBRACK values RBRACK .)
+    TRUE            reduce using rule 99 (array -> LBRACK values RBRACK .)
+    FALSE           reduce using rule 99 (array -> LBRACK values RBRACK .)
+    NULL            reduce using rule 99 (array -> LBRACK values RBRACK .)
+    STRING          reduce using rule 99 (array -> LBRACK values RBRACK .)
+    $end            reduce using rule 99 (array -> LBRACK values RBRACK .)
+    COMMA           reduce using rule 99 (array -> LBRACK values RBRACK .)
+    RBRACK          reduce using rule 99 (array -> LBRACK values RBRACK .)
+    SLASH           reduce using rule 99 (array -> LBRACK values RBRACK .)
+    RBRACE          reduce using rule 99 (array -> LBRACK values RBRACK .)
+    RPAREN          reduce using rule 99 (array -> LBRACK values RBRACK .)
+
+
+state 116
+
+    (96) values -> values value . COMMA
+    (97) values -> values value .
+
+    COMMA           shift and go to state 146
+    RBRACK          reduce using rule 97 (values -> values value .)
+    NUMBER          reduce using rule 97 (values -> values value .)
+    LBRACE          reduce using rule 97 (values -> values value .)
+    LBRACK          reduce using rule 97 (values -> values value .)
+    TRUE            reduce using rule 97 (values -> values value .)
+    FALSE           reduce using rule 97 (values -> values value .)
+    NULL            reduce using rule 97 (values -> values value .)
+    STRING          reduce using rule 97 (values -> values value .)
+
+
+state 117
+
+    (40) link -> implicit_outport GT inport_list .
+    (43) inport_list -> inport_list . COMMA inport
+
+    RBRACE          reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    IDENTIFIER      reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    DOT             reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    VOIDPORT        reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    COLON           reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    NUMBER          reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    LBRACE          reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    LBRACK          reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    TRUE            reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    FALSE           reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    NULL            reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    STRING          reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    RULE            reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    GROUP           reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    APPLY           reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    $end            reduce using rule 40 (link -> implicit_outport GT inport_list .)
+    COMMA           shift and go to state 145
+
+
+state 118
+
+    (39) link -> real_outport GT inport_list .
+    (43) inport_list -> inport_list . COMMA inport
+
+    RBRACE          reduce using rule 39 (link -> real_outport GT inport_list .)
+    IDENTIFIER      reduce using rule 39 (link -> real_outport GT inport_list .)
+    DOT             reduce using rule 39 (link -> real_outport GT inport_list .)
+    VOIDPORT        reduce using rule 39 (link -> real_outport GT inport_list .)
+    COLON           reduce using rule 39 (link -> real_outport GT inport_list .)
+    NUMBER          reduce using rule 39 (link -> real_outport GT inport_list .)
+    LBRACE          reduce using rule 39 (link -> real_outport GT inport_list .)
+    LBRACK          reduce using rule 39 (link -> real_outport GT inport_list .)
+    TRUE            reduce using rule 39 (link -> real_outport GT inport_list .)
+    FALSE           reduce using rule 39 (link -> real_outport GT inport_list .)
+    NULL            reduce using rule 39 (link -> real_outport GT inport_list .)
+    STRING          reduce using rule 39 (link -> real_outport GT inport_list .)
+    RULE            reduce using rule 39 (link -> real_outport GT inport_list .)
+    GROUP           reduce using rule 39 (link -> real_outport GT inport_list .)
+    APPLY           reduce using rule 39 (link -> real_outport GT inport_list .)
+    $end            reduce using rule 39 (link -> real_outport GT inport_list .)
+    COMMA           shift and go to state 145
+
+
+state 119
+
+    (37) link -> real_outport GT void .
+
+    RBRACE          reduce using rule 37 (link -> real_outport GT void .)
+    IDENTIFIER      reduce using rule 37 (link -> real_outport GT void .)
+    DOT             reduce using rule 37 (link -> real_outport GT void .)
+    VOIDPORT        reduce using rule 37 (link -> real_outport GT void .)
+    COLON           reduce using rule 37 (link -> real_outport GT void .)
+    NUMBER          reduce using rule 37 (link -> real_outport GT void .)
+    LBRACE          reduce using rule 37 (link -> real_outport GT void .)
+    LBRACK          reduce using rule 37 (link -> real_outport GT void .)
+    TRUE            reduce using rule 37 (link -> real_outport GT void .)
+    FALSE           reduce using rule 37 (link -> real_outport GT void .)
+    NULL            reduce using rule 37 (link -> real_outport GT void .)
+    STRING          reduce using rule 37 (link -> real_outport GT void .)
+    RULE            reduce using rule 37 (link -> real_outport GT void .)
+    GROUP           reduce using rule 37 (link -> real_outport GT void .)
+    APPLY           reduce using rule 37 (link -> real_outport GT void .)
+    $end            reduce using rule 37 (link -> real_outport GT void .)
+
+
+state 120
+
+    (75) argnames -> argnames COMMA . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 147
+
+
+state 121
+
+    (12) compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN . opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE
+    (73) opt_argnames -> . argnames
+    (74) opt_argnames -> . empty
+    (75) argnames -> . argnames COMMA IDENTIFIER
+    (76) argnames -> . IDENTIFIER
+    (2) empty -> .
+
+    IDENTIFIER      shift and go to state 85
+    RARROW          reduce using rule 2 (empty -> .)
+
+    argnames                       shift and go to state 83
+    opt_argnames                   shift and go to state 148
+    empty                          shift and go to state 86
+
+state 122
+
+    (111) group -> GROUP identifier COLON identifiers .
+    (77) identifiers -> identifiers . COMMA identifier
+
+    IDENTIFIER      reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    RULE            reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    GROUP           reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    APPLY           reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    VOIDPORT        reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    COLON           reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    DOT             reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    NUMBER          reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    LBRACE          reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    LBRACK          reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    TRUE            reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    FALSE           reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    NULL            reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    STRING          reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    $end            reduce using rule 111 (group -> GROUP identifier COLON identifiers .)
+    COMMA           shift and go to state 91
+
+
+state 123
+
+    (108) rule -> predicate .
+
+    AND             reduce using rule 108 (rule -> predicate .)
+    OR              reduce using rule 108 (rule -> predicate .)
+    IDENTIFIER      reduce using rule 108 (rule -> predicate .)
+    RULE            reduce using rule 108 (rule -> predicate .)
+    GROUP           reduce using rule 108 (rule -> predicate .)
+    APPLY           reduce using rule 108 (rule -> predicate .)
+    VOIDPORT        reduce using rule 108 (rule -> predicate .)
+    COLON           reduce using rule 108 (rule -> predicate .)
+    DOT             reduce using rule 108 (rule -> predicate .)
+    NUMBER          reduce using rule 108 (rule -> predicate .)
+    LBRACE          reduce using rule 108 (rule -> predicate .)
+    LBRACK          reduce using rule 108 (rule -> predicate .)
+    TRUE            reduce using rule 108 (rule -> predicate .)
+    FALSE           reduce using rule 108 (rule -> predicate .)
+    NULL            reduce using rule 108 (rule -> predicate .)
+    STRING          reduce using rule 108 (rule -> predicate .)
+    $end            reduce using rule 108 (rule -> predicate .)
+    RPAREN          reduce using rule 108 (rule -> predicate .)
+
+
+state 124
+
+    (105) rule -> UNOT . rule
+    (103) rule -> . rule AND rule
+    (104) rule -> . rule OR rule
+    (105) rule -> . UNOT rule
+    (106) rule -> . LPAREN rule RPAREN
+    (107) rule -> . identifier
+    (108) rule -> . predicate
+    (79) identifier -> . IDENTIFIER
+    (109) predicate -> . identifier LPAREN named_args RPAREN
+
+    UNOT            shift and go to state 124
+    LPAREN          shift and go to state 126
+    IDENTIFIER      shift and go to state 13
+
+    predicate                      shift and go to state 123
+    identifier                     shift and go to state 127
+    rule                           shift and go to state 149
+
+state 125
+
+    (102) define_rule -> RULE identifier COLON rule .
+    (103) rule -> rule . AND rule
+    (104) rule -> rule . OR rule
+
+    IDENTIFIER      reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    RULE            reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    GROUP           reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    APPLY           reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    VOIDPORT        reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    COLON           reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    DOT             reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    NUMBER          reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    LBRACE          reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    LBRACK          reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    TRUE            reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    FALSE           reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    NULL            reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    STRING          reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    $end            reduce using rule 102 (define_rule -> RULE identifier COLON rule .)
+    AND             shift and go to state 150
+    OR              shift and go to state 151
+
+
+state 126
+
+    (106) rule -> LPAREN . rule RPAREN
+    (103) rule -> . rule AND rule
+    (104) rule -> . rule OR rule
+    (105) rule -> . UNOT rule
+    (106) rule -> . LPAREN rule RPAREN
+    (107) rule -> . identifier
+    (108) rule -> . predicate
+    (79) identifier -> . IDENTIFIER
+    (109) predicate -> . identifier LPAREN named_args RPAREN
+
+    UNOT            shift and go to state 124
+    LPAREN          shift and go to state 126
+    IDENTIFIER      shift and go to state 13
+
+    predicate                      shift and go to state 123
+    identifier                     shift and go to state 127
+    rule                           shift and go to state 152
+
+state 127
+
+    (107) rule -> identifier .
+    (109) predicate -> identifier . LPAREN named_args RPAREN
+
+    AND             reduce using rule 107 (rule -> identifier .)
+    OR              reduce using rule 107 (rule -> identifier .)
+    IDENTIFIER      reduce using rule 107 (rule -> identifier .)
+    RULE            reduce using rule 107 (rule -> identifier .)
+    GROUP           reduce using rule 107 (rule -> identifier .)
+    APPLY           reduce using rule 107 (rule -> identifier .)
+    VOIDPORT        reduce using rule 107 (rule -> identifier .)
+    COLON           reduce using rule 107 (rule -> identifier .)
+    DOT             reduce using rule 107 (rule -> identifier .)
+    NUMBER          reduce using rule 107 (rule -> identifier .)
+    LBRACE          reduce using rule 107 (rule -> identifier .)
+    LBRACK          reduce using rule 107 (rule -> identifier .)
+    TRUE            reduce using rule 107 (rule -> identifier .)
+    FALSE           reduce using rule 107 (rule -> identifier .)
+    NULL            reduce using rule 107 (rule -> identifier .)
+    STRING          reduce using rule 107 (rule -> identifier .)
+    $end            reduce using rule 107 (rule -> identifier .)
+    RPAREN          reduce using rule 107 (rule -> identifier .)
+    LPAREN          shift and go to state 153
+
+
+state 128
+
+    (110) apply -> APPLY identifiers COLON rule .
+    (103) rule -> rule . AND rule
+    (104) rule -> rule . OR rule
+
+    IDENTIFIER      reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    RULE            reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    GROUP           reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    APPLY           reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    VOIDPORT        reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    COLON           reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    DOT             reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    NUMBER          reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    LBRACE          reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    LBRACK          reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    TRUE            reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    FALSE           reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    NULL            reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    STRING          reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    $end            reduce using rule 110 (apply -> APPLY identifiers COLON rule .)
+    AND             shift and go to state 150
+    OR              shift and go to state 151
+
+
+state 129
+
+    (77) identifiers -> identifiers COMMA identifier .
+
+    COMMA           reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    IDENTIFIER      reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    RULE            reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    GROUP           reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    APPLY           reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    VOIDPORT        reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    COLON           reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    DOT             reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    NUMBER          reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    LBRACE          reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    LBRACK          reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    TRUE            reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    FALSE           reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    NULL            reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    STRING          reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+    $end            reduce using rule 77 (identifiers -> identifiers COMMA identifier .)
+
+
+state 130
+
+    (32) opt_direction -> LBRACK IDENTIFIER RBRACK .
+
+    LPAREN          reduce using rule 32 (opt_direction -> LBRACK IDENTIFIER RBRACK .)
+
+
+state 131
+
+    (34) port_property -> qualified_port opt_direction LPAREN named_args . RPAREN
+    (67) named_args -> named_args . named_arg COMMA
+    (68) named_args -> named_args . named_arg
+    (70) named_arg -> . identifier EQ argument
+    (79) identifier -> . IDENTIFIER
+
+    RPAREN          shift and go to state 155
+    IDENTIFIER      shift and go to state 13
+
+    named_arg                      shift and go to state 154
+    identifier                     shift and go to state 156
+
+state 132
+
+    (69) named_args -> empty .
+
+    RPAREN          reduce using rule 69 (named_args -> empty .)
+    IDENTIFIER      reduce using rule 69 (named_args -> empty .)
+
+
+state 133
+
+    (31) assignment -> IDENTIFIER COLON qualified_name LPAREN . named_args RPAREN
+    (67) named_args -> . named_args named_arg COMMA
+    (68) named_args -> . named_args named_arg
+    (69) named_args -> . empty
+    (2) empty -> .
+
+    RPAREN          reduce using rule 2 (empty -> .)
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    empty                          shift and go to state 132
+    named_args                     shift and go to state 157
+
+state 134
+
+    (45) real_inport_list -> inport_list COMMA . real_inport
+    (43) inport_list -> inport_list COMMA . inport
+    (58) real_inport -> . opt_tag qualified_port
+    (47) inport -> . real_or_internal_inport
+    (48) inport -> . transformed_inport
+    (54) opt_tag -> . AT tag_value
+    (55) opt_tag -> . empty
+    (52) real_or_internal_inport -> . real_inport
+    (53) real_or_internal_inport -> . internal_inport
+    (49) transformed_inport -> . port_transform real_or_internal_inport
+    (2) empty -> .
+    (60) internal_inport -> . unqualified_port
+    (62) port_transform -> . SLASH argument SLASH
+    (63) port_transform -> . SLASH label argument SLASH
+    (65) unqualified_port -> . DOT IDENTIFIER
+
+    AT              shift and go to state 105
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+    SLASH           shift and go to state 106
+    DOT             shift and go to state 35
+
+    unqualified_port               shift and go to state 97
+    transformed_inport             shift and go to state 98
+    real_or_internal_inport        shift and go to state 103
+    opt_tag                        shift and go to state 99
+    internal_inport                shift and go to state 107
+    inport                         shift and go to state 158
+    port_transform                 shift and go to state 108
+    real_inport                    shift and go to state 159
+    empty                          shift and go to state 102
+
+state 135
+
+    (58) real_inport -> opt_tag qualified_port .
+
+    COMMA           reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    IDENTIFIER      reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    RULE            reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    GROUP           reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    APPLY           reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    VOIDPORT        reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    COLON           reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    DOT             reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    NUMBER          reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    LBRACE          reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    LBRACK          reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    TRUE            reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    FALSE           reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    NULL            reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    STRING          reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    $end            reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+    RBRACE          reduce using rule 58 (real_inport -> opt_tag qualified_port .)
+
+
+state 136
+
+    (64) qualified_port -> IDENTIFIER . DOT IDENTIFIER
+
+    DOT             shift and go to state 72
+
+
+state 137
+
+    (56) tag_value -> NUMBER .
+
+    IDENTIFIER      reduce using rule 56 (tag_value -> NUMBER .)
+
+
+state 138
+
+    (57) tag_value -> STRING .
+
+    IDENTIFIER      reduce using rule 57 (tag_value -> STRING .)
+
+
+state 139
+
+    (54) opt_tag -> AT tag_value .
+
+    IDENTIFIER      reduce using rule 54 (opt_tag -> AT tag_value .)
+
+
+state 140
+
+    (63) port_transform -> SLASH label . argument SLASH
+    (71) argument -> . value
+    (72) argument -> . identifier
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (79) identifier -> . IDENTIFIER
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    NUMBER          shift and go to state 43
+    IDENTIFIER      shift and go to state 13
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    null                           shift and go to state 27
+    string                         shift and go to state 42
+    dictionary                     shift and go to state 29
+    argument                       shift and go to state 160
+    value                          shift and go to state 21
+    bool                           shift and go to state 24
+    array                          shift and go to state 23
+    identifier                     shift and go to state 55
+
+state 141
+
+    (62) port_transform -> SLASH argument . SLASH
+
+    SLASH           shift and go to state 161
+
+
+state 142
+
+    (49) transformed_inport -> port_transform real_or_internal_inport .
+
+    COMMA           reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    IDENTIFIER      reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    RULE            reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    GROUP           reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    APPLY           reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    VOIDPORT        reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    COLON           reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    DOT             reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    NUMBER          reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    LBRACE          reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    LBRACK          reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    TRUE            reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    FALSE           reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    NULL            reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    STRING          reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    $end            reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+    RBRACE          reduce using rule 49 (transformed_inport -> port_transform real_or_internal_inport .)
+
+
+state 143
+
+    (92) members -> members member COMMA .
+
+    RBRACE          reduce using rule 92 (members -> members member COMMA .)
+    STRING          reduce using rule 92 (members -> members member COMMA .)
+
+
+state 144
+
+    (95) member -> string COLON . value
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    NUMBER          shift and go to state 43
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    string                         shift and go to state 42
+    dictionary                     shift and go to state 29
+    value                          shift and go to state 162
+    bool                           shift and go to state 24
+    array                          shift and go to state 23
+    null                           shift and go to state 27
+
+state 145
+
+    (43) inport_list -> inport_list COMMA . inport
+    (47) inport -> . real_or_internal_inport
+    (48) inport -> . transformed_inport
+    (52) real_or_internal_inport -> . real_inport
+    (53) real_or_internal_inport -> . internal_inport
+    (49) transformed_inport -> . port_transform real_or_internal_inport
+    (58) real_inport -> . opt_tag qualified_port
+    (60) internal_inport -> . unqualified_port
+    (62) port_transform -> . SLASH argument SLASH
+    (63) port_transform -> . SLASH label argument SLASH
+    (54) opt_tag -> . AT tag_value
+    (55) opt_tag -> . empty
+    (65) unqualified_port -> . DOT IDENTIFIER
+    (2) empty -> .
+
+    SLASH           shift and go to state 106
+    AT              shift and go to state 105
+    DOT             shift and go to state 35
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    unqualified_port               shift and go to state 97
+    real_or_internal_inport        shift and go to state 103
+    real_inport                    shift and go to state 114
+    internal_inport                shift and go to state 107
+    inport                         shift and go to state 158
+    empty                          shift and go to state 102
+    port_transform                 shift and go to state 108
+    opt_tag                        shift and go to state 99
+    transformed_inport             shift and go to state 98
+
+state 146
+
+    (96) values -> values value COMMA .
+
+    RBRACK          reduce using rule 96 (values -> values value COMMA .)
+    NUMBER          reduce using rule 96 (values -> values value COMMA .)
+    LBRACE          reduce using rule 96 (values -> values value COMMA .)
+    LBRACK          reduce using rule 96 (values -> values value COMMA .)
+    TRUE            reduce using rule 96 (values -> values value COMMA .)
+    FALSE           reduce using rule 96 (values -> values value COMMA .)
+    NULL            reduce using rule 96 (values -> values value COMMA .)
+    STRING          reduce using rule 96 (values -> values value COMMA .)
+
+
+state 147
+
+    (75) argnames -> argnames COMMA IDENTIFIER .
+
+    COMMA           reduce using rule 75 (argnames -> argnames COMMA IDENTIFIER .)
+    LBRACE          reduce using rule 75 (argnames -> argnames COMMA IDENTIFIER .)
+    RPAREN          reduce using rule 75 (argnames -> argnames COMMA IDENTIFIER .)
+    RARROW          reduce using rule 75 (argnames -> argnames COMMA IDENTIFIER .)
+
+
+state 148
+
+    (12) compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames . RARROW opt_argnames LBRACE docstring comp_statements RBRACE
+
+    RARROW          shift and go to state 163
+
+
+state 149
+
+    (105) rule -> UNOT rule .
+    (103) rule -> rule . AND rule
+    (104) rule -> rule . OR rule
+
+    AND             reduce using rule 105 (rule -> UNOT rule .)
+    OR              reduce using rule 105 (rule -> UNOT rule .)
+    IDENTIFIER      reduce using rule 105 (rule -> UNOT rule .)
+    RULE            reduce using rule 105 (rule -> UNOT rule .)
+    GROUP           reduce using rule 105 (rule -> UNOT rule .)
+    APPLY           reduce using rule 105 (rule -> UNOT rule .)
+    VOIDPORT        reduce using rule 105 (rule -> UNOT rule .)
+    COLON           reduce using rule 105 (rule -> UNOT rule .)
+    DOT             reduce using rule 105 (rule -> UNOT rule .)
+    NUMBER          reduce using rule 105 (rule -> UNOT rule .)
+    LBRACE          reduce using rule 105 (rule -> UNOT rule .)
+    LBRACK          reduce using rule 105 (rule -> UNOT rule .)
+    TRUE            reduce using rule 105 (rule -> UNOT rule .)
+    FALSE           reduce using rule 105 (rule -> UNOT rule .)
+    NULL            reduce using rule 105 (rule -> UNOT rule .)
+    STRING          reduce using rule 105 (rule -> UNOT rule .)
+    $end            reduce using rule 105 (rule -> UNOT rule .)
+    RPAREN          reduce using rule 105 (rule -> UNOT rule .)
+
+  ! AND             [ shift and go to state 150 ]
+  ! OR              [ shift and go to state 151 ]
+
+
+state 150
+
+    (103) rule -> rule AND . rule
+    (103) rule -> . rule AND rule
+    (104) rule -> . rule OR rule
+    (105) rule -> . UNOT rule
+    (106) rule -> . LPAREN rule RPAREN
+    (107) rule -> . identifier
+    (108) rule -> . predicate
+    (79) identifier -> . IDENTIFIER
+    (109) predicate -> . identifier LPAREN named_args RPAREN
+
+    UNOT            shift and go to state 124
+    LPAREN          shift and go to state 126
+    IDENTIFIER      shift and go to state 13
+
+    predicate                      shift and go to state 123
+    identifier                     shift and go to state 127
+    rule                           shift and go to state 164
+
+state 151
+
+    (104) rule -> rule OR . rule
+    (103) rule -> . rule AND rule
+    (104) rule -> . rule OR rule
+    (105) rule -> . UNOT rule
+    (106) rule -> . LPAREN rule RPAREN
+    (107) rule -> . identifier
+    (108) rule -> . predicate
+    (79) identifier -> . IDENTIFIER
+    (109) predicate -> . identifier LPAREN named_args RPAREN
+
+    UNOT            shift and go to state 124
+    LPAREN          shift and go to state 126
+    IDENTIFIER      shift and go to state 13
+
+    predicate                      shift and go to state 123
+    identifier                     shift and go to state 127
+    rule                           shift and go to state 165
+
+state 152
+
+    (106) rule -> LPAREN rule . RPAREN
+    (103) rule -> rule . AND rule
+    (104) rule -> rule . OR rule
+
+    RPAREN          shift and go to state 166
+    AND             shift and go to state 150
+    OR              shift and go to state 151
+
+
+state 153
+
+    (109) predicate -> identifier LPAREN . named_args RPAREN
+    (67) named_args -> . named_args named_arg COMMA
+    (68) named_args -> . named_args named_arg
+    (69) named_args -> . empty
+    (2) empty -> .
+
+    RPAREN          reduce using rule 2 (empty -> .)
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    empty                          shift and go to state 132
+    named_args                     shift and go to state 167
+
+state 154
+
+    (67) named_args -> named_args named_arg . COMMA
+    (68) named_args -> named_args named_arg .
+
+    COMMA           shift and go to state 168
+    RPAREN          reduce using rule 68 (named_args -> named_args named_arg .)
+    IDENTIFIER      reduce using rule 68 (named_args -> named_args named_arg .)
+
+
+state 155
+
+    (34) port_property -> qualified_port opt_direction LPAREN named_args RPAREN .
+
+    RBRACE          reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    IDENTIFIER      reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    DOT             reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    VOIDPORT        reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    COLON           reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    NUMBER          reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    LBRACE          reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    LBRACK          reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    TRUE            reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    FALSE           reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    NULL            reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    STRING          reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    RULE            reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    GROUP           reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    APPLY           reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+    $end            reduce using rule 34 (port_property -> qualified_port opt_direction LPAREN named_args RPAREN .)
+
+
+state 156
+
+    (70) named_arg -> identifier . EQ argument
+
+    EQ              shift and go to state 169
+
+
+state 157
+
+    (31) assignment -> IDENTIFIER COLON qualified_name LPAREN named_args . RPAREN
+    (67) named_args -> named_args . named_arg COMMA
+    (68) named_args -> named_args . named_arg
+    (70) named_arg -> . identifier EQ argument
+    (79) identifier -> . IDENTIFIER
+
+    RPAREN          shift and go to state 170
+    IDENTIFIER      shift and go to state 13
+
+    identifier                     shift and go to state 156
+    named_arg                      shift and go to state 154
+
+state 158
+
+    (43) inport_list -> inport_list COMMA inport .
+
+    COMMA           reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    IDENTIFIER      reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    RULE            reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    GROUP           reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    APPLY           reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    VOIDPORT        reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    COLON           reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    DOT             reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    NUMBER          reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    LBRACE          reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    LBRACK          reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    TRUE            reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    FALSE           reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    NULL            reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    STRING          reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    $end            reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+    RBRACE          reduce using rule 43 (inport_list -> inport_list COMMA inport .)
+
+
+state 159
+
+    (45) real_inport_list -> inport_list COMMA real_inport .
+    (52) real_or_internal_inport -> real_inport .
+
+    IDENTIFIER      reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    RULE            reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    GROUP           reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    APPLY           reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    VOIDPORT        reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    COLON           reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    DOT             reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    NUMBER          reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    LBRACE          reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    LBRACK          reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    TRUE            reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    FALSE           reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    NULL            reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    STRING          reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    $end            reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    RBRACE          reduce using rule 45 (real_inport_list -> inport_list COMMA real_inport .)
+    COMMA           reduce using rule 52 (real_or_internal_inport -> real_inport .)
+
+
+state 160
+
+    (63) port_transform -> SLASH label argument . SLASH
+
+    SLASH           shift and go to state 171
+
+
+state 161
+
+    (62) port_transform -> SLASH argument SLASH .
+
+    AT              reduce using rule 62 (port_transform -> SLASH argument SLASH .)
+    DOT             reduce using rule 62 (port_transform -> SLASH argument SLASH .)
+    IDENTIFIER      reduce using rule 62 (port_transform -> SLASH argument SLASH .)
+
+
+state 162
+
+    (95) member -> string COLON value .
+
+    COMMA           reduce using rule 95 (member -> string COLON value .)
+    RBRACE          reduce using rule 95 (member -> string COLON value .)
+    STRING          reduce using rule 95 (member -> string COLON value .)
+
+
+state 163
+
+    (12) compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW . opt_argnames LBRACE docstring comp_statements RBRACE
+    (73) opt_argnames -> . argnames
+    (74) opt_argnames -> . empty
+    (75) argnames -> . argnames COMMA IDENTIFIER
+    (76) argnames -> . IDENTIFIER
+    (2) empty -> .
+
+    IDENTIFIER      shift and go to state 85
+    LBRACE          reduce using rule 2 (empty -> .)
+
+    argnames                       shift and go to state 83
+    opt_argnames                   shift and go to state 172
+    empty                          shift and go to state 86
+
+state 164
+
+    (103) rule -> rule AND rule .
+    (103) rule -> rule . AND rule
+    (104) rule -> rule . OR rule
+
+    AND             reduce using rule 103 (rule -> rule AND rule .)
+    OR              reduce using rule 103 (rule -> rule AND rule .)
+    IDENTIFIER      reduce using rule 103 (rule -> rule AND rule .)
+    RULE            reduce using rule 103 (rule -> rule AND rule .)
+    GROUP           reduce using rule 103 (rule -> rule AND rule .)
+    APPLY           reduce using rule 103 (rule -> rule AND rule .)
+    VOIDPORT        reduce using rule 103 (rule -> rule AND rule .)
+    COLON           reduce using rule 103 (rule -> rule AND rule .)
+    DOT             reduce using rule 103 (rule -> rule AND rule .)
+    NUMBER          reduce using rule 103 (rule -> rule AND rule .)
+    LBRACE          reduce using rule 103 (rule -> rule AND rule .)
+    LBRACK          reduce using rule 103 (rule -> rule AND rule .)
+    TRUE            reduce using rule 103 (rule -> rule AND rule .)
+    FALSE           reduce using rule 103 (rule -> rule AND rule .)
+    NULL            reduce using rule 103 (rule -> rule AND rule .)
+    STRING          reduce using rule 103 (rule -> rule AND rule .)
+    $end            reduce using rule 103 (rule -> rule AND rule .)
+    RPAREN          reduce using rule 103 (rule -> rule AND rule .)
+
+  ! AND             [ shift and go to state 150 ]
+  ! OR              [ shift and go to state 151 ]
+
+
+state 165
+
+    (104) rule -> rule OR rule .
+    (103) rule -> rule . AND rule
+    (104) rule -> rule . OR rule
+
+    OR              reduce using rule 104 (rule -> rule OR rule .)
+    IDENTIFIER      reduce using rule 104 (rule -> rule OR rule .)
+    RULE            reduce using rule 104 (rule -> rule OR rule .)
+    GROUP           reduce using rule 104 (rule -> rule OR rule .)
+    APPLY           reduce using rule 104 (rule -> rule OR rule .)
+    VOIDPORT        reduce using rule 104 (rule -> rule OR rule .)
+    COLON           reduce using rule 104 (rule -> rule OR rule .)
+    DOT             reduce using rule 104 (rule -> rule OR rule .)
+    NUMBER          reduce using rule 104 (rule -> rule OR rule .)
+    LBRACE          reduce using rule 104 (rule -> rule OR rule .)
+    LBRACK          reduce using rule 104 (rule -> rule OR rule .)
+    TRUE            reduce using rule 104 (rule -> rule OR rule .)
+    FALSE           reduce using rule 104 (rule -> rule OR rule .)
+    NULL            reduce using rule 104 (rule -> rule OR rule .)
+    STRING          reduce using rule 104 (rule -> rule OR rule .)
+    $end            reduce using rule 104 (rule -> rule OR rule .)
+    RPAREN          reduce using rule 104 (rule -> rule OR rule .)
+    AND             shift and go to state 150
+
+  ! AND             [ reduce using rule 104 (rule -> rule OR rule .) ]
+  ! OR              [ shift and go to state 151 ]
+
+
+state 166
+
+    (106) rule -> LPAREN rule RPAREN .
+
+    AND             reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    OR              reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    IDENTIFIER      reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    RULE            reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    GROUP           reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    APPLY           reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    VOIDPORT        reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    COLON           reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    DOT             reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    NUMBER          reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    LBRACE          reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    LBRACK          reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    TRUE            reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    FALSE           reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    NULL            reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    STRING          reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    $end            reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+    RPAREN          reduce using rule 106 (rule -> LPAREN rule RPAREN .)
+
+
+state 167
+
+    (109) predicate -> identifier LPAREN named_args . RPAREN
+    (67) named_args -> named_args . named_arg COMMA
+    (68) named_args -> named_args . named_arg
+    (70) named_arg -> . identifier EQ argument
+    (79) identifier -> . IDENTIFIER
+
+    RPAREN          shift and go to state 173
+    IDENTIFIER      shift and go to state 13
+
+    identifier                     shift and go to state 156
+    named_arg                      shift and go to state 154
+
+state 168
+
+    (67) named_args -> named_args named_arg COMMA .
+
+    RPAREN          reduce using rule 67 (named_args -> named_args named_arg COMMA .)
+    IDENTIFIER      reduce using rule 67 (named_args -> named_args named_arg COMMA .)
+
+
+state 169
+
+    (70) named_arg -> identifier EQ . argument
+    (71) argument -> . value
+    (72) argument -> . identifier
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (79) identifier -> . IDENTIFIER
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    NUMBER          shift and go to state 43
+    IDENTIFIER      shift and go to state 13
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    null                           shift and go to state 27
+    string                         shift and go to state 42
+    dictionary                     shift and go to state 29
+    argument                       shift and go to state 174
+    value                          shift and go to state 21
+    bool                           shift and go to state 24
+    array                          shift and go to state 23
+    identifier                     shift and go to state 55
+
+state 170
+
+    (31) assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .
+
+    IDENTIFIER      reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    RULE            reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    GROUP           reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    APPLY           reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    VOIDPORT        reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    COLON           reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    DOT             reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    NUMBER          reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    LBRACE          reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    LBRACK          reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    TRUE            reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    FALSE           reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    NULL            reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    STRING          reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    $end            reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+    RBRACE          reduce using rule 31 (assignment -> IDENTIFIER COLON qualified_name LPAREN named_args RPAREN .)
+
+
+state 171
+
+    (63) port_transform -> SLASH label argument SLASH .
+
+    AT              reduce using rule 63 (port_transform -> SLASH label argument SLASH .)
+    DOT             reduce using rule 63 (port_transform -> SLASH label argument SLASH .)
+    IDENTIFIER      reduce using rule 63 (port_transform -> SLASH label argument SLASH .)
+
+
+state 172
+
+    (12) compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames . LBRACE docstring comp_statements RBRACE
+
+    LBRACE          shift and go to state 175
+
+
+state 173
+
+    (109) predicate -> identifier LPAREN named_args RPAREN .
+
+    AND             reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    OR              reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    IDENTIFIER      reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    RULE            reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    GROUP           reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    APPLY           reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    VOIDPORT        reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    COLON           reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    DOT             reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    NUMBER          reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    LBRACE          reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    LBRACK          reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    TRUE            reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    FALSE           reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    NULL            reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    STRING          reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    $end            reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+    RPAREN          reduce using rule 109 (predicate -> identifier LPAREN named_args RPAREN .)
+
+
+state 174
+
+    (70) named_arg -> identifier EQ argument .
+
+    COMMA           reduce using rule 70 (named_arg -> identifier EQ argument .)
+    RPAREN          reduce using rule 70 (named_arg -> identifier EQ argument .)
+    IDENTIFIER      reduce using rule 70 (named_arg -> identifier EQ argument .)
+
+
+state 175
+
+    (12) compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE . docstring comp_statements RBRACE
+    (13) docstring -> . DOCSTRING
+    (14) docstring -> . empty
+    (2) empty -> .
+
+    DOCSTRING       shift and go to state 177
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+    DOT             reduce using rule 2 (empty -> .)
+    VOIDPORT        reduce using rule 2 (empty -> .)
+    COLON           reduce using rule 2 (empty -> .)
+    NUMBER          reduce using rule 2 (empty -> .)
+    LBRACE          reduce using rule 2 (empty -> .)
+    LBRACK          reduce using rule 2 (empty -> .)
+    TRUE            reduce using rule 2 (empty -> .)
+    FALSE           reduce using rule 2 (empty -> .)
+    NULL            reduce using rule 2 (empty -> .)
+    STRING          reduce using rule 2 (empty -> .)
+
+    empty                          shift and go to state 178
+    docstring                      shift and go to state 176
+
+state 176
+
+    (12) compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring . comp_statements RBRACE
+    (15) comp_statements -> . comp_statements comp_statement
+    (16) comp_statements -> . comp_statement
+    (17) comp_statement -> . assignment
+    (18) comp_statement -> . port_property
+    (19) comp_statement -> . internal_port_property
+    (20) comp_statement -> . link
+    (31) assignment -> . IDENTIFIER COLON qualified_name LPAREN named_args RPAREN
+    (34) port_property -> . qualified_port opt_direction LPAREN named_args RPAREN
+    (35) internal_port_property -> . unqualified_port opt_direction LPAREN named_args RPAREN
+    (36) link -> . void GT void
+    (37) link -> . real_outport GT void
+    (38) link -> . void GT real_inport_list
+    (39) link -> . real_outport GT inport_list
+    (40) link -> . implicit_outport GT inport_list
+    (41) link -> . internal_outport GT inport_list
+    (64) qualified_port -> . IDENTIFIER DOT IDENTIFIER
+    (65) unqualified_port -> . DOT IDENTIFIER
+    (42) void -> . VOIDPORT
+    (59) real_outport -> . qualified_port
+    (50) implicit_outport -> . argument
+    (51) implicit_outport -> . label argument
+    (61) internal_outport -> . unqualified_port
+    (71) argument -> . value
+    (72) argument -> . identifier
+    (66) label -> . COLON identifier
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (79) identifier -> . IDENTIFIER
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    IDENTIFIER      shift and go to state 39
+    DOT             shift and go to state 35
+    VOIDPORT        shift and go to state 46
+    COLON           shift and go to state 34
+    NUMBER          shift and go to state 43
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    unqualified_port               shift and go to state 179
+    comp_statement                 shift and go to state 180
+    argument                       shift and go to state 19
+    array                          shift and go to state 23
+    null                           shift and go to state 27
+    dictionary                     shift and go to state 29
+    comp_statements                shift and go to state 181
+    label                          shift and go to state 32
+    bool                           shift and go to state 24
+    qualified_port                 shift and go to state 38
+    string                         shift and go to state 42
+    assignment                     shift and go to state 182
+    void                           shift and go to state 45
+    port_property                  shift and go to state 183
+    link                           shift and go to state 184
+    internal_port_property         shift and go to state 185
+    internal_outport               shift and go to state 50
+    value                          shift and go to state 21
+    implicit_outport               shift and go to state 53
+    real_outport                   shift and go to state 54
+    identifier                     shift and go to state 55
+
+state 177
+
+    (13) docstring -> DOCSTRING .
+
+    IDENTIFIER      reduce using rule 13 (docstring -> DOCSTRING .)
+    DOT             reduce using rule 13 (docstring -> DOCSTRING .)
+    VOIDPORT        reduce using rule 13 (docstring -> DOCSTRING .)
+    COLON           reduce using rule 13 (docstring -> DOCSTRING .)
+    NUMBER          reduce using rule 13 (docstring -> DOCSTRING .)
+    LBRACE          reduce using rule 13 (docstring -> DOCSTRING .)
+    LBRACK          reduce using rule 13 (docstring -> DOCSTRING .)
+    TRUE            reduce using rule 13 (docstring -> DOCSTRING .)
+    FALSE           reduce using rule 13 (docstring -> DOCSTRING .)
+    NULL            reduce using rule 13 (docstring -> DOCSTRING .)
+    STRING          reduce using rule 13 (docstring -> DOCSTRING .)
+
+
+state 178
+
+    (14) docstring -> empty .
+
+    IDENTIFIER      reduce using rule 14 (docstring -> empty .)
+    DOT             reduce using rule 14 (docstring -> empty .)
+    VOIDPORT        reduce using rule 14 (docstring -> empty .)
+    COLON           reduce using rule 14 (docstring -> empty .)
+    NUMBER          reduce using rule 14 (docstring -> empty .)
+    LBRACE          reduce using rule 14 (docstring -> empty .)
+    LBRACK          reduce using rule 14 (docstring -> empty .)
+    TRUE            reduce using rule 14 (docstring -> empty .)
+    FALSE           reduce using rule 14 (docstring -> empty .)
+    NULL            reduce using rule 14 (docstring -> empty .)
+    STRING          reduce using rule 14 (docstring -> empty .)
+
+
+state 179
+
+    (35) internal_port_property -> unqualified_port . opt_direction LPAREN named_args RPAREN
+    (61) internal_outport -> unqualified_port .
+    (32) opt_direction -> . LBRACK IDENTIFIER RBRACK
+    (33) opt_direction -> . empty
+    (2) empty -> .
+
+    GT              reduce using rule 61 (internal_outport -> unqualified_port .)
+    LBRACK          shift and go to state 68
+    LPAREN          reduce using rule 2 (empty -> .)
+
+    opt_direction                  shift and go to state 186
+    empty                          shift and go to state 70
+
+state 180
+
+    (16) comp_statements -> comp_statement .
+
+    RBRACE          reduce using rule 16 (comp_statements -> comp_statement .)
+    IDENTIFIER      reduce using rule 16 (comp_statements -> comp_statement .)
+    DOT             reduce using rule 16 (comp_statements -> comp_statement .)
+    VOIDPORT        reduce using rule 16 (comp_statements -> comp_statement .)
+    COLON           reduce using rule 16 (comp_statements -> comp_statement .)
+    NUMBER          reduce using rule 16 (comp_statements -> comp_statement .)
+    LBRACE          reduce using rule 16 (comp_statements -> comp_statement .)
+    LBRACK          reduce using rule 16 (comp_statements -> comp_statement .)
+    TRUE            reduce using rule 16 (comp_statements -> comp_statement .)
+    FALSE           reduce using rule 16 (comp_statements -> comp_statement .)
+    NULL            reduce using rule 16 (comp_statements -> comp_statement .)
+    STRING          reduce using rule 16 (comp_statements -> comp_statement .)
+
+
+state 181
+
+    (12) compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements . RBRACE
+    (15) comp_statements -> comp_statements . comp_statement
+    (17) comp_statement -> . assignment
+    (18) comp_statement -> . port_property
+    (19) comp_statement -> . internal_port_property
+    (20) comp_statement -> . link
+    (31) assignment -> . IDENTIFIER COLON qualified_name LPAREN named_args RPAREN
+    (34) port_property -> . qualified_port opt_direction LPAREN named_args RPAREN
+    (35) internal_port_property -> . unqualified_port opt_direction LPAREN named_args RPAREN
+    (36) link -> . void GT void
+    (37) link -> . real_outport GT void
+    (38) link -> . void GT real_inport_list
+    (39) link -> . real_outport GT inport_list
+    (40) link -> . implicit_outport GT inport_list
+    (41) link -> . internal_outport GT inport_list
+    (64) qualified_port -> . IDENTIFIER DOT IDENTIFIER
+    (65) unqualified_port -> . DOT IDENTIFIER
+    (42) void -> . VOIDPORT
+    (59) real_outport -> . qualified_port
+    (50) implicit_outport -> . argument
+    (51) implicit_outport -> . label argument
+    (61) internal_outport -> . unqualified_port
+    (71) argument -> . value
+    (72) argument -> . identifier
+    (66) label -> . COLON identifier
+    (82) value -> . dictionary
+    (83) value -> . array
+    (84) value -> . bool
+    (85) value -> . null
+    (86) value -> . NUMBER
+    (87) value -> . string
+    (79) identifier -> . IDENTIFIER
+    (91) dictionary -> . LBRACE members RBRACE
+    (99) array -> . LBRACK values RBRACK
+    (88) bool -> . TRUE
+    (89) bool -> . FALSE
+    (90) null -> . NULL
+    (80) string -> . STRING
+    (81) string -> . string STRING
+
+    RBRACE          shift and go to state 188
+    IDENTIFIER      shift and go to state 39
+    DOT             shift and go to state 35
+    VOIDPORT        shift and go to state 46
+    COLON           shift and go to state 34
+    NUMBER          shift and go to state 43
+    LBRACE          shift and go to state 48
+    LBRACK          shift and go to state 52
+    TRUE            shift and go to state 25
+    FALSE           shift and go to state 51
+    NULL            shift and go to state 30
+    STRING          shift and go to state 20
+
+    unqualified_port               shift and go to state 179
+    comp_statement                 shift and go to state 187
+    argument                       shift and go to state 19
+    array                          shift and go to state 23
+    null                           shift and go to state 27
+    dictionary                     shift and go to state 29
+    label                          shift and go to state 32
+    bool                           shift and go to state 24
+    qualified_port                 shift and go to state 38
+    string                         shift and go to state 42
+    assignment                     shift and go to state 182
+    void                           shift and go to state 45
+    port_property                  shift and go to state 183
+    link                           shift and go to state 184
+    internal_port_property         shift and go to state 185
+    internal_outport               shift and go to state 50
+    value                          shift and go to state 21
+    implicit_outport               shift and go to state 53
+    real_outport                   shift and go to state 54
+    identifier                     shift and go to state 55
+
+state 182
+
+    (17) comp_statement -> assignment .
+
+    RBRACE          reduce using rule 17 (comp_statement -> assignment .)
+    IDENTIFIER      reduce using rule 17 (comp_statement -> assignment .)
+    DOT             reduce using rule 17 (comp_statement -> assignment .)
+    VOIDPORT        reduce using rule 17 (comp_statement -> assignment .)
+    COLON           reduce using rule 17 (comp_statement -> assignment .)
+    NUMBER          reduce using rule 17 (comp_statement -> assignment .)
+    LBRACE          reduce using rule 17 (comp_statement -> assignment .)
+    LBRACK          reduce using rule 17 (comp_statement -> assignment .)
+    TRUE            reduce using rule 17 (comp_statement -> assignment .)
+    FALSE           reduce using rule 17 (comp_statement -> assignment .)
+    NULL            reduce using rule 17 (comp_statement -> assignment .)
+    STRING          reduce using rule 17 (comp_statement -> assignment .)
+
+
+state 183
+
+    (18) comp_statement -> port_property .
+
+    RBRACE          reduce using rule 18 (comp_statement -> port_property .)
+    IDENTIFIER      reduce using rule 18 (comp_statement -> port_property .)
+    DOT             reduce using rule 18 (comp_statement -> port_property .)
+    VOIDPORT        reduce using rule 18 (comp_statement -> port_property .)
+    COLON           reduce using rule 18 (comp_statement -> port_property .)
+    NUMBER          reduce using rule 18 (comp_statement -> port_property .)
+    LBRACE          reduce using rule 18 (comp_statement -> port_property .)
+    LBRACK          reduce using rule 18 (comp_statement -> port_property .)
+    TRUE            reduce using rule 18 (comp_statement -> port_property .)
+    FALSE           reduce using rule 18 (comp_statement -> port_property .)
+    NULL            reduce using rule 18 (comp_statement -> port_property .)
+    STRING          reduce using rule 18 (comp_statement -> port_property .)
+
+
+state 184
+
+    (20) comp_statement -> link .
+
+    RBRACE          reduce using rule 20 (comp_statement -> link .)
+    IDENTIFIER      reduce using rule 20 (comp_statement -> link .)
+    DOT             reduce using rule 20 (comp_statement -> link .)
+    VOIDPORT        reduce using rule 20 (comp_statement -> link .)
+    COLON           reduce using rule 20 (comp_statement -> link .)
+    NUMBER          reduce using rule 20 (comp_statement -> link .)
+    LBRACE          reduce using rule 20 (comp_statement -> link .)
+    LBRACK          reduce using rule 20 (comp_statement -> link .)
+    TRUE            reduce using rule 20 (comp_statement -> link .)
+    FALSE           reduce using rule 20 (comp_statement -> link .)
+    NULL            reduce using rule 20 (comp_statement -> link .)
+    STRING          reduce using rule 20 (comp_statement -> link .)
+
+
+state 185
+
+    (19) comp_statement -> internal_port_property .
+
+    RBRACE          reduce using rule 19 (comp_statement -> internal_port_property .)
+    IDENTIFIER      reduce using rule 19 (comp_statement -> internal_port_property .)
+    DOT             reduce using rule 19 (comp_statement -> internal_port_property .)
+    VOIDPORT        reduce using rule 19 (comp_statement -> internal_port_property .)
+    COLON           reduce using rule 19 (comp_statement -> internal_port_property .)
+    NUMBER          reduce using rule 19 (comp_statement -> internal_port_property .)
+    LBRACE          reduce using rule 19 (comp_statement -> internal_port_property .)
+    LBRACK          reduce using rule 19 (comp_statement -> internal_port_property .)
+    TRUE            reduce using rule 19 (comp_statement -> internal_port_property .)
+    FALSE           reduce using rule 19 (comp_statement -> internal_port_property .)
+    NULL            reduce using rule 19 (comp_statement -> internal_port_property .)
+    STRING          reduce using rule 19 (comp_statement -> internal_port_property .)
+
+
+state 186
+
+    (35) internal_port_property -> unqualified_port opt_direction . LPAREN named_args RPAREN
+
+    LPAREN          shift and go to state 189
+
+
+state 187
+
+    (15) comp_statements -> comp_statements comp_statement .
+
+    RBRACE          reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    IDENTIFIER      reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    DOT             reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    VOIDPORT        reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    COLON           reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    NUMBER          reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    LBRACE          reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    LBRACK          reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    TRUE            reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    FALSE           reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    NULL            reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+    STRING          reduce using rule 15 (comp_statements -> comp_statements comp_statement .)
+
+
+state 188
+
+    (12) compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .
+
+    COMPONENT       reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    IDENTIFIER      reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    RULE            reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    GROUP           reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    APPLY           reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    VOIDPORT        reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    COLON           reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    DOT             reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    NUMBER          reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    LBRACE          reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    LBRACK          reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    TRUE            reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    FALSE           reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    NULL            reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    STRING          reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+    $end            reduce using rule 12 (compdef -> COMPONENT qualified_name LPAREN opt_argnames RPAREN opt_argnames RARROW opt_argnames LBRACE docstring comp_statements RBRACE .)
+
+
+state 189
+
+    (35) internal_port_property -> unqualified_port opt_direction LPAREN . named_args RPAREN
+    (67) named_args -> . named_args named_arg COMMA
+    (68) named_args -> . named_args named_arg
+    (69) named_args -> . empty
+    (2) empty -> .
+
+    RPAREN          reduce using rule 2 (empty -> .)
+    IDENTIFIER      reduce using rule 2 (empty -> .)
+
+    empty                          shift and go to state 132
+    named_args                     shift and go to state 190
+
+state 190
+
+    (35) internal_port_property -> unqualified_port opt_direction LPAREN named_args . RPAREN
+    (67) named_args -> named_args . named_arg COMMA
+    (68) named_args -> named_args . named_arg
+    (70) named_arg -> . identifier EQ argument
+    (79) identifier -> . IDENTIFIER
+
+    RPAREN          shift and go to state 191
+    IDENTIFIER      shift and go to state 13
+
+    named_arg                      shift and go to state 154
+    identifier                     shift and go to state 156
+
+state 191
+
+    (35) internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .
+
+    RBRACE          reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    IDENTIFIER      reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    DOT             reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    VOIDPORT        reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    COLON           reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    NUMBER          reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    LBRACE          reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    LBRACK          reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    TRUE            reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    FALSE           reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    NULL            reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+    STRING          reduce using rule 35 (internal_port_property -> unqualified_port opt_direction LPAREN named_args RPAREN .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for STRING in state 42 resolved as shift

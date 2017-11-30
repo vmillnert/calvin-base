@@ -290,29 +290,4 @@ def handle_resource_mem_avail(self, handle, connection, match, data, hdr):
     """
     self.node.mem_monitor.set_avail(data['value'], CalvinCB(self.index_cb, handle, connection))
 
-    
-
-
-@handler(r"POST /node/resource/healthMetric\sHTTP/1")
-@authentication_decorator
-def handle_node_health_metric(self, handle, connection, match, data, hdr):
-    """
-    POST /node/resource/healthMetric
-    Updates the health metric of the current node
-    Body:
-    {
-        "value": <Health (between 0 and 1)>
-    }
-    Response status code: OK or INTERNAL_ERROR
-    Response: none
-    """
-
-    # print "The new health was set to " + str(data['value'])
-
-    try:    
-        self.node.app_manager.set_health(data['value'])
-        status = calvinresponse.OK
-    except:
-        status = calvinresponse.INTERNAL_ERROR
-    self.send_response(handle, connection, None, status)
-
+        

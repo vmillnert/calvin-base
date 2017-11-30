@@ -159,6 +159,28 @@ class ActorManager(object):
             else:
                 security = None
             actor_def, signer = self.lookup_and_verify(actor_type, security)
+
+            print "VM: actor migrated successfully!"
+            print "VM: the actor has the following requirements:"
+            deploy_reqs_list = state['private']['_deployment_requirements']
+
+            print "VM: deploy_reqs_list: " + str(deploy_reqs_list)
+
+            for i in range(0,len(deploy_reqs_list)):
+                deploy_req = deploy_reqs_list[i]
+                print "VM: deploy req: " + str(deploy_req)
+
+                if 'index' in deploy_req['kwargs']:
+                    print "VM: " + str(deploy_req['kwargs']['index'])
+                    index_reqs = deploy_req['kwargs']['index']
+                    print "VM: index_req: " + str(index_reqs)
+                    if index_reqs[0] == 'user_extra':
+                        print "VM: It's a match => we should remove this requirement"
+                        del deploy_reqs_list[i]
+                        
+            print "VM: new deploy_req: " + str(deploy_reqs_list)
+                
+
             requirements = actor_def.requires if hasattr(actor_def, "requires") else []
             self.check_requirements_and_sec_policy(requirements, security, state['private']['_id'],
                                                    signer, migration_info,
@@ -522,3 +544,30 @@ class ActorManager(object):
 
     def list_actors(self):
         return self.actors.keys()
+
+    def set_health(self, value, cb=None):
+        _log.critical("VM: We set the health of the node to " + str(value))
+
+        if value > 0.75:
+            self._health_triggered_migration(cb)
+
+    def _health_triggered_migration(self, cb=None):
+        _log.critical("VM: health triggered migration necessary")
+        actor_ids = self.list_actors()
+        _log.critical("VM: following actors are deployed: " + str(actor_ids))
+        
+        # we should migrate the first actor
+        actor_id = actor_ids[0]
+        _log.critical("VM: The following actor_id will be migrated: " + str(actor_ids[0]))
+
+        # specify the new requirement
+
+        requirements = [{"op" : "node_attr_match",
+                         "kwargs" : {"index":["node_name",{"name":"ludc"}]},
+                         "type":"+"},
+                        {"op" : "node_attr_match",
+                         "kwargs" : {"index":["user_extra",{"healthy":"yes"}]},
+                         "type":"-"}]
+        
+        self.update_requirements(actor_id, requirements, extend=True, move=False,
+                                 authorization_check=False, callback=cb)

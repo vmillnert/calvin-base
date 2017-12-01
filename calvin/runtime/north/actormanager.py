@@ -28,6 +28,9 @@ from calvin.runtime.north.plugins.port import DISCONNECT
 from calvin.runtime.north.calvinsys import get_calvinsys
 from calvin.runtime.north.calvinlib import get_calvinlib
 
+# Stuff that we've added
+from calvin.utilities.attribute_resolver import AttributeResolver
+
 
 _log = get_logger(__name__)
 
@@ -174,7 +177,7 @@ class ActorManager(object):
                     print "VM: " + str(deploy_req['kwargs']['index'])
                     index_reqs = deploy_req['kwargs']['index']
                     print "VM: index_req: " + str(index_reqs)
-                    if index_reqs[0] == 'user_extra':
+                    if index_reqs[0] == 'health':
                         print "VM: It's a match => we should remove this requirement"
                         del deploy_reqs_list[i]
                         
@@ -545,13 +548,68 @@ class ActorManager(object):
     def list_actors(self):
         return self.actors.keys()
 
-    def set_health(self, value, cb=None):
+    def set_health(self, value):
+
         _log.critical("VM: We set the health of the node to " + str(value))
 
-        if value > 0.75:
-            self._health_triggered_migration(cb)
+        # data = {"node_name": {"name" : "wasp"}}
 
-    def _health_triggered_migration(self, cb=None):
+        if float(value) < 0.75:
+            # data = {u"health": u"bad"}
+            value = "bad"
+            self._health_triggered_migration()
+        else:
+            # data = {u"health": u"good"}
+            value = "good"
+            
+
+        # ###
+        # New Way
+        # ###
+        # Sets a certain resource of a node.
+        # Gets the old value to erase from indexes.
+        # Parameters:
+        # prefix: String used in storage for attribute, e.g. nodeCpuAvail.
+        # prefix_index: String used in indexed_public structure for this field, e.g. cpuAvail.
+        # value: new value to set.
+        # cb: callback to receive response. Signature: cb(value, True/False) 
+        
+        # get old value to cleanup indexes
+        prefix = "nodeHealth"
+        prefix_index = "health"
+
+        print "VM: the node id: " + str(self.node.id)
+
+        self.set(prefix, prefix_index, value)
+        
+        # self.node.storage.get(prefix=prefix, key=self.node.id, cb=CalvinCB(self._set_aux,
+        #     prefix_index=prefix_index, new_value=value))
+
+        # self.node.storage.set(prefix=prefix, key=self.node.id, value=value, cb=None)
+
+        # if cb:
+        #     async.DelayedCall(0, cb, value, True)
+
+        # ###
+        
+        # ####
+        # Old way
+        # ####
+
+        # self.node.storage.remove_node_index(self.node)
+        # data = {u'health' : value}
+        # self.node.attributes.set_indexed_public(data)            
+        # self.node_name = self.node.attributes.get_node_name_as_str()
+        # # print "node_name: " + str(self.node_name)
+        # self.node.storage.add_node(self.node)
+
+        # #####
+
+        # _log.critical("VM: updated indexed_public with: " + str(value))
+
+
+
+    def _health_triggered_migration(self):
         _log.critical("VM: health triggered migration necessary")
         actor_ids = self.list_actors()
         _log.critical("VM: following actors are deployed: " + str(actor_ids))
@@ -563,11 +621,70 @@ class ActorManager(object):
         # specify the new requirement
 
         requirements = [{"op" : "node_attr_match",
-                         "kwargs" : {"index":["node_name",{"name":"ludc"}]},
-                         "type":"+"},
-                        {"op" : "node_attr_match",
-                         "kwargs" : {"index":["user_extra",{"healthy":"yes"}]},
-                         "type":"-"}]
+                         "kwargs" : {"index":["health", "good"]},
+                         "type":"+"}]
+        # requirements = [{"op" : "node_attr_match",
+        #                  "kwargs" : {"index":["node_name", {"name": "dc2"}]},
+        #                  "type":"+"}]
         
-        self.update_requirements(actor_id, requirements, extend=True, move=False,
-                                 authorization_check=False, callback=cb)
+        self.update_requirements(actor_id, requirements, extend=True, move=True,
+                                 authorization_check=False, callback=None)
+
+    def set(self, prefix, prefix_index, value, cb=None):
+        """
+        Sets a certain resource of a node.
+        Gets the old value to erase from indexes.
+        Parameters:
+        prefix: String used in storage for attribute, e.g. nodeCpuAvail.
+        prefix_index: String used in indexed_public structure for this field, e.g. cpuAvail.
+        value: new value to set.
+        cb: callback to receive response. Signature: cb(value, True/False) 
+        """
+        print "VM: Entering 'set' with:"
+        print "VM: prefix: " + str(prefix)
+        print "VM: prefix_id: " + str(prefix_index)
+        print "VM: value: " + str(value)
+
+        # get old value to cleanup indexes
+        self.node.storage.get(prefix=prefix, key=self.node.id, cb=CalvinCB(self._set_aux,
+            prefix_index=prefix_index, new_value=value))
+        print "VM: Got the node-storage"
+
+        self.node.storage.set(prefix=prefix, key=self.node.id, value=value, cb=None)
+        print "VM: Set the node-storage"
+        if cb:
+            async.DelayedCall(0, cb, value, True)
+        
+    def _set_aux(self, key, value, prefix_index, new_value=None):
+        """
+        Auxiliary method to set indexes .
+        Removes old indexes before adding the new ones. Triggered by a get in the database
+        """
+        print "VM: Entering '_set_aux' with:"
+        print "VM: key: " + str(key)
+        print "VM: value: " + str(value)
+        print "VM: new_value: " + str(new_value)
+        print "VM: prefix_index: " + str(prefix_index)
+        
+        # if new value is exactly the same, we don't need to change anything..
+        if value is new_value:
+            _log.debug("%s, value: %s. Nothing changed, just return.." % (prefix_index, value))
+            print("VM: %s, value: %s. Nothing changed, just return.." % (prefix_index, value))
+            return
+
+        # erase indexes related to old value
+        if value is not None:
+            old_data = AttributeResolver({"indexed_public": {prefix_index: str(value)}})
+            _log.debug("Removing " + str(key) + " for " + prefix_index + ": " + str(value))
+            print("VM: Removing " + str(key) + " for " + prefix_index + ": " + str(value))
+            for index in old_data.get_indexed_public():
+                self.node.storage.remove_index(index=index, value=key, root_prefix_level=2)
+
+        # insert the new ones
+        if new_value is not None:
+            new_data = AttributeResolver({"indexed_public": {prefix_index: str(new_value)}})
+            _log.debug("After possible removal, adding new node " + str(self.node.id) + " for " + prefix_index + ": " + str(new_value))
+            print("VM: After possible removal, adding new node " + str(self.node.id) + " for " + prefix_index + ": " + str(new_value))
+            for index in new_data.get_indexed_public():
+                print "VM: index: " + index
+                self.node.storage.add_index(index=index, value=self.node.id, root_prefix_level=2, cb=None)

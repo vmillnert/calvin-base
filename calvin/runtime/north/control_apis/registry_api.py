@@ -162,6 +162,10 @@ def handle_post_node_attribute_indexed_public(self, handle, connection, match, d
     }
     Response status code: OK, UNAUTHORIZED or INTERNAL_ERROR
     """
+
+    print "VM: adding a new attribute: "
+    print data
+
     try:
         if match.group(1) == self.node.id:
             if self.node.runtime_credentials is None or self.node.runtime_credentials.domain is None:
@@ -202,6 +206,8 @@ def handle_get_node(self, handle, connection, match, data, hdr):
         "uri": "calvinip://<address>:<port>"
     }
     """
+    print "VM: requesting info about node-attributes"
+
     self.node.storage.get_node(match.group(1), CalvinCB(
         func=self.storage_cb, handle=handle, connection=connection))
 

@@ -52,6 +52,11 @@ cpuAvail_help = {"0": "No CPU available",
                  "75": "75% of CPU available",
                  "100":"100% of CPU available"}
 
+# Acceptable values for health parameter
+health_keys =  ["bad", "good"]
+health_help = {"good": "node is health and can accept actors",
+               "bad": "node is not healthy enough to accept more actors"}
+
 cpuAffinity_keys = ["dedicated"]
 cpuAffinity_help = {"dedicated": "Runs in a unique CPU"}
 
@@ -80,7 +85,7 @@ memTotal_help = {"1K": "1Kb of RAM",
 
 
 # list of acceptable resources
-resource_list = ["cpuAvail", "memAvail"]
+resource_list = ["cpuAvail", "memAvail", "health"]
 
 attribute_docs = '''
 # Calvin Node Attributes
@@ -117,6 +122,8 @@ attribute_docs += ' ' * _indent_index + '"cpuTotal": { # The node\'s CPU power i
 attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuTotal_help[a] for a in cpuTotal_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"cpuAvail": { # The node\'s CPU availability information\n'
 attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuAvail_help[a] for a in cpuAvail_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += ' ' * _indent_index + '"health": { # The node\'s health information\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + health_help[a] for a in health_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"cpuAffinity": { # The node\'s CPU affinity\n'
 attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuAffinity_help[a] for a in cpuAffinity_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"memTotal": { # The node\'s total RAM information\n'
@@ -205,12 +212,30 @@ class AttributeResolverHelper(object):
         return resolved
 
     @classmethod
+    def health_resolver(cls, attr):
+        print "VM: 'attribute_resolver': \n We entered 'health_resolver': " + str(attributes)
+
+        if attr not in health_keys:
+            raise Exception('Health must be: %s' % health_keys)
+        resolved = map(cls._to_unicode, health_keys[:health_keys.index(attr) + 1])
+        return resolved
+
+    
+    @classmethod
     def cpu_avail_resolver(cls, attr):
         if attr not in cpuAvail_keys:
             raise Exception('CPU availability must be: %s' % cpuAvail_keys)
         resolved = map(cls._to_unicode, cpuAvail_keys[:cpuAvail_keys.index(attr) + 1])
         return resolved
 
+    @classmethod
+    def health_resolver(cls, attr):
+        if attr not in health_keys:
+            raise Exception('Health must be: %s' % health_keys)
+        resolved = map(cls._to_unicode, health_keys[:health_keys.index(attr) + 1])
+        return resolved
+    
+    
     @classmethod
     def cpu_total_resolver(cls, attr):
         if attr not in cpuTotal_keys:
@@ -296,6 +321,7 @@ attr_resolver = {"owner": AttributeResolverHelper.owner_resolver,
                  "cpuAffinity" : AttributeResolverHelper.cpu_affi_resolver,
                  "memAvail" : AttributeResolverHelper.mem_avail_resolver,
                  "memTotal" : AttributeResolverHelper.mem_total_resolver,
+                 "health" : AttributeResolverHelper.health_resolver,
                  "user_extra": AttributeResolverHelper.extra_resolver}
 
 keys = {"owner": owner_keys,
@@ -305,7 +331,8 @@ keys = {"owner": owner_keys,
         "cpuAvail": cpuAvail_keys,
         "cpuAffinity": cpuAffinity_keys,
         "memAvail": memAvail_keys,
-        "memTotal": memTotal_keys}
+        "memTotal": memTotal_keys,
+        "health": health_keys,}
 
 def format_index_string(attr, trim=True):
     ''' To format the index search string an attribute resolver function needs to be used:
@@ -352,6 +379,7 @@ class AttributeResolver(object):
             self.attr["private"] = {}
 
     def set_indexed_public(self, attributes):
+        print "VM: 'attribute_resolver': \n We received the following attributes: " + str(attributes)
         attr = {}
         for attr_type, attribute in attributes.items():
             attr[attr_type] = attr_resolver[attr_type](attribute)

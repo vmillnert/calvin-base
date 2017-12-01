@@ -623,5 +623,10 @@ def handle_node_health_metric(self, handle, connection, match, data, hdr):
     """
 
     # _log.critical("The new health was set to " + str(data['value']))
-
-    self.node.am.set_health(data['value'], CalvinCB(self.index_cb, handle, connection))
+    # try:
+    self.node.am.set_health(data['value'])
+    status = calvinresponse.OK
+    self.send_response(handle, connection, None, status=status)
+    # except:
+    #     status = calvinresponse.INTERNAL_ERROR
+    #     self.send_response(handle, connection, None, status=status)

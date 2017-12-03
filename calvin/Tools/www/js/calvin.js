@@ -71,30 +71,29 @@ function clearLog()
 
 function addActorToGraph(actor)
 {
-  if (document.getElementById("chkDrawApplication").checked) {
-    if (graphTimer) {
-      clearTimeout(graphTimer);
-    }
+    if (document.getElementById("chkDrawApplication").checked) {
+        if (graphTimer) {
+            clearTimeout(graphTimer);
+        }
+        for (var index in peers) {
+            if (peers[index].id == actor.peer_id) {
+                graph.setNode(peers[index].id, {
+                    label: peers[index].node_name.name,
+                    clusterLabelPos: 'top',
+                    style: 'fill: ' + peers[index].healthColor
+                });
+            }
+        }
 
-    for (var index in peers) {
-      if (peers[index].id == actor.peer_id) {
-        graph.setNode(peers[index].id, {
-          label: peers[index].node_name.name,
-          clusterLabelPos: 'top',
-          style: 'fill: LightGrey'
-        });
-      }
-    }
+        if (actor.is_shadow) {
+            graph.setNode(actor.id, {label: actor.name, style: 'fill: Tomato'});
+        } else {
+            graph.setNode(actor.id, {label: actor.name, style: 'fill: White'});
+        }
+        graph.setParent(actor.id, actor.peer_id);
 
-    if (actor.is_shadow) {
-      graph.setNode(actor.id, {label: actor.name, style: 'fill: Tomato'});
-    } else {
-      graph.setNode(actor.id, {label: actor.name, style: 'fill: White'});
+        graphTimer = setTimeout(updateGraph, 1000);
     }
-    graph.setParent(actor.id, actor.peer_id);
-
-    graphTimer = setTimeout(updateGraph, 1000);
-  }
 }
 
 function removeActorFromGraph(actor)
@@ -211,7 +210,7 @@ function drawConnections()
 
   var index_peer;
   for (index_peer in peers) {
-    var source = {id:peers[index_peer].id, name:peers[index_peer].node_name.name};
+    var source = {id:peers[index_peer].id, name:peers[index_peer].node_name.name, healthColor:peers[index_peer].healthColor};
     nodes.push(source);
   }
 
@@ -250,7 +249,8 @@ function drawConnections()
   var node = gnodes.append("circle")
   .attr("class", "node")
   .attr("r", 10)
-  .style("fill", function(d) { return color("#aec7e8"); })
+  // .style("fill", function(d) { return color("#aec7e8"); })
+  .style("fill", function(d) { return d.healthColor; })
   .call(force.drag);
 
   var labels = gnodes.append("text")
@@ -281,6 +281,7 @@ function runtimeObject(id)
   this.node_name = {};
   this.address = {};
   this.owner = {};
+  this.healthColor = "LightGray";
 }
 
 // Return runtime object from id
@@ -540,6 +541,8 @@ function getPeerID()
   );
 }
 
+
+
 // Get peers from index "index"
 function getPeersFromIndex(index)
 {
@@ -583,6 +586,42 @@ function getPeers(peer)
       {"peer": peer}
     );
   }
+}
+
+// Get health of the node with id "id"
+function getNodeHealth(id)
+{
+    send_request("GET",
+                 peers[id].control_uris[0] + '/node/resource/getHealth',
+                 null,
+                 function(data, kwargs) {
+                     if (data) {
+                         setNodeHealth(id, data);
+                     }
+                 },
+                 null,
+                 null
+                );
+    
+}
+
+function setNodeHealth(id, health)
+{
+    if (health === "good" ){
+        peers[id].healthColor = "LightGreen";
+    } else {
+        peers[id].healthColor = "LightPink";
+    }
+        
+    graph.setNode(peers[id].id, {
+        label: peers[id].node_name.name,
+        clusterLabelPos: 'top',
+        style: 'fill: ' + peers[id].healthColor
+    });
+
+    graphTimer = setTimeout(updateGraph, 1000);
+    drawConnections();
+
 }
 
 // Get runtime information from runtime with id "id"
@@ -1889,6 +1928,9 @@ function graphEventHandler(event)
 {
   console.log("graphEventHandler" + event.data);
   var data = JSON.parse(event.data);
+  for (var id in peers) {
+      getNodeHealth(id);
+  }    
   if(data.type == "actor_new") {
     var actor = findActor(data.actor_id);
     if (actor) {
@@ -1899,11 +1941,11 @@ function graphEventHandler(event)
   } else if(data.type == "actor_replicate") {
     var actor = findActor(data.actor_id);
     if (actor) {
-      actor.master = true
-      actor.replication_id = data.replication_id
+        actor.master = true;
+        actor.replication_id = data.replication_id;
     }
     if (!findRuntime(data.dest_node_id)) {
-      getPeer(data.dest_node_id);
+        getPeer(data.dest_node_id);
     }
     getActor(data.replica_actor_id, false, false);
   } else if(data.type == "actor_dereplicate") {

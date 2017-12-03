@@ -615,20 +615,20 @@ class ActorManager(object):
         _log.critical("VM: following actors are deployed: " + str(actor_ids))
         
         # we should migrate the first actor
-        actor_id = actor_ids[0]
-        _log.critical("VM: The following actor_id will be migrated: " + str(actor_ids[0]))
-
-        # specify the new requirement
-
-        requirements = [{"op" : "node_attr_match",
-                         "kwargs" : {"index":["health", "good"]},
-                         "type":"+"}]
-        # requirements = [{"op" : "node_attr_match",
-        #                  "kwargs" : {"index":["node_name", {"name": "dc2"}]},
-        #                  "type":"+"}]
-        
-        self.update_requirements(actor_id, requirements, extend=True, move=True,
-                                 authorization_check=False, callback=None)
+        if actor_ids:
+            actor_id = actor_ids[0]
+            print "VM: The following actor_id will be migrated: " + str(actor_ids[0])
+            # specify the new requirement
+            requirements = [{"op" : "node_attr_match",
+                             "kwargs" : {"index":["health", "good"]},
+                             "type":"+"}]
+            # requirements = [{"op" : "node_attr_match",
+            #                  "kwargs" : {"index":["node_name", {"name": "dc2"}]},
+            #                  "type":"+"}]
+            self.update_requirements(actor_id, requirements, extend=True, move=True,
+                                     authorization_check=False, callback=None)
+        else:
+            print "VM: not actors to be migrated"
 
     def set(self, prefix, prefix_index, value, cb=None):
         """

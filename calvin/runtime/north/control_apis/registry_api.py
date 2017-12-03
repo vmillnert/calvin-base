@@ -296,4 +296,22 @@ def handle_resource_mem_avail(self, handle, connection, match, data, hdr):
     """
     self.node.mem_monitor.set_avail(data['value'], CalvinCB(self.index_cb, handle, connection))
 
-        
+@handler(r"GET /node/resource/getHealth\sHTTP/1")
+@authentication_decorator
+def handle_get_health(self, handle, connection, match, data, hdr):
+    """
+    GET /node/resource/health
+    Updates the health metric of the current node
+    Body:
+    {
+        "value": <Health (between 0 and 1)>
+    }
+    Response status code: OK or INTERNAL_ERROR
+    Response: none
+    """
+    print "VM: Requested health metric:"    
+    # self.node.storage.get(match.group(1), cb=CalvinCB(
+    #     func=self.storage_cb, handle=handle, connection=connection))
+    self.node.storage.get(prefix='nodeHealth', key=self.node.id,
+                          cb=CalvinCB(func=self.storage_cb, handle=handle,
+                                      connection=connection))

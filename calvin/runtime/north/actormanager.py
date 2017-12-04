@@ -164,24 +164,24 @@ class ActorManager(object):
             actor_def, signer = self.lookup_and_verify(actor_type, security)
 
             print "VM: actor migrated successfully!"
-            print "VM: the actor has the following requirements:"
+            # print "VM: the actor has the following requirements:"
             deploy_reqs_list = state['private']['_deployment_requirements']
 
-            print "VM: deploy_reqs_list: " + str(deploy_reqs_list)
+            # print "VM: deploy_reqs_list: " + str(deploy_reqs_list)
 
             for i in range(0,len(deploy_reqs_list)):
                 deploy_req = deploy_reqs_list[i]
-                print "VM: deploy req: " + str(deploy_req)
+                # print "VM: deploy req: " + str(deploy_req)
 
                 if 'index' in deploy_req['kwargs']:
                     print "VM: " + str(deploy_req['kwargs']['index'])
                     index_reqs = deploy_req['kwargs']['index']
-                    print "VM: index_req: " + str(index_reqs)
+                    # print "VM: index_req: " + str(index_reqs)
                     if index_reqs[0] == 'health':
-                        print "VM: It's a match => we should remove this requirement"
+                        # print "VM: It's a match => we should remove this requirement"
                         del deploy_reqs_list[i]
                         
-            print "VM: new deploy_req: " + str(deploy_reqs_list)
+            # print "VM: new deploy_req: " + str(deploy_reqs_list)
                 
 
             requirements = actor_def.requires if hasattr(actor_def, "requires") else []
@@ -550,7 +550,7 @@ class ActorManager(object):
 
     def set_health(self, value):
 
-        _log.critical("VM: We set the health of the node to " + str(value))
+        _log.critical("\nVM: node health set to " + str(value))
 
         # data = {"node_name": {"name" : "wasp"}}
 
@@ -561,7 +561,10 @@ class ActorManager(object):
         else:
             # data = {u"health": u"good"}
             value = "good"
-            
+
+        self.node.control.log_health_new(value)
+        print "VM: send new health-value to log"
+
 
         # ###
         # New Way
@@ -578,7 +581,7 @@ class ActorManager(object):
         prefix = "nodeHealth"
         prefix_index = "health"
 
-        print "VM: the node id: " + str(self.node.id)
+        # print "VM: the node id: " + str(self.node.id)
 
         self.set(prefix, prefix_index, value)
         
@@ -628,7 +631,7 @@ class ActorManager(object):
             self.update_requirements(actor_id, requirements, extend=True, move=True,
                                      authorization_check=False, callback=None)
         else:
-            print "VM: not actors to be migrated"
+            print "VM: no actors to migrate"
 
     def set(self, prefix, prefix_index, value, cb=None):
         """
@@ -640,18 +643,18 @@ class ActorManager(object):
         value: new value to set.
         cb: callback to receive response. Signature: cb(value, True/False) 
         """
-        print "VM: Entering 'set' with:"
-        print "VM: prefix: " + str(prefix)
-        print "VM: prefix_id: " + str(prefix_index)
-        print "VM: value: " + str(value)
+        # print "VM: Entering 'set' with:"
+        # print "VM: prefix: " + str(prefix)
+        # print "VM: prefix_id: " + str(prefix_index)
+        # print "VM: value: " + str(value)
 
         # get old value to cleanup indexes
         self.node.storage.get(prefix=prefix, key=self.node.id, cb=CalvinCB(self._set_aux,
             prefix_index=prefix_index, new_value=value))
-        print "VM: Got the node-storage"
+        # print "VM: Got the node-storage"
 
         self.node.storage.set(prefix=prefix, key=self.node.id, value=value, cb=None)
-        print "VM: Set the node-storage"
+        # print "VM: Set the node-storage"
         if cb:
             async.DelayedCall(0, cb, value, True)
         
@@ -660,23 +663,23 @@ class ActorManager(object):
         Auxiliary method to set indexes .
         Removes old indexes before adding the new ones. Triggered by a get in the database
         """
-        print "VM: Entering '_set_aux' with:"
-        print "VM: key: " + str(key)
-        print "VM: value: " + str(value)
-        print "VM: new_value: " + str(new_value)
-        print "VM: prefix_index: " + str(prefix_index)
+        # print "VM: Entering '_set_aux' with:"
+        # print "VM: key: " + str(key)
+        # print "VM: value: " + str(value)
+        # print "VM: new_value: " + str(new_value)
+        # print "VM: prefix_index: " + str(prefix_index)
         
         # if new value is exactly the same, we don't need to change anything..
         if value is new_value:
             _log.debug("%s, value: %s. Nothing changed, just return.." % (prefix_index, value))
-            print("VM: %s, value: %s. Nothing changed, just return.." % (prefix_index, value))
+            # print("VM: %s, value: %s. Nothing changed, just return.." % (prefix_index, value))
             return
 
         # erase indexes related to old value
         if value is not None:
             old_data = AttributeResolver({"indexed_public": {prefix_index: str(value)}})
             _log.debug("Removing " + str(key) + " for " + prefix_index + ": " + str(value))
-            print("VM: Removing " + str(key) + " for " + prefix_index + ": " + str(value))
+            # print("VM: Removing " + str(key) + " for " + prefix_index + ": " + str(value))
             for index in old_data.get_indexed_public():
                 self.node.storage.remove_index(index=index, value=key, root_prefix_level=2)
 
@@ -684,7 +687,7 @@ class ActorManager(object):
         if new_value is not None:
             new_data = AttributeResolver({"indexed_public": {prefix_index: str(new_value)}})
             _log.debug("After possible removal, adding new node " + str(self.node.id) + " for " + prefix_index + ": " + str(new_value))
-            print("VM: After possible removal, adding new node " + str(self.node.id) + " for " + prefix_index + ": " + str(new_value))
+            # print("VM: After possible removal, adding new node " + str(self.node.id) + " for " + prefix_index + ": " + str(new_value))
             for index in new_data.get_indexed_public():
-                print "VM: index: " + index
+                # print "VM: index: " + index
                 self.node.storage.add_index(index=index, value=self.node.id, root_prefix_level=2, cb=None)

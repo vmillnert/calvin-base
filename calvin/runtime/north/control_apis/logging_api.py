@@ -17,6 +17,7 @@ LOG_LINK_DISCONNECTED = 8
 LOG_ACTOR_REPLICATE = 9
 LOG_ACTOR_DEREPLICATE = 10
 LOG_LOG_MESSAGE = 11
+LOG_HEALTH_NEW = 12
 
 
 class Logger(object):
@@ -373,6 +374,8 @@ def handle_post_log(self, handle, connection, match, data, hdr):
                     events.append(LOG_LINK_DISCONNECTED)
                 elif event == 'log_message':
                     events.append(LOG_LOG_MESSAGE)
+                elif event == 'health_new':
+                    events.append(LOG_HEALTH_NEW)
                 else:
                     status = calvinresponse.BAD_REQUEST
                     break
@@ -434,3 +437,26 @@ def handle_get_log(self, handle, connection, match, data, hdr):
         self.send_streamheader(handle, connection)
     else:
         self.send_response(handle, connection, None, calvinresponse.NOT_FOUND)
+
+@register
+def log_health_new(self, health_value):
+    """ Trace application new
+    """
+    disconnected = []
+    for user_id, logger in self.loggers.iteritems():
+        if not logger.events or LOG_HEALTH_NEW in logger.events:
+            data = {}
+            data['timestamp'] = time.time()
+            data['node_id'] = self.node.id
+            data['type'] = 'health_new'
+            data['value'] = health_value
+            if logger.connection is not None:
+                if not logger.connection.connection_lost:
+                    logger.connection.send("data: %s\n\n" % json.dumps(data))
+                else:
+                    disconnected.append(user_id)
+            elif self.tunnel_client is not None and logger.handle is not None:
+                msg = {"cmd": "logevent", "msgid": logger.handle, "header": None, "data": "data: %s\n\n" % json.dumps(data)}
+                self.tunnel_client.send(msg)
+    for user_id in disconnected:
+        del self.loggers[user_id]

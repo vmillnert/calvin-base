@@ -309,9 +309,6 @@ def handle_get_health(self, handle, connection, match, data, hdr):
     Response status code: OK or INTERNAL_ERROR
     Response: none
     """
-    print "VM: Requested health metric:"    
-    # self.node.storage.get(match.group(1), cb=CalvinCB(
-    #     func=self.storage_cb, handle=handle, connection=connection))
     self.node.storage.get(prefix='nodeHealth', key=self.node.id,
                           cb=CalvinCB(func=self.storage_cb, handle=handle,
                                       connection=connection))

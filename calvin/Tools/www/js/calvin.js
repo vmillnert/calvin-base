@@ -1718,6 +1718,9 @@ function startTrace() {
   if (document.getElementById("chkTraceLogMessage").checked) {
     events.push("log_message");
   }
+  if (document.getElementById("chkTraceHealthNew").checked) {
+    events.push("health_new");
+  }
 
   $("#traceDialog").modal('hide');
   for (var index in peers) {
@@ -1865,6 +1868,8 @@ function eventHandler(event)
     cell3.appendChild(document.createTextNode(data.peer_id));
   } else if(data.type == "log_message") {
     cell3.appendChild(document.createTextNode(data.msg));
+  } else if(data.type == "health_new") {
+    cell3.appendChild(document.createTextNode(data.value));
   } else {
     console.log("eventHandler - Unknown event type:" + data.type);
   }
@@ -1873,7 +1878,7 @@ function eventHandler(event)
 // Start event stream for graph
 function startGraphEvents(application)
 {
-  var events = ["actor_new", "actor_replicate", "actor_dereplicate"];
+  var events = ["actor_new", "actor_replicate", "actor_dereplicate", "health_new"];
   var actors = application.actors;
   for (var index in peers) {
     if (peers[index].control_uris) {
@@ -1928,9 +1933,9 @@ function graphEventHandler(event)
 {
   console.log("graphEventHandler" + event.data);
   var data = JSON.parse(event.data);
-  for (var id in peers) {
-      getNodeHealth(id);
-  }    
+  // for (var id in peers) {
+  //     getNodeHealth(id);
+  // }    
   if(data.type == "actor_new") {
     var actor = findActor(data.actor_id);
     if (actor) {
@@ -1964,6 +1969,10 @@ function graphEventHandler(event)
       actorSelector.options.remove(index);
       sortCombo(actorSelector);
     }
+  } else if (data.type == "health_new") {
+      for (var id in peers) {
+          getNodeHealth(id);
+      }
   } else {
     console.log("graphEventHandler - Unknown event type:" + data.type);
   }

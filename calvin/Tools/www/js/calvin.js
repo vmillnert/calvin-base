@@ -485,6 +485,7 @@ function connect()
 
   getPeerID();
   getPeersFromIndex("/node/attribute/node_name");
+
 }
 
 function make_base_auth(user, password)
@@ -607,6 +608,8 @@ function getNodeHealth(id)
 
 function setNodeHealth(id, health)
 {
+
+
     if (health === "good" ){
         peers[id].healthColor = "LightGreen";
     } else {
@@ -619,7 +622,7 @@ function setNodeHealth(id, health)
         style: 'fill: ' + peers[id].healthColor
     });
 
-    graphTimer = setTimeout(updateGraph, 1000);
+    graphTimer = setTimeout(updateGraph, 100);
     drawConnections();
 
 }
@@ -1932,10 +1935,7 @@ function stopGraphEvents()
 function graphEventHandler(event)
 {
   console.log("graphEventHandler" + event.data);
-  var data = JSON.parse(event.data);
-  // for (var id in peers) {
-  //     getNodeHealth(id);
-  // }    
+  var data = JSON.parse(event.data);  
   if(data.type == "actor_new") {
     var actor = findActor(data.actor_id);
     if (actor) {
@@ -1970,8 +1970,15 @@ function graphEventHandler(event)
       sortCombo(actorSelector);
     }
   } else if (data.type == "health_new") {
-      for (var id in peers) {
-          getNodeHealth(id);
+      for (id in peers) {
+          // showSuccess("data.node_id: " + data.node_id);
+          // showSuccess("data.value: " + data.value);
+          // showSuccess("peers[id].id: " + peers[id].id);
+          if (data.node_id === peers[id].id){
+              setNodeHealth(id, data.value);
+          } else if (peers[id].healthColor === "LightGray") {
+              getNodeHealth(id); // if we don't have any info about the health of this node => update it
+          }
       }
   } else {
     console.log("graphEventHandler - Unknown event type:" + data.type);

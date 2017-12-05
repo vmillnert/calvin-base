@@ -30,7 +30,7 @@ from calvin.runtime.north.calvinlib import get_calvinlib
 
 # Stuff that we've added
 from calvin.utilities.attribute_resolver import AttributeResolver
-
+import time
 
 _log = get_logger(__name__)
 
@@ -552,63 +552,26 @@ class ActorManager(object):
 
         _log.critical("\nVM: node health set to " + str(value))
 
-        # data = {"node_name": {"name" : "wasp"}}
-
         if float(value) < 0.75:
-            # data = {u"health": u"bad"}
             value = "bad"
-            self._health_triggered_migration()
         else:
-            # data = {u"health": u"good"}
             value = "good"
+        
 
         self.node.control.log_health_new(value)
         print "VM: send new health-value to log"
 
-
-        # ###
-        # New Way
-        # ###
-        # Sets a certain resource of a node.
-        # Gets the old value to erase from indexes.
-        # Parameters:
-        # prefix: String used in storage for attribute, e.g. nodeCpuAvail.
-        # prefix_index: String used in indexed_public structure for this field, e.g. cpuAvail.
-        # value: new value to set.
-        # cb: callback to receive response. Signature: cb(value, True/False) 
-        
         # get old value to cleanup indexes
         prefix = "nodeHealth"
         prefix_index = "health"
-
-        # print "VM: the node id: " + str(self.node.id)
-
         self.set(prefix, prefix_index, value)
+
+        if value == "bad":
+            self._health_triggered_migration()
+
         
-        # self.node.storage.get(prefix=prefix, key=self.node.id, cb=CalvinCB(self._set_aux,
-        #     prefix_index=prefix_index, new_value=value))
 
-        # self.node.storage.set(prefix=prefix, key=self.node.id, value=value, cb=None)
 
-        # if cb:
-        #     async.DelayedCall(0, cb, value, True)
-
-        # ###
-        
-        # ####
-        # Old way
-        # ####
-
-        # self.node.storage.remove_node_index(self.node)
-        # data = {u'health' : value}
-        # self.node.attributes.set_indexed_public(data)            
-        # self.node_name = self.node.attributes.get_node_name_as_str()
-        # # print "node_name: " + str(self.node_name)
-        # self.node.storage.add_node(self.node)
-
-        # #####
-
-        # _log.critical("VM: updated indexed_public with: " + str(value))
 
 
 
@@ -625,9 +588,6 @@ class ActorManager(object):
             requirements = [{"op" : "node_attr_match",
                              "kwargs" : {"index":["health", "good"]},
                              "type":"+"}]
-            # requirements = [{"op" : "node_attr_match",
-            #                  "kwargs" : {"index":["node_name", {"name": "dc2"}]},
-            #                  "type":"+"}]
             self.update_requirements(actor_id, requirements, extend=True, move=True,
                                      authorization_check=False, callback=None)
         else:

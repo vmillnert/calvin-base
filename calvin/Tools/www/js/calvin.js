@@ -1975,7 +1975,13 @@ function graphEventHandler(event)
           // showSuccess("data.value: " + data.value);
           // showSuccess("peers[id].id: " + peers[id].id);
           if (data.node_id === peers[id].id){
-              setNodeHealth(id, data.value);
+              // check so that we don't do uneccessary updates
+              // we should only update it if it changes health
+              if (data.value === "good" && peers[id].healthColor !== "LightGreen"){
+                  setNodeHealth(id, data.value);
+              } else if (data.value === "bad" && peers[id].healthColor !== "LightPink"){
+                  setNodeHealth(id, data.value);
+              }
           } else if (peers[id].healthColor === "LightGray") {
               getNodeHealth(id); // if we don't have any info about the health of this node => update it
           }

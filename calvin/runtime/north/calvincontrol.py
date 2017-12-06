@@ -229,6 +229,10 @@ class CalvinControl(object):
 
     def log_log_message(self, message):
         pass
+    
+    def log_health_new(self, health_value):
+        pass
+
 
 
 

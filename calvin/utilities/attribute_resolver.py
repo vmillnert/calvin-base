@@ -45,15 +45,15 @@ node_name_help = {"organization": '(reversed DNS) name of organisation',
                   "group": 'Name of node group e.g. "project" name',
                   "name": 'Name of node'}
 # Acceptable values for CPU parameter
-cpuAvail_keys = ["0", "25", "50", "75", "100"]
+cpuAvail_keys =  ["0", "25", "50", "75", "100"]
 cpuAvail_help = {"0": "No CPU available",
                  "25": "25% of CPU available",
                  "50": "50% of CPU available",
                  "75": "75% of CPU available",
-                 "100": "100% of CPU available"}
+                 "100":"100% of CPU available"}
 
 # Acceptable values for health parameter
-health_keys = ["bad", "good"]
+health_keys =  ["bad", "good"]
 health_help = {"good": "node is health and can accept actors",
                "bad": "node is not healthy enough to accept more actors"}
 
@@ -65,23 +65,24 @@ cpuTotal_help = {"1": "One MIPS",
                  "1000": "One thousand MIPS",
                  "100000": "One hundred thousand MIPS",
                  "1000000": "One GIPS (billion instructions per second)",
-                 "10000000": "Ten GIPS (billion instructions per second)"}
+                 "10000000":"Ten GIPS (billion instructions per second)"}
 
 # Acceptable values for RAM parameter
-memAvail_keys = ["0", "25", "50", "75", "100"]
+memAvail_keys =  ["0", "25", "50", "75", "100"]
 memAvail_help = {"0": "No RAM available",
                  "25": "25% of RAM available",
                  "50": "50% of RAM available",
                  "75": "75% of RAM available",
-                 "100": "100% of RAM available"}
+                 "100":"100% of RAM available"}
 
 memTotal_keys = ["1K", "100K", "1M", "100M", "1G", "10G"]
 memTotal_help = {"1K": "1Kb of RAM",
                  "100K": "100Kb of RAM",
                  "1M": "1Mb of RAM",
                  "100M": "100Mb of RAM",
-                 "1G": "1Gb of RAM",
-                 "10G": "10Gb of RAM"}
+                 "1G":"1Gb of RAM",
+                 "10G":"10Gb of RAM"}
+
 
 # list of acceptable resources
 resource_list = ["cpuAvail", "memAvail", "health"]
@@ -112,32 +113,23 @@ The data structure is as follows:
 _indent_index = 20
 _indent_index2 = _indent_index + 4
 attribute_docs += ' ' * _indent_index + '"owner": {# The node\'s affilation\n'
-attribute_docs += (',\n').join(
-    [' ' * _indent_index2 + '"' + a + '": ' + owner_help[a] for a in owner_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + owner_help[a] for a in owner_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"address": {# The node\'s (static) address\n'
-attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + address_help[a] for a in
-                                address_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + address_help[a] for a in address_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"node_name": { # The node\'s static easy identification\n'
-attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + node_name_help[a] for a in
-                                node_name_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + node_name_help[a] for a in node_name_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"cpuTotal": { # The node\'s CPU power in MIPS (million instructions per second)\n'
-attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuTotal_help[a] for a in
-                                cpuTotal_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuTotal_help[a] for a in cpuTotal_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"cpuAvail": { # The node\'s CPU availability information\n'
-attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuAvail_help[a] for a in
-                                cpuAvail_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuAvail_help[a] for a in cpuAvail_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"health": { # The node\'s health information\n'
-attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + health_help[a] for a in
-                                health_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + health_help[a] for a in health_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"cpuAffinity": { # The node\'s CPU affinity\n'
-attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuAffinity_help[a] for a in
-                                cpuAffinity_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuAffinity_help[a] for a in cpuAffinity_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"memTotal": { # The node\'s total RAM information\n'
-attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + memTotal_help[a] for a in
-                                memTotal_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + memTotal_help[a] for a in memTotal_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"memAvail": { # The node\'s RAM availability information\n'
-attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + memAvail_help[a] for a in
-                                memAvail_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + memAvail_help[a] for a in memAvail_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '''"user_extra": {# Any user specific extra attributes, as a list of list with index words, not possible to skip levels
                 }
     }
@@ -177,6 +169,7 @@ countries = ["AD", "AE", "AF", "AG", "AI", "AL", "AM", "AO", "AQ", "AR", "AS", "
              "SN", "SO", "SR", "SS", "ST", "SV", "SX", "SY", "SZ", "TC", "TD", "TF", "TG", "TH", "TJ", "TK", "TL",
              "TM", "TN", "TO", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "UM", "US", "UY", "UZ", "VA", "VC", "VE",
              "VG", "VI", "VN", "VU", "WF", "WS", "YE", "YT", "ZA", "ZM", "ZW"]
+
 
 
 class AttributeResolverHelper(object):
@@ -227,6 +220,7 @@ class AttributeResolverHelper(object):
         resolved = map(cls._to_unicode, health_keys[:health_keys.index(attr) + 1])
         return resolved
 
+
     @classmethod
     def cpu_avail_resolver(cls, attr):
         if attr not in cpuAvail_keys:
@@ -240,6 +234,7 @@ class AttributeResolverHelper(object):
             raise Exception('Health must be: %s' % health_keys)
         resolved = map(cls._to_unicode, health_keys[:health_keys.index(attr) + 1])
         return resolved
+
 
     @classmethod
     def cpu_total_resolver(cls, attr):
@@ -321,12 +316,12 @@ class AttributeResolverHelper(object):
 attr_resolver = {"owner": AttributeResolverHelper.owner_resolver,
                  "node_name": AttributeResolverHelper.node_name_resolver,
                  "address": AttributeResolverHelper.address_resolver,
-                 "cpuTotal": AttributeResolverHelper.cpu_total_resolver,
-                 "cpuAvail": AttributeResolverHelper.cpu_avail_resolver,
-                 "cpuAffinity": AttributeResolverHelper.cpu_affi_resolver,
-                 "memAvail": AttributeResolverHelper.mem_avail_resolver,
-                 "memTotal": AttributeResolverHelper.mem_total_resolver,
-                 "health": AttributeResolverHelper.health_resolver,
+                 "cpuTotal" : AttributeResolverHelper.cpu_total_resolver,
+                 "cpuAvail" : AttributeResolverHelper.cpu_avail_resolver,
+                 "cpuAffinity" : AttributeResolverHelper.cpu_affi_resolver,
+                 "memAvail" : AttributeResolverHelper.mem_avail_resolver,
+                 "memTotal" : AttributeResolverHelper.mem_total_resolver,
+                 "health" : AttributeResolverHelper.health_resolver,
                  "user_extra": AttributeResolverHelper.extra_resolver}
 
 keys = {"owner": owner_keys,
@@ -337,8 +332,7 @@ keys = {"owner": owner_keys,
         "cpuAffinity": cpuAffinity_keys,
         "memAvail": memAvail_keys,
         "memTotal": memTotal_keys,
-        "health": health_keys, }
-
+        "health": health_keys,}
 
 def format_index_string(attr, trim=True):
     ''' To format the index search string an attribute resolver function needs to be used:
@@ -363,7 +357,6 @@ def format_index_string(attr, trim=True):
 
 class AttributeResolver(object):
     '''Resolves incoming attributes for a node and verify it'''
-
     def __init__(self, attr):
         super(AttributeResolver, self).__init__()
         self.attr = attr
@@ -408,9 +401,9 @@ class AttributeResolver(object):
             return value
         else:
             return self._get_attribute_helper(indices[1:], value[indices[0]])
-
+    
     def _get_attribute(self, index, which):
-        indices = [idx for idx in index.split("/") if idx]  # remove extra /'s
+        indices = [idx for idx in index.split("/") if idx] # remove extra /'s
         try:
             return self._get_attribute_helper(indices, self.attr[which])
         except KeyError:
@@ -420,24 +413,24 @@ class AttributeResolver(object):
             _log.error("Error: Invalid attribute '%r'" % (index,))
 
     def _has_attribute(self, index, which):
-        indices = [idx for idx in index.split("/") if idx]  # remove extra /'s
+        indices = [idx for idx in index.split("/") if idx] # remove extra /'s
         try:
             return self._get_attribute_helper(indices, self.attr[which]) or True
         except KeyError:
             return False
         except:
             _log.error("Error: Invalid attribute '%r'" % (index,))
-
+        
     def has_private_attribute(self, index):
         return self._has_attribute(index, "private")
-
+        
     def has_public_attribute(self, index):
         return self._has_attribute(index, "public")
-
+        
     def get_private(self, index=None):
         if not index:
             return self.attr["private"]
-        return self._get_attribute(index, "private")
+        return self._get_attribute(index, "private")            
 
     def get_public(self, index=None):
         if not index:
@@ -446,8 +439,7 @@ class AttributeResolver(object):
 
     def get_indexed_public(self, as_list=False):
         # Return all indexes encoded for storage as a list of lists
-        return [AttributeResolverHelper.encode_index([AttributeResolverHelper._to_unicode(k)] + v, as_list=as_list) for
-                k, v in self.attr["indexed_public"].items()]
+        return [AttributeResolverHelper.encode_index([AttributeResolverHelper._to_unicode(k)] + v, as_list=as_list) for k, v in self.attr["indexed_public"].items()]
 
     def get_node_name_as_str(self):
         """
@@ -467,17 +459,16 @@ class AttributeResolver(object):
         The attribute type (e.g. "owner") and the attribute name (e.g. "organization")
         are concatenated using "." to form the key (e.g. "owner.organization").
         """
-        return {attr_type + "." + keys[attr_type][i]: value
-                for attr_type, value_list in self.attr["indexed_public"].iteritems()
+        return {attr_type + "." + keys[attr_type][i]: value 
+                for attr_type, value_list in self.attr["indexed_public"].iteritems() 
                 for i, value in enumerate(value_list) if value is not None}
-
 
 if __name__ == "__main__":
     ar = AttributeResolver({"indexed_public": {
-        "address": {"country": "SE", "locality": "Lund", "street": u"Sölvegatan", "streetNumber": 53},
-        "owner": {"organization": u"ericsson.com", "organizationalUnit": "Ericsson Research", "personOrGroup": "CT"},
-        "node_name": {"organization": "ericsson.com", "purpose": "Test", "name": "alpha1"},
-        "cpuAvail": 50}})
+                            "address": {"country": "SE", "locality": "Lund", "street": u"Sölvegatan", "streetNumber": 53},
+                            "owner": {"organization": u"ericsson.com", "organizationalUnit": "Ericsson Research", "personOrGroup": "CT"},
+                            "node_name": {"organization": "ericsson.com", "purpose": "Test", "name": "alpha1"},
+                            "cpuAvail": 50}})
 
     print attribute_docs
 
@@ -505,4 +496,4 @@ if __name__ == "__main__":
     s = AttributeResolverHelper.encode_index(['cpuAvail', '0', '25', '50'])
     print s
     print AttributeResolverHelper.decode_index(s)
-
+    

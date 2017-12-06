@@ -162,6 +162,10 @@ def handle_post_node_attribute_indexed_public(self, handle, connection, match, d
     }
     Response status code: OK, UNAUTHORIZED or INTERNAL_ERROR
     """
+
+    print "VM: adding a new attribute: "
+    print data
+
     try:
         if match.group(1) == self.node.id:
             if self.node.runtime_credentials is None or self.node.runtime_credentials.domain is None:
@@ -202,6 +206,8 @@ def handle_get_node(self, handle, connection, match, data, hdr):
         "uri": "calvinip://<address>:<port>"
     }
     """
+    print "VM: requesting info about node-attributes"
+
     self.node.storage.get_node(match.group(1), CalvinCB(
         func=self.storage_cb, handle=handle, connection=connection))
 
@@ -290,14 +296,11 @@ def handle_resource_mem_avail(self, handle, connection, match, data, hdr):
     """
     self.node.mem_monitor.set_avail(data['value'], CalvinCB(self.index_cb, handle, connection))
 
-    
-
-
-@handler(r"POST /node/resource/healthMetric\sHTTP/1")
+@handler(r"GET /node/resource/getHealth\sHTTP/1")
 @authentication_decorator
-def handle_node_health_metric(self, handle, connection, match, data, hdr):
+def handle_get_health(self, handle, connection, match, data, hdr):
     """
-    POST /node/resource/healthMetric
+    GET /node/resource/health
     Updates the health metric of the current node
     Body:
     {
@@ -306,13 +309,6 @@ def handle_node_health_metric(self, handle, connection, match, data, hdr):
     Response status code: OK or INTERNAL_ERROR
     Response: none
     """
-
-    # print "The new health was set to " + str(data['value'])
-
-    try:    
-        self.node.app_manager.set_health(data['value'])
-        status = calvinresponse.OK
-    except:
-        status = calvinresponse.INTERNAL_ERROR
-    self.send_response(handle, connection, None, status)
-
+    self.node.storage.get(prefix='nodeHealth', key=self.node.id,
+                          cb=CalvinCB(func=self.storage_cb, handle=handle,
+                                      connection=connection))

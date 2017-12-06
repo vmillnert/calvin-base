@@ -17,6 +17,12 @@ class HealthMonitor(object):
         self.value_range = {'min': 0.0, 'max': 1.0}
         self.threshold = 0.75
 
+        self._set_initial_health()
+
+    def _set_initial_health(self):
+        self.set_health(self.value_range['max'])
+
+
     def set_health(self, health_value, cb=None):
         """
         Sets the health of a node. health_value should be a float between 0 (worst) and 1 (best).

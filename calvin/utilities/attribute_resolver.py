@@ -52,13 +52,10 @@ cpuAvail_help = {"0": "No CPU available",
                  "75": "75% of CPU available",
                  "100": "100% of CPU available"}
 
-# Acceptable values for healthMetric parameter
-healthMetric_keys = ["0.0", "0.25", "0.50", "0.75", "1.0"]
-healthMetric_help = {"0.0": "Runtime health perfect",
-                     "0.25": "Runtime health slightly degraded",
-                     "0.50": "Runtime health degraded",
-                     ".75": "Runtime health seriously degraded",
-                     "1.0": "Runtime health worst possible"}
+# Acceptable values for health parameter
+health_keys = ["bad", "good"]
+health_help = {"good": "node is health and can accept actors",
+               "bad": "node is not healthy enough to accept more actors"}
 
 cpuAffinity_keys = ["dedicated"]
 cpuAffinity_help = {"dedicated": "Runs in a unique CPU"}
@@ -87,7 +84,7 @@ memTotal_help = {"1K": "1Kb of RAM",
                  "10G": "10Gb of RAM"}
 
 # list of acceptable resources
-resource_list = ["cpuAvail", "memAvail", "healthMetric"]
+resource_list = ["cpuAvail", "memAvail", "health"]
 
 attribute_docs = '''
 # Calvin Node Attributes
@@ -129,9 +126,9 @@ attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuTota
 attribute_docs += ' ' * _indent_index + '"cpuAvail": { # The node\'s CPU availability information\n'
 attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuAvail_help[a] for a in
                                 cpuAvail_keys]) + '\n' + ' ' * _indent_index + '},\n'
-attribute_docs += ' ' * _indent_index + '"healthMetric": { # The node\'s health information\n'
-attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + healthMetric_help[a] for a in
-                                healthMetric_keys]) + '\n' + ' ' * _indent_index + '},\n'
+attribute_docs += ' ' * _indent_index + '"health": { # The node\'s health information\n'
+attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + health_help[a] for a in
+                                health_keys]) + '\n' + ' ' * _indent_index + '},\n'
 attribute_docs += ' ' * _indent_index + '"cpuAffinity": { # The node\'s CPU affinity\n'
 attribute_docs += (',\n').join([' ' * _indent_index2 + '"' + a + '": ' + cpuAffinity_help[a] for a in
                                 cpuAffinity_keys]) + '\n' + ' ' * _indent_index + '},\n'
@@ -222,6 +219,15 @@ class AttributeResolverHelper(object):
         return resolved
 
     @classmethod
+    def health_resolver(cls, attr):
+        print "VM: 'attribute_resolver': \n We entered 'health_resolver': " + str(attributes)
+
+        if attr not in health_keys:
+            raise Exception('Health must be: %s' % health_keys)
+        resolved = map(cls._to_unicode, health_keys[:health_keys.index(attr) + 1])
+        return resolved
+
+    @classmethod
     def cpu_avail_resolver(cls, attr):
         if attr not in cpuAvail_keys:
             raise Exception('CPU availability must be: %s' % cpuAvail_keys)
@@ -229,10 +235,10 @@ class AttributeResolverHelper(object):
         return resolved
 
     @classmethod
-    def health_metric_resolver(cls, attr):
-        if attr not in healthMetric_keys:
-            raise Exception('Health metric must be: %s' % healthMetric_keys)
-        resolved = map(cls._to_unicode, healthMetric_keys[:healthMetric_keys.index(attr) + 1])
+    def health_resolver(cls, attr):
+        if attr not in health_keys:
+            raise Exception('Health must be: %s' % health_keys)
+        resolved = map(cls._to_unicode, health_keys[:health_keys.index(attr) + 1])
         return resolved
 
     @classmethod
@@ -317,10 +323,10 @@ attr_resolver = {"owner": AttributeResolverHelper.owner_resolver,
                  "address": AttributeResolverHelper.address_resolver,
                  "cpuTotal": AttributeResolverHelper.cpu_total_resolver,
                  "cpuAvail": AttributeResolverHelper.cpu_avail_resolver,
-                 "healthMetric": AttributeResolverHelper.health_metric_resolver,
                  "cpuAffinity": AttributeResolverHelper.cpu_affi_resolver,
                  "memAvail": AttributeResolverHelper.mem_avail_resolver,
                  "memTotal": AttributeResolverHelper.mem_total_resolver,
+                 "health": AttributeResolverHelper.health_resolver,
                  "user_extra": AttributeResolverHelper.extra_resolver}
 
 keys = {"owner": owner_keys,
@@ -328,10 +334,10 @@ keys = {"owner": owner_keys,
         "address": address_keys,
         "cpuTotal": cpuTotal_keys,
         "cpuAvail": cpuAvail_keys,
-        "healthMetric": healthMetric_keys,
         "cpuAffinity": cpuAffinity_keys,
         "memAvail": memAvail_keys,
-        "memTotal": memTotal_keys}
+        "memTotal": memTotal_keys,
+        "health": health_keys, }
 
 
 def format_index_string(attr, trim=True):
@@ -380,6 +386,7 @@ class AttributeResolver(object):
             self.attr["private"] = {}
 
     def set_indexed_public(self, attributes):
+        print "VM: 'attribute_resolver': \n We received the following attributes: " + str(attributes)
         attr = {}
         for attr_type, attribute in attributes.items():
             attr[attr_type] = attr_resolver[attr_type](attribute)
@@ -470,7 +477,7 @@ if __name__ == "__main__":
         "address": {"country": "SE", "locality": "Lund", "street": u"Sölvegatan", "streetNumber": 53},
         "owner": {"organization": u"ericsson.com", "organizationalUnit": "Ericsson Research", "personOrGroup": "CT"},
         "node_name": {"organization": "ericsson.com", "purpose": "Test", "name": "alpha1"},
-        "cpuAvail": 50}, "healthMetric": 0.0})
+        "cpuAvail": 50}})
 
     print attribute_docs
 
@@ -498,6 +505,4 @@ if __name__ == "__main__":
     s = AttributeResolverHelper.encode_index(['cpuAvail', '0', '25', '50'])
     print s
     print AttributeResolverHelper.decode_index(s)
-    s = AttributeResolverHelper.encode_index(['healthMetric', '0.0', '0.25', '0.50'])
-    print s
-    print AttributeResolverHelper.decode_index(s)
+

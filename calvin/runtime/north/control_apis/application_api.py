@@ -605,3 +605,26 @@ def handle_disconnect_cb(self, handle, connection, **kwargs):
     status = kwargs.get('status', None)
     _log.analyze(self.node.id, "+ DISCONNECTED", {'status': status.status}, tb=True)
     self.send_response(handle, connection, None, status=status.status)
+
+@handler(r"POST /actor/putmatch\sHTTP/1")
+@authentication_decorator
+def handle_putmatch(self, handle, connection, match, data, hdr):
+    """
+    POST /actor/putmatch
+    Set the value of a requirement for all actors which match a property
+    Body:
+    {
+        "match": {matchset},
+        "put": {putset}
+    }
+    Response status code: OK, INTERNAL_ERROR or NOT_FOUND
+    Response: none
+    """
+    match = data.get('match', None)
+    put = data.get('put', None)
+    _log.warning("GOT PUTMATCH")
+    for key,data in match.items():
+        _log.warning("{} == {}?".format(key, data))
+    for key,data in put.items():
+        _log.warning("  {} => {}".format(key, data))
+    self.send_response(handle, connection, None, status=calvinresponse.OK)

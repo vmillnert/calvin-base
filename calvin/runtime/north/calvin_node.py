@@ -50,6 +50,7 @@ from calvin.utilities.calvinlogger import get_logger, set_file
 from calvin.utilities import calvinconfig
 from calvin.runtime.north.resource_monitor.cpu import CpuMonitor
 from calvin.runtime.north.resource_monitor.memory import MemMonitor
+from calvin.runtime.north.resource_monitor.health import HealthMonitor
 from calvin.runtime.north.proxyhandler import ProxyHandler
 
 _log = get_logger(__name__)
@@ -138,6 +139,7 @@ class Node(object):
 
         self.cpu_monitor = CpuMonitor(self.id, self.storage)
         self.mem_monitor = MemMonitor(self.id, self.storage)
+        self.health_monitor = HealthMonitor(self)
 
         self.proxy_handler = ProxyHandler(self)
 

@@ -621,15 +621,7 @@ def handle_node_health_metric(self, handle, connection, match, data, hdr):
     Response status code: OK or INTERNAL_ERROR
     Response: none
     """
-
-    # _log.critical("The new health was set to " + str(data['value']))
-    # try:
-    self.node.am.set_health(data['value'])
-    status = calvinresponse.OK
-    self.send_response(handle, connection, None, status=status)
-    # except:
-    #     status = calvinresponse.INTERNAL_ERROR
-    #     self.send_response(handle, connection, None, status=status)
+    self.node.health_monitor.set_health(data['value'], CalvinCB(self.handle_node_health_metric_cb, handle, connection))
 
 
 @handler(r"GET /node/resource/health\sHTTP/1")
@@ -645,12 +637,17 @@ def handle_node_health_metric(self, handle, connection, match, data, hdr):
     Response status code: OK or INTERNAL_ERROR
     Response: none
     """
+    self.node.health_monitor.set_health(data['value'], CalvinCB(self.handle_node_health_metric_cb, handle, connection))
 
-    # _log.critical("The new health was set to " + str(data['value']))
-    # try:
-    self.node.am.set_health(data['value'])
-    status = calvinresponse.OK
-    self.send_response(handle, connection, None, status=status)
-    # except:
-    #     status = calvinresponse.INTERNAL_ERROR
-    #     self.send_response(handle, connection, None, status=status)
+@register
+def handle_node_health_metric_cb(self, handle, connection, *args, **kwargs):
+    """ Node health set response
+    """
+    _log.critical("#TN: Got to node health cb!")
+    if 'status' in kwargs:
+        status = kwargs['status']
+        _log.critical("#TN: Reported status is " + str(status))
+    else:
+        status = False
+    self.send_response(handle, connection, None,
+                       status=calvinresponse.OK if status is True else calvinresponse.INTERNAL_ERROR)

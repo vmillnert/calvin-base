@@ -53,5 +53,5 @@ class ResourceMonitorHelper(object):
 
         self.storage.set(prefix=prefix, key=self.node_id, value=value, cb=None)
         if cb:
-            async.DelayedCall(0, cb, value, True)
+            async.DelayedCall(0, cb, value=value, status=True)
 

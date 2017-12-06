@@ -548,34 +548,7 @@ class ActorManager(object):
     def list_actors(self):
         return self.actors.keys()
 
-    def set_health(self, value):
-
-        _log.critical("\nVM: node health set to " + str(value))
-
-        if float(value) < 0.75:
-            value = "bad"
-        else:
-            value = "good"
-        
-
-        self.node.control.log_health_new(value)
-        print "VM: send new health-value to log"
-
-        # get old value to cleanup indexes
-        prefix = "nodeHealth"
-        prefix_index = "health"
-        self.set(prefix, prefix_index, value)
-
-        if value == "bad":
-            self._health_triggered_migration()
-
-        
-
-
-
-
-
-    def _health_triggered_migration(self):
+    def health_triggered_migration(self):
         _log.critical("VM: health triggered migration necessary")
         actor_ids = self.list_actors()
         _log.critical("VM: following actors are deployed: " + str(actor_ids))
@@ -593,61 +566,3 @@ class ActorManager(object):
         else:
             print "VM: no actors to migrate"
 
-    def set(self, prefix, prefix_index, value, cb=None):
-        """
-        Sets a certain resource of a node.
-        Gets the old value to erase from indexes.
-        Parameters:
-        prefix: String used in storage for attribute, e.g. nodeCpuAvail.
-        prefix_index: String used in indexed_public structure for this field, e.g. cpuAvail.
-        value: new value to set.
-        cb: callback to receive response. Signature: cb(value, True/False) 
-        """
-        # print "VM: Entering 'set' with:"
-        # print "VM: prefix: " + str(prefix)
-        # print "VM: prefix_id: " + str(prefix_index)
-        # print "VM: value: " + str(value)
-
-        # get old value to cleanup indexes
-        self.node.storage.get(prefix=prefix, key=self.node.id, cb=CalvinCB(self._set_aux,
-            prefix_index=prefix_index, new_value=value))
-        # print "VM: Got the node-storage"
-
-        self.node.storage.set(prefix=prefix, key=self.node.id, value=value, cb=None)
-        # print "VM: Set the node-storage"
-        if cb:
-            async.DelayedCall(0, cb, value, True)
-        
-    def _set_aux(self, key, value, prefix_index, new_value=None):
-        """
-        Auxiliary method to set indexes .
-        Removes old indexes before adding the new ones. Triggered by a get in the database
-        """
-        # print "VM: Entering '_set_aux' with:"
-        # print "VM: key: " + str(key)
-        # print "VM: value: " + str(value)
-        # print "VM: new_value: " + str(new_value)
-        # print "VM: prefix_index: " + str(prefix_index)
-        
-        # if new value is exactly the same, we don't need to change anything..
-        if value is new_value:
-            _log.debug("%s, value: %s. Nothing changed, just return.." % (prefix_index, value))
-            # print("VM: %s, value: %s. Nothing changed, just return.." % (prefix_index, value))
-            return
-
-        # erase indexes related to old value
-        if value is not None:
-            old_data = AttributeResolver({"indexed_public": {prefix_index: str(value)}})
-            _log.debug("Removing " + str(key) + " for " + prefix_index + ": " + str(value))
-            # print("VM: Removing " + str(key) + " for " + prefix_index + ": " + str(value))
-            for index in old_data.get_indexed_public():
-                self.node.storage.remove_index(index=index, value=key, root_prefix_level=2)
-
-        # insert the new ones
-        if new_value is not None:
-            new_data = AttributeResolver({"indexed_public": {prefix_index: str(new_value)}})
-            _log.debug("After possible removal, adding new node " + str(self.node.id) + " for " + prefix_index + ": " + str(new_value))
-            # print("VM: After possible removal, adding new node " + str(self.node.id) + " for " + prefix_index + ": " + str(new_value))
-            for index in new_data.get_indexed_public():
-                # print "VM: index: " + index
-                self.node.storage.add_index(index=index, value=self.node.id, root_prefix_level=2, cb=None)

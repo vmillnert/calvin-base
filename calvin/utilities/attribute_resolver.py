@@ -213,13 +213,12 @@ class AttributeResolverHelper(object):
 
     @classmethod
     def health_resolver(cls, attr):
-        print "VM: 'attribute_resolver': \n We entered 'health_resolver': " + str(attributes)
+        print "VM: 'attribute_resolver': \n We entered 'health_resolver': " + str(attr)
 
         if attr not in health_keys:
             raise Exception('Health must be: %s' % health_keys)
         resolved = map(cls._to_unicode, health_keys[:health_keys.index(attr) + 1])
         return resolved
-
 
     @classmethod
     def cpu_avail_resolver(cls, attr):
@@ -227,14 +226,6 @@ class AttributeResolverHelper(object):
             raise Exception('CPU availability must be: %s' % cpuAvail_keys)
         resolved = map(cls._to_unicode, cpuAvail_keys[:cpuAvail_keys.index(attr) + 1])
         return resolved
-
-    @classmethod
-    def health_resolver(cls, attr):
-        if attr not in health_keys:
-            raise Exception('Health must be: %s' % health_keys)
-        resolved = map(cls._to_unicode, health_keys[:health_keys.index(attr) + 1])
-        return resolved
-
 
     @classmethod
     def cpu_total_resolver(cls, attr):

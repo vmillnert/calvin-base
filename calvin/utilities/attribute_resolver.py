@@ -53,9 +53,8 @@ cpuAvail_help = {"0": "No CPU available",
                  "100":"100% of CPU available"}
 
 # Acceptable values for health parameter
-health_keys =  ["bad", "good"]
-health_help = {"good": "node is health and can accept actors",
-               "bad": "node is not healthy enough to accept more actors"}
+health_keys =  ["healthy"]
+health_help = {"healthy": "yes if healthy, else no"}
 
 cpuAffinity_keys = ["dedicated"]
 cpuAffinity_help = {"dedicated": "Runs in a unique CPU"}
@@ -85,7 +84,7 @@ memTotal_help = {"1K": "1Kb of RAM",
 
 
 # list of acceptable resources
-resource_list = ["cpuAvail", "memAvail", "health"]
+resource_list = ["cpuAvail", "memAvail"]
 
 attribute_docs = '''
 # Calvin Node Attributes
@@ -215,10 +214,15 @@ class AttributeResolverHelper(object):
     def health_resolver(cls, attr):
         print "VM: 'attribute_resolver': \n We entered 'health_resolver': " + str(attr)
 
-        if attr not in health_keys:
-            raise Exception('Health must be: %s' % health_keys)
-        resolved = map(cls._to_unicode, health_keys[:health_keys.index(attr) + 1])
-        return resolved
+        if not isinstance(attr, dict):
+            print "VM: Error in resolving, not a dict"
+            raise Exception('Health attribute must be a dictionary with %s keys.' % health_keys)
+        if not attr.has_key("healthy"):
+            print "VM: Error in resolving, wrong key"
+            raise Exception('Health attribute must be a dictionary with %s keys.' % health_keys)
+        resolved = cls._to_unicode(attr["healthy"])
+        print "VM: resolved to: " + str(resolved)
+        return [resolved]
 
     @classmethod
     def cpu_avail_resolver(cls, attr):

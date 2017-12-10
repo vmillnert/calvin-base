@@ -171,7 +171,7 @@ class ActorManager(object):
 
             for i in range(0,len(deploy_reqs_list)):
                 deploy_req = deploy_reqs_list[i]
-                # print "VM: deploy req: " + str(deploy_req)
+                print "VM: deploy req: " + str(deploy_req)
 
                 if 'index' in deploy_req['kwargs']:
                     print "VM: " + str(deploy_req['kwargs']['index'])
@@ -181,7 +181,7 @@ class ActorManager(object):
                         # print "VM: It's a match => we should remove this requirement"
                         del deploy_reqs_list[i]
                         
-            # print "VM: new deploy_req: " + str(deploy_reqs_list)
+            print "VM: new deploy_req: " + str(deploy_reqs_list)
                 
 
             requirements = actor_def.requires if hasattr(actor_def, "requires") else []
@@ -336,9 +336,12 @@ class ActorManager(object):
 
     def _update_requirements_placements(self, actor_id, possible_placements, status=None, move=False, cb=None):
         _log.analyze(self.node.id, "+ BEGIN", {}, tb=True)
+        print "self node id " + str(self.node.id)
+        print "possible placements: " + str(possible_placements)
         if move and len(possible_placements)>1:
             possible_placements.discard(self.node.id)
         actor = self.actors[actor_id]
+
         if not possible_placements:
             actor._replication_data.inhibate(actor_id, False)
             if cb:
@@ -558,11 +561,12 @@ class ActorManager(object):
             actor_id = actor_ids[0]
             print "VM: The following actor_id will be migrated: " + str(actor_ids[0])
             # specify the new requirement
-            requirements = [{"op" : "node_attr_match",
-                             "kwargs" : {"index":["health", "good"]},
-                             "type":"+"}]
-            self.update_requirements(actor_id, requirements, extend=True, move=True,
+            requirements = [{"op": "node_attr_match", "kwargs": {"index": ["health", {"healthy":"yes"}]}, "type": "+"}]
+
+            try:
+                self.update_requirements(actor_id, requirements, extend=True, move=True,
                                      authorization_check=False, callback=None)
+            except Exception:
+                print "Failed migration with exception " + str(Exception.message)
         else:
             print "VM: no actors to migrate"
-

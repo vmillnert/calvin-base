@@ -36,7 +36,7 @@ class ReqMatch(object):
         """ Helper function for matching locally found actors """
         if actor_id not in self.node.am.actors:
             # Can only migrate actors from our node
-            _log.analyze(self.node.id, "+ NO ACTOR", {'actor_id': actor_id})
+            print str(self.node.id) + "+ NO ACTOR"
             if callable(self.callback):
                 self.callback(status=response.CalvinResponse(False), possible_placements=set([]))
             return
@@ -56,9 +56,10 @@ class ReqMatch(object):
             actor_id and component_ids are used when calling the requirement operations only,
             they are required by some of the req operations.
         """
+        print "Got to match!"
         if not isinstance(requirements, (list, tuple)):
             # Requirements need to be list
-            _log.analyze(self.node.id, "+ NO REQ LIST", {'reqs': requirements})
+            print str(self.node.id) + "+ NO REQ LIST"
             if callable(self.callback):
                 self.callback(status=response.CalvinResponse(response.BAD_REQUEST), possible_placements=set([]))
             return

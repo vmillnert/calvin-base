@@ -14,7 +14,6 @@ class HealthMonitor(object):
         self.value_range = {'min': 0.0, 'max': 1.0}
         self.threshold = 0.75
         self.healthy = None
-        self.first_access = True
         self.perceived_healthy = None
 
     def set_health(self, health_value, cb=None):
@@ -32,16 +31,17 @@ class HealthMonitor(object):
         else:
             new_healthy = "yes"
 
-        if new_healthy != self.healthy or self.first_access:
+        if new_healthy != self.healthy:
             # Only update health if necessary
-            self._update_health("nodeHealth", deepcopy(self.healthy), new_healthy, cb)
+            self._update_health(deepcopy(self.healthy), new_healthy, cb)
         else:
             # No update necessary
-            async.DelayedCall(0, cb, value=health_value, status=True)
+            if cb:
+                async.DelayedCall(0, cb, value=health_value, status=True)
 
         self._migrate_if_unhealthy()
 
-    def _update_health(self, prefix, old_value, new_value, cb=None):
+    def _update_health(self, old_value, new_value, cb):
         """
         Updates node health.
         Parameters:
@@ -51,22 +51,19 @@ class HealthMonitor(object):
         """
         if not self.node.storage.started:
             print "Storage not started!"
-            async.DelayedCall(0, cb, value=new_value, status=False)
+            if cb:
+                async.DelayedCall(0, cb, value=new_value, status=False)
             return
         else:
             print "Storage has started, continue"
 
         self.healthy = new_value
 
-        if not self.first_access:
-            print "Is not first access, removing old yes index if it exists"
-            self._remove_yes_index(old_value)
-        else:
-            self.first_access = False
+        self._remove_yes_index(old_value)
 
         self._add_yes_index(new_value)
 
-        self.node.storage.set(prefix=prefix, key=self.node.id, value=new_value, cb=CalvinCB(self._set_storage_cb))
+        self.node.storage.set(prefix="nodeHealth", key=self.node.id, value=new_value, cb=CalvinCB(self._set_storage_cb))
 
         if cb:
             async.DelayedCall(0, cb, value=new_value, status=True)
@@ -75,32 +72,25 @@ class HealthMonitor(object):
         """
         Removes old indexes.
         """
-        print "old value in remove_index is " + old_value
-
-        # erase indexes related to old value
-        if old_value is not None:
-            if old_value == "yes":
-                print "Old value is " + str(old_value)
-                old_index = "/node/attribute/health/" + str(old_value)
-                print "old index was " + old_index
-                self.node.storage.remove_index(index=old_index, value=self.node.id, root_prefix_level=2,
-                                          cb=CalvinCB(self._remove_index_storage_cb))
-            else:
-                print "Nothing done in remove yes index"
+        print "In remove_yes_index with old value " + str(old_value)
+        if old_value == "yes":
+            old_index = "/node/attribute/health/" + str(old_value)
+            self.node.storage.remove_index(index=old_index, value=self.node.id, root_prefix_level=2,
+                                      cb=CalvinCB(self._remove_index_storage_cb))
+        else:
+            print "Old value is not yes, nothing done in remove yes index"
 
     def _add_yes_index(self, new_value):
 
         # TODO: #TN: use get_indexed_public() in AttributeResolver to set index instead
 
-        if new_value is not None:
-            if new_value == "yes":
-                print "New value is " + str(new_value)
-                new_index = "/node/attribute/health/" + str(new_value)
-                print "new index is " + new_index
-                self.node.storage.add_index(index=new_index, value=self.node.id, root_prefix_level=2,
-                                       cb=CalvinCB(self._add_index_storage_cb))
-            else:
-                print "Nothing done in add yes index"
+        print "In add_yes_index with new value " + str(new_value)
+        if new_value == "yes":
+            new_index = "/node/attribute/health/" + str(new_value)
+            self.node.storage.add_index(index=new_index, value=self.node.id, root_prefix_level=2,
+                                   cb=CalvinCB(self._add_index_storage_cb))
+        else:
+            print "New value is not yes, nothing done in add yes index"
 
     def _add_index_storage_cb(self, value):
         print "Got to add index cb with result " + str(value)

@@ -145,6 +145,15 @@ class ActorManager(object):
             raise(e)
         return a
 
+    @staticmethod
+    def _remove_deploy_req(deploy_req):
+        if 'index' in deploy_req['kwargs']:
+            index_reqs = deploy_req['kwargs']['index']
+            if index_reqs[0] == 'health':
+                return True
+
+        return False
+
     def new_from_migration(self, actor_type, state, prev_connections=None, callback=None):
         """Instantiate an actor of type 'actor_type' and apply the 'state' to the actor."""
         try:
@@ -164,25 +173,14 @@ class ActorManager(object):
             actor_def, signer = self.lookup_and_verify(actor_type, security)
 
             print "VM: actor migrated successfully!"
-            # print "VM: the actor has the following requirements:"
             deploy_reqs_list = state['private']['_deployment_requirements']
 
-            # print "VM: deploy_reqs_list: " + str(deploy_reqs_list)
+            print "VM: old deploy_reqs_list: " + str(deploy_reqs_list)
 
-            for i in range(0,len(deploy_reqs_list)):
-                deploy_req = deploy_reqs_list[i]
-                print "VM: deploy req: " + str(deploy_req)
+            deploy_reqs_list[:] = [deploy_req for deploy_req in deploy_reqs_list
+                                   if not self._remove_deploy_req(deploy_req)]
 
-                if 'index' in deploy_req['kwargs']:
-                    print "VM: " + str(deploy_req['kwargs']['index'])
-                    index_reqs = deploy_req['kwargs']['index']
-                    # print "VM: index_req: " + str(index_reqs)
-                    if index_reqs[0] == 'health':
-                        # print "VM: It's a match => we should remove this requirement"
-                        del deploy_reqs_list[i]
-                        
-            print "VM: new deploy_req: " + str(deploy_reqs_list)
-                
+            print "VM: new deploy_reqs list: " + str(state['private']['_deployment_requirements'])
 
             requirements = actor_def.requires if hasattr(actor_def, "requires") else []
             self.check_requirements_and_sec_policy(requirements, security, state['private']['_id'],
@@ -566,7 +564,7 @@ class ActorManager(object):
             try:
                 self.update_requirements(actor_id, requirements, extend=True, move=True,
                                      authorization_check=False, callback=None)
-            except Exception:
-                print "Failed migration with exception " + str(Exception.message)
+            except Exception as ex:
+                print "Failed migration with exception " + str(ex.message)
         else:
             print "VM: no actors to migrate"

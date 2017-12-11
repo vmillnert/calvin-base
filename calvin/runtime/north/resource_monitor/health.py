@@ -74,7 +74,7 @@ class HealthMonitor(object):
         """
         print "In remove_yes_index with old value " + str(old_value)
         if old_value == "yes":
-            old_index = "/node/attribute/health/" + str(old_value)
+            old_index = "/node/attribute/health/yes"
             self.node.storage.remove_index(index=old_index, value=self.node.id, root_prefix_level=2,
                                       cb=CalvinCB(self._remove_index_storage_cb))
         else:
@@ -86,7 +86,7 @@ class HealthMonitor(object):
 
         print "In add_yes_index with new value " + str(new_value)
         if new_value == "yes":
-            new_index = "/node/attribute/health/" + str(new_value)
+            new_index = "/node/attribute/health/yes"
             self.node.storage.add_index(index=new_index, value=self.node.id, root_prefix_level=2,
                                    cb=CalvinCB(self._add_index_storage_cb))
         else:
@@ -107,6 +107,7 @@ class HealthMonitor(object):
         print "VM: send new health-value to log"
 
     def _migrate_if_unhealthy(self):
+        # TODO: Add some increase in nbr of actors migrated each time runtime is unhealthy?
         if self.healthy == "no":
             print "Migration triggered!"
             self.node.am.health_triggered_migration()

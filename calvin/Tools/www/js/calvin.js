@@ -597,7 +597,7 @@ function getNodeHealth(id)
                  null,
                  function(data, kwargs) {
                      if (data) {
-                         setNodeHealth(id, data);
+                         setNodeHealth(id, data.healthy);
                      }
                  },
                  null,

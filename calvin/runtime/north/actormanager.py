@@ -559,7 +559,8 @@ class ActorManager(object):
             actor_id = actor_ids[0]
             print "VM: The following actor_id will be migrated: " + str(actor_ids[0])
             # specify the new requirement
-            requirements = [{"op": "node_attr_match", "kwargs": {"index": ["health", {"healthy":"yes"}]}, "type": "+"}]
+            requirements = [{"op": "node_attr_match",
+                             "kwargs": {"index": ["health", {"healthy": "yes"}]}, "type": "+"}]
 
             try:
                 self.update_requirements(actor_id, requirements, extend=True, move=True,

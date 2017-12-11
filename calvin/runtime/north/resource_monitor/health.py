@@ -28,6 +28,7 @@ class HealthMonitor(object):
         if not self._correct_health_value(health_value, cb):
             return
 
+        # TODO: #TN: Add hysteresis interval to avoid oscillations?
         if float(health_value) < self.threshold:
             new_healthy = "no"
         else:

@@ -53,8 +53,9 @@ cpuAvail_help = {"0": "No CPU available",
                  "100":"100% of CPU available"}
 
 # Acceptable values for health parameter
-health_keys =  ["healthy"]
-health_help = {"healthy": "yes if healthy, else no"}
+health_keys =  ["healthy", "cell"]
+health_help = {"healthy": "yes if healthy, else no",
+               "cell": "id of current cell deployed in"}
 
 cpuAffinity_keys = ["dedicated"]
 cpuAffinity_help = {"dedicated": "Runs in a unique CPU"}
@@ -215,14 +216,10 @@ class AttributeResolverHelper(object):
         print "VM: 'attribute_resolver': \n We entered 'health_resolver': " + str(attr)
 
         if not isinstance(attr, dict):
-            print "VM: Error in resolving, not a dict"
             raise Exception('Health attribute must be a dictionary with %s keys.' % health_keys)
-        if not attr.has_key("healthy"):
-            print "VM: Error in resolving, wrong key"
-            raise Exception('Health attribute must be a dictionary with %s keys.' % health_keys)
-        resolved = cls._to_unicode(attr["healthy"])
-        print "VM: resolved to: " + str(resolved)
-        return [resolved]
+        resolved = [cls._to_unicode(attr[k]) if k in attr.keys() else None for k in health_keys]
+        print "#TN: resolved to: " + str(resolved)
+        return resolved
 
     @classmethod
     def cpu_avail_resolver(cls, attr):

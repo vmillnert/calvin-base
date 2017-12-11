@@ -3,6 +3,7 @@
 from calvin.runtime.south.plugins.async import async
 from calvin.utilities.calvinlogger import get_logger
 from calvin.utilities.calvin_callback import CalvinCB
+from calvin.utilities.attribute_resolver import AttributeResolver
 from copy import deepcopy
 
 _log = get_logger(__name__)
@@ -14,6 +15,7 @@ class HealthMonitor(object):
         self.value_range = {'min': 0.0, 'max': 1.0}
         self.threshold = 0.75
         self.healthy = None
+        self.cell = "1"
         self.perceived_healthy = None
 
     def set_health(self, health_value, cb=None):
@@ -41,54 +43,73 @@ class HealthMonitor(object):
 
         self._migrate_if_unhealthy()
 
-    def _update_health(self, old_value, new_value, cb):
+    def set_cell(self, new_cell, cb=None):
+
+        # TODO: #TN: Add correctness check of cell value!
+
+        if new_cell != self.cell:
+            # Only update cell if necessary
+            self._update_cell(deepcopy(self.cell), new_cell, cb)
+        else:
+            # No update necessary
+            if cb:
+                async.DelayedCall(0, cb, value=new_cell, status=True)
+
+    def _update_health(self, old_health, new_health, cb):
+        self._update(old_health, new_health, self.cell, self.cell, cb)
+
+    def _update_cell(self, old_cell, new_cell, cb):
+        self._update(self.healthy, self.healthy, old_cell, new_cell, cb)
+
+    def _update(self, old_health, new_health, old_cell, new_cell, cb):
         """
-        Updates node health.
-        Parameters:
-        prefix: String used in storage for attribute, e.g. nodeCpuAvail.
-        value: new value to set.
-        cb: callback to receive response. Signature: cb(value, True/False)
+        Updates node values.
         """
         if not self.node.storage.started:
             print "Storage not started!"
             if cb:
-                async.DelayedCall(0, cb, value=new_value, status=False)
+                async.DelayedCall(0, cb, value="0", status=False)
             return
         else:
             print "Storage has started, continue"
 
-        self.healthy = new_value
+        self.healthy = new_health
+        self.cell = new_cell
 
-        self._remove_yes_index(old_value)
+        self._remove_yes_index(old_health, old_cell)
 
-        self._add_yes_index(new_value)
+        self._add_yes_index(new_health, new_cell)
 
+        # Or save healthy and cell at two different prefixes?
+        new_value = {"healthy": new_health, "cell": new_cell}
         self.node.storage.set(prefix="nodeHealth", key=self.node.id, value=new_value, cb=CalvinCB(self._set_storage_cb))
 
         if cb:
             async.DelayedCall(0, cb, value=new_value, status=True)
 
-    def _remove_yes_index(self, old_value):
+    def _remove_yes_index(self, old_health, old_cell):
         """
         Removes old indexes.
         """
-        print "In remove_yes_index with old value " + str(old_value)
-        if old_value == "yes":
-            old_index = "/node/attribute/health/yes"
-            self.node.storage.remove_index(index=old_index, value=self.node.id, root_prefix_level=2,
-                                      cb=CalvinCB(self._remove_index_storage_cb))
+        print "In remove_yes_index with old health,cell: " + str(old_health) + "," + str(old_cell)
+        if old_health == "yes":
+            old_data = AttributeResolver(self._format_attribute(old_health, old_cell))
+            for old_index in old_data.get_indexed_public():
+                self.node.storage.remove_index(index=old_index, value=self.node.id, root_prefix_level=2,
+                                               cb=CalvinCB(self._remove_index_storage_cb))
         else:
-            print "Old value is not yes, nothing done in remove yes index"
+            print "Old health is not yes, nothing done in remove yes index"
 
-    def _add_yes_index(self, new_value):
-
-        # TODO: #TN: use get_indexed_public() in AttributeResolver to set index instead
-
-        print "In add_yes_index with new value " + str(new_value)
-        if new_value == "yes":
-            new_index = "/node/attribute/health/yes"
-            self.node.storage.add_index(index=new_index, value=self.node.id, root_prefix_level=2,
-                                   cb=CalvinCB(self._add_index_storage_cb))
+    def _add_yes_index(self, new_health, new_cell):
+        """
+        Adds new indexes.
+        """
+        print "In add_yes_index with new health,cell: " + str(new_health) + "," + str(new_cell)
+        if new_health == "yes":
+            new_data = AttributeResolver(self._format_attribute(new_health, new_cell))
+            for new_index in new_data.get_indexed_public():
+                self.node.storage.add_index(index=new_index, value=self.node.id, root_prefix_level=2,
+                                            cb=CalvinCB(self._add_index_storage_cb))
         else:
             print "New value is not yes, nothing done in add yes index"
 
@@ -134,3 +155,7 @@ class HealthMonitor(object):
             return True
         except ValueError:
             return False
+
+    @staticmethod
+    def _format_attribute(healthy_value, cell_value):
+        return {"indexed_public": {"health": {"healthy": healthy_value, "cell": cell_value}}}

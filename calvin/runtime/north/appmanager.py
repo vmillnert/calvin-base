@@ -584,6 +584,12 @@ class Deployer(object):
         self._verified_actors = {}
         self._deploy_counter = 0
         self._instantiate_counter = 0
+        self.imei = None
+
+        if deploy_info:
+            if 'imei' in deploy_info:
+                self.imei = deploy_info['imei']
+
         if name:
             self.name = name
             self.app_id = self.node.app_manager.new(self.name)
@@ -669,7 +675,7 @@ class Deployer(object):
                                                                security=self.sec, 
                                                                signer=info['signer'],
                                                                callback=CalvinCB(self.instantiate, 
-                                                                                 actor_name, info, 
+                                                                                 actor_name, info,
                                                                                  actor_def, cb=cb))
                 return
             self.instantiate(actor_name, info, cb=cb)
@@ -701,7 +707,8 @@ class Deployer(object):
             info['args']['name'] = actor_name
             actor_id = self.node.am.new(actor_type=info['actor_type'], args=info['args'], signature=info['signature'], 
                                         actor_def=actor_def, security=self.sec, access_decision=access_decision, 
-                                        shadow_actor='shadow_actor' in info, port_properties=port_properties)
+                                        shadow_actor='shadow_actor' in info, port_properties=port_properties,
+                                        imei=self.imei)
             if not actor_id:
                 raise Exception("Could not instantiate actor %s" % actor_name)
             deploy_req = self.get_req(actor_name)
@@ -759,7 +766,8 @@ class Deployer(object):
         if self._deploy_counter < len(self.deployable['actors']):
             return
         for actor_name, info in self._verified_actors.iteritems():
-            self.check_requirements_and_sec_policy(actor_name, info[0], info[1], cb=CalvinCB(self._deploy_finalize))
+            self.check_requirements_and_sec_policy(actor_name, info[0], info[1],
+                                                   cb=CalvinCB(self._deploy_finalize))
 
     def _deploy_finalize(self):
         self._instantiate_counter += 1

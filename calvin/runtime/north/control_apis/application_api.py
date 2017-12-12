@@ -381,6 +381,7 @@ def handle_deploy(self, handle, connection, match, data, hdr):
     Body:
     {
         "name": <application name>,
+        "imei": <user id>,
         "script": <calvin script>  # alternativly "app_info"
         "app_info": <compiled script as app_info>  # alternativly "script"
         "sec_sign": {<cert hash>: <security signature of script>, ...} # optional and only with "script"
@@ -607,24 +608,7 @@ def handle_disconnect_cb(self, handle, connection, **kwargs):
     self.send_response(handle, connection, None, status=status.status)
 
 
-    
 @handler(r"POST /node/resource/healthMetric\sHTTP/1")
-@authentication_decorator
-def handle_node_health_metric(self, handle, connection, match, data, hdr):
-    """
-    POST /node/resource/healthMetric
-    Updates the health metric of the current node
-    Body:
-    {
-        "value": <Health (between 0 and 1)>
-    }
-    Response status code: OK or INTERNAL_ERROR
-    Response: none
-    """
-    self.node.health_monitor.set_health(data['value'], CalvinCB(self.handle_node_health_metric_cb, handle, connection))
-
-
-@handler(r"GET /node/resource/health\sHTTP/1")
 @authentication_decorator
 def handle_node_health_metric(self, handle, connection, match, data, hdr):
     """

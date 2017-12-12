@@ -15,8 +15,9 @@ class HealthMonitor(object):
         self.value_range = {'min': 0.0, 'max': 1.0}
         self.threshold = 0.75
         self.healthy = None
-        self.cell = "1"
-        self.perceived_healthy = None
+        self.cell = node.cell if node.cell else "1"
+
+        print "self.cell is " + self.cell
 
     def set_health(self, health_value, cb=None):
         """
@@ -24,6 +25,9 @@ class HealthMonitor(object):
         This value is then stored either as "good" or "bad" according to the threshold.
         If the health value is "bad", an actor migration is triggered.
         """
+        actor_ids = self.node.am.get_actors_with_imei("abcd1234")
+
+        print "actor ids in set_health: " + str(actor_ids)
 
         if not self._correct_health_value(health_value, cb):
             return
@@ -66,14 +70,6 @@ class HealthMonitor(object):
         """
         Updates node values.
         """
-        if not self.node.storage.started:
-            print "Storage not started!"
-            if cb:
-                async.DelayedCall(0, cb, value="0", status=False)
-            return
-        else:
-            print "Storage has started, continue"
-
         self.healthy = new_health
         self.cell = new_cell
 
@@ -81,7 +77,6 @@ class HealthMonitor(object):
 
         self._add_yes_index(new_health, new_cell)
 
-        # Or save healthy and cell at two different prefixes?
         new_value = {"healthy": new_health, "cell": new_cell}
         self.node.storage.set(prefix="nodeHealth", key=self.node.id, value=new_value, cb=CalvinCB(self._set_storage_cb))
 
@@ -116,11 +111,9 @@ class HealthMonitor(object):
 
     def _add_index_storage_cb(self, value):
         print "Got to add index cb with result " + str(value)
-        self.perceived_healthy = self.healthy
 
     def _remove_index_storage_cb(self, value):
         print "Got to remove index cb with result " + str(value)
-        self.perceived_healthy = self.healthy
 
     def _set_storage_cb(self, key, value):
         _log.critical("\nVM: node health set to " + str(self.healthy))

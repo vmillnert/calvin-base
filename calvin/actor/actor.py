@@ -258,7 +258,8 @@ class Actor(object):
     _security_state_keys = ('_subject_attributes')
 
     # These are the instance variables that will always be serialized, see serialize()/deserialize() below
-    _private_state_keys = ('_id', '_name', '_has_started', '_deployment_requirements', '_signature', '_migration_info', "_port_property_capabilities", "_replication_data")
+    _private_state_keys = ('_id', '_name', '_has_started', '_deployment_requirements', '_signature', '_imei',
+                           '_migration_info', "_port_property_capabilities", "_replication_data")
 
     # Internal state (status)
     class FSM(object):
@@ -329,7 +330,7 @@ class Actor(object):
 
     # What are the arguments, really?
     def __init__(self, actor_type, name='', allow_invalid_transitions=True, disable_transition_checks=False,
-                 disable_state_checks=False, actor_id=None, security=None):
+                 disable_state_checks=False, actor_id=None, security=None, imei=None):
         """Should _not_ be overridden in subclasses."""
         super(Actor, self).__init__()
         self._type = actor_type
@@ -358,6 +359,10 @@ class Actor(object):
 
         self.inports = {p: actorport.InPort(p, self, pp) for p, pp in self.inport_properties.items()}
         self.outports = {p: actorport.OutPort(p, self, pp) for p, pp in self.outport_properties.items()}
+
+        self._imei = imei
+
+        print "In actor.py init: " + str(self._imei)
 
         hooks = {
             (Actor.STATUS.PENDING, Actor.STATUS.ENABLED): self._will_start,

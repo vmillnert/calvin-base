@@ -444,6 +444,12 @@ class AttributeResolver(object):
         except:
             return None
 
+    def get_cell_id(self):
+        try:
+            return self.attr['indexed_public']['health'][1]
+        except:
+            return None
+
     def get_indexed_public_with_keys(self):
         """
         Return a dictionary with all indexed_public attributes that have been set.

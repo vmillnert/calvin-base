@@ -16,8 +16,24 @@ class HealthMonitor(object):
         self.threshold = 0.75
         self.healthy = None
         self.cell = node.cell if node.cell else "1"
+        self.imei_cells = {}
 
         print "self.cell is " + self.cell
+
+    def set_imei_cells(self, imei_cell_list, cb=None):
+        # TODO: #TN: Add correctness check of imei_cell_list!
+
+        for imei_cell in imei_cell_list:
+            imei = imei_cell['imei']
+            cell = imei_cell['cell']
+            self.imei_cells[imei] = cell
+
+        print "Stored IMEIs with corresponding cell ids: " + str(self.imei_cells)
+
+        if cb:
+            async.DelayedCall(0, cb, value="OK", status=True)
+
+        self._migrate_foreign_cells()
 
     def set_health(self, health_value, cb=None):
         """
@@ -25,9 +41,6 @@ class HealthMonitor(object):
         This value is then stored either as "good" or "bad" according to the threshold.
         If the health value is "bad", an actor migration is triggered.
         """
-        actor_ids = self.node.am.get_actors_with_imei("abcd1234")
-
-        print "actor ids in set_health: " + str(actor_ids)
 
         if not self._correct_health_value(health_value, cb):
             return
@@ -126,6 +139,17 @@ class HealthMonitor(object):
         if self.healthy == "no":
             print "Migration triggered!"
             self.node.am.health_triggered_migration()
+
+    def _migrate_foreign_cells(self):
+        print "Got to beginning of foreign"
+        foreign_imei_cells = [{'imei': imei, 'cell': cell}
+                              for imei, cell in self.imei_cells.iteritems() if cell != self.cell]
+
+        if foreign_imei_cells:
+            print "Foreign cells: " + str(foreign_imei_cells)
+            self.node.am.cell_triggered_migration(foreign_imei_cells)
+        else:
+            print "No actors to migrate from latest cell changes"
 
     def _correct_health_value(self, health_value, cb):
         if not self._is_float(health_value):

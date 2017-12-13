@@ -593,7 +593,7 @@ function getPeers(peer)
 function getNodeHealth(id)
 {
     send_request("GET",
-                 peers[id].control_uris[0] + '/node/resource/getHealth',
+                 peers[id].control_uris[0] + '/node/attribute/getHealth',
                  null,
                  function(data, kwargs) {
                      if (data) {

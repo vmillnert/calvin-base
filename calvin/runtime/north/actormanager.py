@@ -155,6 +155,10 @@ class ActorManager(object):
 
         return False
 
+    def _remove_old_deploy_reqs(self, deploy_reqs_list):
+        deploy_reqs_list[:] = [deploy_req for deploy_req in deploy_reqs_list
+                               if not self._remove_deploy_req(deploy_req)]
+
     def new_from_migration(self, actor_type, state, prev_connections=None, callback=None):
         """Instantiate an actor of type 'actor_type' and apply the 'state' to the actor."""
         try:
@@ -178,8 +182,7 @@ class ActorManager(object):
 
             print "VM: old deploy_reqs_list: " + str(deploy_reqs_list)
 
-            deploy_reqs_list[:] = [deploy_req for deploy_req in deploy_reqs_list
-                                   if not self._remove_deploy_req(deploy_req)]
+            self._remove_old_deploy_reqs(deploy_reqs_list)
 
             print "VM: new deploy_reqs list: " + str(state['private']['_deployment_requirements'])
 
@@ -559,18 +562,55 @@ class ActorManager(object):
         # we should migrate the first actor
         if actor_ids:
             actor_id = actor_ids[0]
-            print "VM: The following actor_id will be migrated: " + str(actor_ids[0])
-            # specify the new requirement
-            requirements = [{"op": "node_attr_match",
-                             "kwargs": {"index": ["health", {"healthy": "yes", "cell": "1"}]}, "type": "+"}]
-
-            try:
-                self.update_requirements(actor_id, requirements, extend=True, move=True,
-                                     authorization_check=False, callback=None)
-            except Exception as ex:
-                print "Failed migration with exception " + str(ex.message)
+            self._migrate_actor_to_dc(actor_id)
         else:
             print "VM: no actors to migrate"
 
-    def get_actors_with_imei(self, imei):
+    def cell_triggered_migration(self, foreign_imei_cells):
+        for foreign_imei_cell in foreign_imei_cells:
+            imei = foreign_imei_cell['imei']
+            cell = foreign_imei_cell['cell']
+            actor_ids = self.node.am._get_actors_with_imei(imei)
+            if actor_ids:
+                for actor_id in actor_ids:
+                    print "Cell migrating: " + str(foreign_imei_cell)
+                    self._migrate_actor_to_cell(actor_id, cell)
+
+    def _migrate_actor_to_cell(self, actor_id, cell):
+        requirements = [{"op": "node_attr_match",
+                         "kwargs": {"index": ["health", {"healthy": "yes", "cell": cell}]}, "type": "+"}]
+
+        try:
+            self.update_requirements(actor_id, requirements, extend=True, move=True, authorization_check=False,
+                                     callback=CalvinCB(self._migrate_actor_to_cell_cb, actor_id=actor_id))
+        except Exception as ex:
+            print "Failed migration with exception " + str(ex.message)
+
+    def _migrate_actor_to_dc(self, actor_id):
+        print "VM: The following actor_id will be migrated: " + str(actor_id)
+        # specify the new requirement
+        requirements = [{"op": "node_attr_match",
+                         "kwargs": {"index": ["health", {"healthy": "yes", "cell": "ludc"}]}, "type": "+"}]
+
+        try:
+            self.update_requirements(actor_id, requirements, extend=True, move=True, authorization_check=False,
+                                     callback=CalvinCB(self._migrate_actor_to_dc_cb, actor_id=actor_id))
+        except Exception as ex:
+            print "Failed migration with exception " + str(ex.message)
+
+    def _migrate_actor_to_cell_cb(self, status, actor_id):
+        print "Migration completed with status " + str(status) +  "and actor id " + str(actor_id)
+        if status == response.CalvinResponse(False):
+            actor = self.actors[actor_id]
+            if actor:
+                self._remove_old_deploy_reqs(actor._deployment_requirements)
+                self._migrate_actor_to_dc(actor_id)
+
+    def _migrate_actor_to_dc_cb(self, status, actor_id):
+        print "Migration completed with status " + str(status) +  "and actor id " + str(actor_id)
+        actor = self.actors[actor_id]
+        if actor:
+            self._remove_old_deploy_reqs(actor._deployment_requirements)
+
+    def _get_actors_with_imei(self, imei):
         return [actor for actor in self.actors if self.actors[actor]._imei == imei]

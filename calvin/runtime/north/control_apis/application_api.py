@@ -608,7 +608,7 @@ def handle_disconnect_cb(self, handle, connection, **kwargs):
     self.send_response(handle, connection, None, status=status.status)
 
 
-@handler(r"POST /node/resource/healthMetric\sHTTP/1")
+@handler(r"POST /node/attribute/healthMetric\sHTTP/1")
 @authentication_decorator
 def handle_node_health_metric(self, handle, connection, match, data, hdr):
     """
@@ -635,3 +635,20 @@ def handle_node_health_metric_cb(self, handle, connection, *args, **kwargs):
         status = False
     self.send_response(handle, connection, None,
                        status=calvinresponse.OK if status is True else calvinresponse.INTERNAL_ERROR)
+
+
+@handler(r"POST /node/attribute/imeicells\sHTTP/1")
+@authentication_decorator
+def handle_imei_cell_info(self, handle, connection, match, data, hdr):
+    """
+    POST /node/resource/healthMetric
+    Updates the cell id information for the application instances with corresponding imeis.
+    Body:
+    {
+        "value": [{"imei": "abcd1234", "cell": "1"}, {"imei": "efgh5678", "cell": "2"}, ... ]
+    }
+    Response status code: OK or INTERNAL_ERROR
+    Response: none
+    """
+    self.node.health_monitor.set_imei_cells(data['value'],
+                                            CalvinCB(self.handle_node_health_metric_cb, handle, connection))

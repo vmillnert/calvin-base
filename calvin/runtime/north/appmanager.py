@@ -690,6 +690,18 @@ class Deployer(object):
         except:
             return "unknown"
 
+    def _get_actor_imei(self, actor_name):
+        if isinstance(self.imei, dict):
+            imei_key = actor_name.split(":")[-1]
+            if imei_key in self.imei.keys():
+                actor_imei = self.imei[imei_key]
+            else:
+                actor_imei = None
+        else:
+            actor_imei = self.imei
+
+        return actor_imei
+
     def instantiate(self, actor_name, info, actor_def=None, access_decision=None, cb=None):
         """
         Instantiate an actor.
@@ -705,10 +717,13 @@ class Deployer(object):
             else:
                 port_properties = None
             info['args']['name'] = actor_name
+
+            actor_imei = self._get_actor_imei(actor_name)
+
             actor_id = self.node.am.new(actor_type=info['actor_type'], args=info['args'], signature=info['signature'], 
                                         actor_def=actor_def, security=self.sec, access_decision=access_decision, 
                                         shadow_actor='shadow_actor' in info, port_properties=port_properties,
-                                        imei=self.imei)
+                                        imei=actor_imei)
             if not actor_id:
                 raise Exception("Could not instantiate actor %s" % actor_name)
             deploy_req = self.get_req(actor_name)

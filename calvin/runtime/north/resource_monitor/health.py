@@ -59,6 +59,8 @@ class HealthMonitor(object):
             if cb:
                 async.DelayedCall(0, cb, value=health_value, status=True)
 
+        self.node.control.log_health_new(self.healthy)
+        print "VM: send new health-value to log"
         self._migrate_if_unhealthy()
 
     def set_cell(self, new_cell, cb=None):
@@ -131,8 +133,7 @@ class HealthMonitor(object):
     def _set_storage_cb(self, key, value):
         _log.critical("\nVM: node health set to " + str(self.healthy))
         print "Got to set storage cb with result " + str(value)
-        self.node.control.log_health_new(self.healthy)
-        print "VM: send new health-value to log"
+
 
     def _migrate_if_unhealthy(self):
         # TODO: Add some increase in nbr of actors migrated each time runtime is unhealthy?

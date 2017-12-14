@@ -381,11 +381,11 @@ def handle_deploy(self, handle, connection, match, data, hdr):
     Body:
     {
         "name": <application name>,
-        "imei": <user id>,
         "script": <calvin script>  # alternativly "app_info"
         "app_info": <compiled script as app_info>  # alternativly "script"
         "sec_sign": {<cert hash>: <security signature of script>, ...} # optional and only with "script"
         "deploy_info":
+            "imei": <user id>,
            {"groups": {"<group 1 name>": ["<actor instance 1 name>", ...]},  # TODO not yet implemented
             "requirements": {
                 "<actor instance 1 name>": [ {"op": "<matching rule name>",

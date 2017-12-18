@@ -99,7 +99,6 @@ class Node(object):
             _log.exception("Attributes not correct, uses empty attribute!")
             self.attributes = AttributeResolver(None)
         self.node_name = self.attributes.get_node_name_as_str()
-        self.cell = self.attributes.get_cell_id()
         # Obtain node id, when using security also handle runtime certificate
         try:
             security_dir = _conf.get("security", "security_dir")

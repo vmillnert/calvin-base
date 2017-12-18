@@ -15,11 +15,19 @@ class HealthMonitor(object):
         self._value_range = {'min': 0.0, 'max': 1.0}
         self._threshold = 0.75
         self._healthy = None
-        self._cell = node.cell if node.cell else "1"
+        self._cell = None
         self._imei_cells = {}
-        print "self.cell is " + self._cell
 
+        print "node attributes are: " + str(self.node.attributes)
+
+        self._set_initial_cell()
         self._set_initial_health()
+
+    def _set_initial_cell(self):
+        node_attributes = self.node.attributes.get_indexed_public_with_keys()
+        if node_attributes:
+            if node_attributes['health.cell']:
+                self._cell = node_attributes['health.cell']
 
     def _set_initial_health(self):
         self.set_health(self._value_range['max'])
@@ -180,5 +188,8 @@ class HealthMonitor(object):
             return False
 
     @staticmethod
-    def _format_attribute(healthy_value, cell_value):
-        return {"indexed_public": {"health": {"healthy": healthy_value, "cell": cell_value}}}
+    def _format_attribute(healthy_value = None, cell_value= None):
+        if cell_value:
+            return {"indexed_public": {"health": {"healthy": healthy_value, "cell": cell_value}}}
+        else:
+            return {"indexed_public": {"health": {"healthy": healthy_value}}}

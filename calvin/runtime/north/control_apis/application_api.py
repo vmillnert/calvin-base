@@ -612,7 +612,7 @@ def handle_disconnect_cb(self, handle, connection, **kwargs):
 @authentication_decorator
 def handle_node_health_metric(self, handle, connection, match, data, hdr):
     """
-    POST /node/resource/healthMetric
+    POST /node/attribute/healthMetric
     Updates the health metric of the current node
     Body:
     {
@@ -641,7 +641,7 @@ def handle_node_health_metric_cb(self, handle, connection, *args, **kwargs):
 @authentication_decorator
 def handle_imei_cell_info(self, handle, connection, match, data, hdr):
     """
-    POST /node/resource/healthMetric
+    POST /node/attribute/imeicells
     Updates the cell id information for the application instances with corresponding imeis.
     Body:
     {

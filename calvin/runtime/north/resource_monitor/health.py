@@ -12,13 +12,17 @@ _log = get_logger(__name__)
 class HealthMonitor(object):
     def __init__(self, node):
         self.node = node
-        self.value_range = {'min': 0.0, 'max': 1.0}
-        self.threshold = 0.75
-        self.healthy = None
-        self.cell = node.cell if node.cell else "1"
-        self.imei_cells = {}
+        self._value_range = {'min': 0.0, 'max': 1.0}
+        self._threshold = 0.75
+        self._healthy = None
+        self._cell = node.cell if node.cell else "1"
+        self._imei_cells = {}
+        print "self.cell is " + self._cell
 
-        print "self.cell is " + self.cell
+        self._set_initial_health()
+
+    def _set_initial_health(self):
+        self.set_health(self._value_range['max'])
 
     def set_imei_cells(self, imei_cell_list, cb=None):
         # TODO: #TN: Add correctness check of imei_cell_list!
@@ -26,9 +30,9 @@ class HealthMonitor(object):
         for imei_cell in imei_cell_list:
             imei = imei_cell['imei']
             cell = imei_cell['cell']
-            self.imei_cells[imei] = cell
+            self._imei_cells[imei] = cell
 
-        print "Stored IMEIs with corresponding cell ids: " + str(self.imei_cells)
+        print "Stored IMEIs with corresponding cell ids: " + str(self._imei_cells)
 
         if cb:
             async.DelayedCall(0, cb, value="OK", status=True)
@@ -46,20 +50,20 @@ class HealthMonitor(object):
             return
 
         # TODO: #TN: Add hysteresis interval to avoid oscillations?
-        if float(health_value) < self.threshold:
+        if float(health_value) < self._threshold:
             new_healthy = "no"
         else:
             new_healthy = "yes"
 
-        if new_healthy != self.healthy:
+        if new_healthy != self._healthy:
             # Only update health if necessary
-            self._update_health(deepcopy(self.healthy), new_healthy, cb)
+            self._update_health(deepcopy(self._healthy), new_healthy, cb)
         else:
             # No update necessary
             if cb:
                 async.DelayedCall(0, cb, value=health_value, status=True)
 
-        self.node.control.log_health_new(self.healthy)
+        self.node.control.log_health_new(self._healthy)
         print "VM: send new health-value to log"
         self._migrate_if_unhealthy()
 
@@ -67,26 +71,26 @@ class HealthMonitor(object):
 
         # TODO: #TN: Add correctness check of cell value!
 
-        if new_cell != self.cell:
+        if new_cell != self._cell:
             # Only update cell if necessary
-            self._update_cell(deepcopy(self.cell), new_cell, cb)
+            self._update_cell(deepcopy(self._cell), new_cell, cb)
         else:
             # No update necessary
             if cb:
                 async.DelayedCall(0, cb, value=new_cell, status=True)
 
     def _update_health(self, old_health, new_health, cb):
-        self._update(old_health, new_health, self.cell, self.cell, cb)
+        self._update(old_health, new_health, self._cell, self._cell, cb)
 
     def _update_cell(self, old_cell, new_cell, cb):
-        self._update(self.healthy, self.healthy, old_cell, new_cell, cb)
+        self._update(self._healthy, self._healthy, old_cell, new_cell, cb)
 
     def _update(self, old_health, new_health, old_cell, new_cell, cb):
         """
         Updates node values.
         """
-        self.healthy = new_health
-        self.cell = new_cell
+        self._healthy = new_health
+        self._cell = new_cell
 
         self._remove_yes_index(old_health, old_cell)
 
@@ -131,20 +135,20 @@ class HealthMonitor(object):
         print "Got to remove index cb with result " + str(value)
 
     def _set_storage_cb(self, key, value):
-        _log.critical("\nVM: node health set to " + str(self.healthy))
+        _log.critical("\nVM: node health set to " + str(self._healthy))
         print "Got to set storage cb with result " + str(value)
 
 
     def _migrate_if_unhealthy(self):
         # TODO: Add some increase in nbr of actors migrated each time runtime is unhealthy?
-        if self.healthy == "no":
+        if self._healthy == "no":
             print "Migration triggered!"
             self.node.am.health_triggered_migration()
 
     def _migrate_foreign_cells(self):
         print "Got to beginning of foreign"
         foreign_imei_cells = [{'imei': imei, 'cell': cell}
-                              for imei, cell in self.imei_cells.iteritems() if cell != self.cell]
+                              for imei, cell in self._imei_cells.iteritems() if cell != self._cell]
 
         if foreign_imei_cells:
             print "Foreign cells: " + str(foreign_imei_cells)
@@ -159,7 +163,7 @@ class HealthMonitor(object):
                 async.DelayedCall(0, cb, value=health_value, status=False)
             return False
 
-        if float(health_value) < self.value_range['min'] or float(health_value) > self.value_range['max']:
+        if float(health_value) < self._value_range['min'] or float(health_value) > self._value_range['max']:
             _log.critical("#TN: Invalid health value: %s" % str(health_value))
             if cb:
                 async.DelayedCall(0, cb, value=health_value, status=False)

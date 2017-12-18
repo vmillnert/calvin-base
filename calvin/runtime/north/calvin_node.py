@@ -140,9 +140,10 @@ class Node(object):
 
         self.cpu_monitor = CpuMonitor(self.id, self.storage)
         self.mem_monitor = MemMonitor(self.id, self.storage)
-        self.health_monitor = HealthMonitor(self)
 
         self.proxy_handler = ProxyHandler(self)
+
+        self.health_monitor = HealthMonitor(self)
 
         # The initialization that requires the main loop operating is deferred to start function
         async.DelayedCall(0, self.start)

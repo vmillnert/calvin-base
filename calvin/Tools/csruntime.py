@@ -40,10 +40,6 @@ Start runtime, compile calvinscript and deploy application.
                             help="shortcut for attribute indexed_public/node_name/name",
                             dest='name')
 
-    argparser.add_argument('--cell', metavar='<cell>', type=str,
-                           help="shortcut for attribute indexed_public/health/cell",
-                           dest='cell')
-
     argparser.add_argument('-n', '--host', metavar='<host>', type=str,
                            help='ip address/hostname of calvin runtime',
                            dest='host')
@@ -419,9 +415,6 @@ def main():
         except Exception as e:
             print "Attributes not JSON:\n", e
             return -1
-
-    if args.cell:
-        runtime_attr.setdefault("indexed_public", {}).setdefault("health", {})['cell'] = args.cell
 
     if args.ext:
         runtime_attr['external_uri'] = args.ext

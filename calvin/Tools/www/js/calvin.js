@@ -1883,6 +1883,9 @@ function eventHandler(event)
 // Start event stream for graph
 function startGraphEvents(application)
 {
+  for (id in peers) {
+      getNodeHealth(id); // We don't have any info about the health of this node => get it
+  }
   var events = ["actor_new", "actor_replicate", "actor_dereplicate", "health_new"];
   var actors = application.actors;
   for (var index in peers) {
@@ -1984,8 +1987,6 @@ function graphEventHandler(event)
               } else if (data.value === "no" && peers[id].healthColor !== "LightPink"){
                   setNodeHealth(id, data.value);
               }
-          } else if (peers[id].healthColor === "LightGray") {
-              getNodeHealth(id); // if we don't have any info about the health of this node => update it
           }
       }
   } else {

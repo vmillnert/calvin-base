@@ -124,6 +124,7 @@ def runtime(uris, control_uri, attributes=None, dispatch=False):
         raise
 
 def storage_runtime(uri, control_uri, attributes=None, dispatch=False):
+    print "Starting storage node!"
     from calvin.utilities.nodecontrol import dispatch_storage_node, start_storage_node
     kwargs = {}
     if dispatch:
@@ -434,6 +435,7 @@ def main():
     else:
         runtime_certificate(runtime_attr)
         if args.storage:
+            print "Got here to start storage node"
             storage_runtime(uris, control_uri, runtime_attr, dispatch=False)
         else:
             runtime(uris, control_uri, runtime_attr, dispatch=False)

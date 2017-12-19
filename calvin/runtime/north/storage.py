@@ -47,7 +47,7 @@ class Storage(object):
         self.started = False
         self.node = node
         storage_type = _conf.get('global', 'storage_type')
-        _log.info("#### STORAGE TYPE %s ####", storage_type)
+        print("#### STORAGE TYPE %s ####", storage_type)
         self.proxy = _conf.get('global', 'storage_proxy') if storage_type == 'proxy' else None
         _log.analyze(self.node.id, "+", {'proxy': self.proxy})
         self.tunnel = {}
@@ -541,6 +541,7 @@ class Storage(object):
         key = tuple(index_items)
         if value:
             # Success
+            print "got here 7"
             if key in self.localstore_sets:
                 self.localstore_sets[key]['-'] -= set(org_value)
                 if not self.localstore_sets[key]['-'] and not self.localstore_sets[key]['+']:
@@ -571,27 +572,33 @@ class Storage(object):
             note that the key here is without the prefix and
             value indicate success.
         """
-
+        print "Trying to remove " + str(value) + " from index " + str(index)
         _log.debug("remove index %s: %s" % (index, value))
         # Get a list of the index levels
         indexes = self._index_strings(index, root_prefix_level)
+        print "indexes: " + str(indexes)
         # For local cache storage make the indexes the key
         key = tuple(indexes)
+        print "key is " + str(key)
         # Make sure we send in a list as value
         value = list(value) if isinstance(value, (list, set, tuple)) else [value]
 
         if key in self.localstore_sets:
+            print "got here 1"
             # Remove value items
             self.localstore_sets[key]['+'] -= set(value)
             # Do remove value items
             self.localstore_sets[key]['-'] |= set(value)
         else:
+            print "got here 2"
             self.localstore_sets[key] = {'+': set([]), '-': set(value)}
 
         if self.started:
+            print "got here 3"
             self.storage.remove_index(prefix="index-", indexes=indexes, value=value,
                 cb=CalvinCB(self.remove_index_cb, org_cb=cb, index_items=indexes, org_value=value))
         elif cb:
+            print "got here 4"
             cb(value=calvinresponse.CalvinResponse(True))
 
     def delete_index(self, index, root_prefix_level=2, cb=None):
@@ -764,6 +771,7 @@ class Storage(object):
         try:
             for index in indexes:
                 # TODO add callback, but currently no users supply a cb anyway
+                print index
                 self.add_index(index, node.id)
         except:
             _log.debug("Add node index failed", exc_info=True)

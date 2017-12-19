@@ -26,6 +26,7 @@ def req_op(node, index, actor_id=None, component=None):
         component contains a list of all actor_ids of the component if the actor belongs to a component else None
     """
     index_str = format_index_string(index)
+    print "index str in node_attr_match: " + index_str
     it = node.storage.get_index_iter(index_str)
     it.set_name("attr_match")
     return it

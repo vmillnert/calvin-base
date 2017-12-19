@@ -296,7 +296,7 @@ def handle_resource_mem_avail(self, handle, connection, match, data, hdr):
     """
     self.node.mem_monitor.set_avail(data['value'], CalvinCB(self.index_cb, handle, connection))
 
-@handler(r"GET /node/resource/getHealth\sHTTP/1")
+@handler(r"GET /node/attribute/getHealth\sHTTP/1")
 @authentication_decorator
 def handle_get_health(self, handle, connection, match, data, hdr):
     """

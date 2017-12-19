@@ -588,17 +588,8 @@ class Deployer(object):
 
         if deploy_info:
             if 'imei' in deploy_info:
-                print "imei exist in deploy_info"
                 self.imei = deploy_info['imei']
-            else:
-                print "imei does not exist"
-        else:
-            print "Deploy info is None"
-            
-        # if 'imei' in deploy_info:
-        #     # print "[appmanager.py] IMEI: " + str(self.deploy_info['imei'])
-        #     self.imei = deploy_info['imei']
-        
+                
         if name:
             self.name = name
             self.app_id = self.node.app_manager.new(self.name)
@@ -686,7 +677,7 @@ class Deployer(object):
                                                                security=self.sec, 
                                                                signer=info['signer'],
                                                                callback=CalvinCB(self.instantiate, 
-                                                                                 actor_name, info, 
+                                                                                 actor_name, info,
                                                                                  actor_def, cb=cb))
                 return
             self.instantiate(actor_name, info, cb=cb)
@@ -700,6 +691,18 @@ class Deployer(object):
             return req_operations[req['op']].req_type
         except:
             return "unknown"
+
+    def _get_actor_imei(self, actor_name):
+        if isinstance(self.imei, dict):
+            imei_key = actor_name.split(":")[-1]
+            if imei_key in self.imei.keys():
+                actor_imei = self.imei[imei_key]
+            else:
+                actor_imei = None
+        else:
+            actor_imei = self.imei
+
+        return actor_imei
 
     def instantiate(self, actor_name, info, actor_def=None, access_decision=None, cb=None):
         """
@@ -718,15 +721,12 @@ class Deployer(object):
                 port_properties = None
             info['args']['name'] = actor_name
 
-            if self.imei:
-                actor_id = self.node.am.new(actor_type=info['actor_type'], args=info['args'], signature=info['signature'], 
+            actor_imei = self._get_actor_imei(actor_name)
+
+            actor_id = self.node.am.new(actor_type=info['actor_type'], args=info['args'], signature=info['signature'], 
                                         actor_def=actor_def, security=self.sec, access_decision=access_decision, 
-                                            shadow_actor='shadow_actor' in info, port_properties=port_properties,
-                                            imei=self.imei)
-            else:
-                actor_id = self.node.am.new(actor_type=info['actor_type'], args=info['args'], signature=info['signature'], 
-                                        actor_def=actor_def, security=self.sec, access_decision=access_decision, 
-                                        shadow_actor='shadow_actor' in info, port_properties=port_properties)
+                                        shadow_actor='shadow_actor' in info, port_properties=port_properties,
+                                        imei=actor_imei)
             if not actor_id:
                 raise Exception("Could not instantiate actor %s" % actor_name)
             deploy_req = self.get_req(actor_name)
@@ -787,7 +787,8 @@ class Deployer(object):
         if self._deploy_counter < len(self.deployable['actors']):
             return
         for actor_name, info in self._verified_actors.iteritems():
-            self.check_requirements_and_sec_policy(actor_name, info[0], info[1], cb=CalvinCB(self._deploy_finalize))
+            self.check_requirements_and_sec_policy(actor_name, info[0], info[1],
+                                                   cb=CalvinCB(self._deploy_finalize))
 
     def _deploy_finalize(self):
         self._instantiate_counter += 1

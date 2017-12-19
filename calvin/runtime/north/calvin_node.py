@@ -50,6 +50,7 @@ from calvin.utilities.calvinlogger import get_logger, set_file
 from calvin.utilities import calvinconfig
 from calvin.runtime.north.resource_monitor.cpu import CpuMonitor
 from calvin.runtime.north.resource_monitor.memory import MemMonitor
+from calvin.runtime.north.resource_monitor.health import HealthMonitor
 from calvin.runtime.north.proxyhandler import ProxyHandler
 
 _log = get_logger(__name__)
@@ -140,6 +141,8 @@ class Node(object):
         self.mem_monitor = MemMonitor(self.id, self.storage)
 
         self.proxy_handler = ProxyHandler(self)
+
+        self.health_monitor = HealthMonitor(self)
 
         # The initialization that requires the main loop operating is deferred to start function
         async.DelayedCall(0, self.start)

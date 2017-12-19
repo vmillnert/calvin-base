@@ -106,8 +106,7 @@ class ActorManager(object):
             else:
                 return a.id
 
-    def _new_actor(self, actor_type, class_=None, actor_id=None, security=None, access_decision=None,
-                   shadow_actor=False, imei=None):
+    def _new_actor(self, actor_type, class_=None, actor_id=None, security=None, access_decision=None, shadow_actor=False, imei=None):
         """Return a 'bare' actor of actor_type, raises an exception on failure."""
         if security_enabled() and not access_decision:
             _log.debug("Security policy check for actor failed, access_decision={}".format(access_decision))
@@ -153,7 +152,20 @@ class ActorManager(object):
             raise(e)
         return a
 
-    def new_from_migration(self, actor_type, state, prev_connections=None, callback=None, imei=None):
+    @staticmethod
+    def _remove_deploy_req(deploy_req):
+        if 'index' in deploy_req['kwargs']:
+            index_reqs = deploy_req['kwargs']['index']
+            if index_reqs[0] == 'health':
+                return True
+
+        return False
+
+    def _remove_old_deploy_reqs(self, deploy_reqs_list):
+        deploy_reqs_list[:] = [deploy_req for deploy_req in deploy_reqs_list
+                               if not self._remove_deploy_req(deploy_req)]
+
+    def new_from_migration(self, actor_type, state, prev_connections=None, callback=None):
         """Instantiate an actor of type 'actor_type' and apply the 'state' to the actor."""
         try:
             _log.analyze(self.node.id, "+", state)
@@ -172,25 +184,13 @@ class ActorManager(object):
             actor_def, signer = self.lookup_and_verify(actor_type, security)
 
             print "VM: actor migrated successfully!"
-            # print "VM: the actor has the following requirements:"
             deploy_reqs_list = state['private']['_deployment_requirements']
 
-            # print "VM: deploy_reqs_list: " + str(deploy_reqs_list)
+            print "VM: old deploy_reqs_list: " + str(deploy_reqs_list)
 
-            for i in range(0,len(deploy_reqs_list)):
-                deploy_req = deploy_reqs_list[i]
-                # print "VM: deploy req: " + str(deploy_req)
+            self._remove_old_deploy_reqs(deploy_reqs_list)
 
-                if 'index' in deploy_req['kwargs']:
-                    print "VM: " + str(deploy_req['kwargs']['index'])
-                    index_reqs = deploy_req['kwargs']['index']
-                    # print "VM: index_req: " + str(index_reqs)
-                    if index_reqs[0] == 'health':
-                        # print "VM: It's a match => we should remove this requirement"
-                        del deploy_reqs_list[i]
-                        
-            # print "VM: new deploy_req: " + str(deploy_reqs_list)
-                
+            print "VM: new deploy_reqs list: " + str(state['private']['_deployment_requirements'])
 
             requirements = actor_def.requires if hasattr(actor_def, "requires") else []
             self.check_requirements_and_sec_policy(requirements, security, state['private']['_id'],
@@ -209,7 +209,8 @@ class ActorManager(object):
         """Return a restored actor in PENDING state, raises an exception on failure."""
         try:
             a = self._new_actor(actor_type, actor_def, actor_id=state['private']['_id'], security=security,
-                                access_decision=access_decision, shadow_actor=shadow_actor, imei=imei)
+                                access_decision=access_decision, shadow_actor=shadow_actor,
+                                imei=state['private']['_imei'])
             if '_shadow_args' in state['managed']:
                 # We were a shadow, do a full init
                 args = state['managed'].pop('_shadow_args')
@@ -344,9 +345,12 @@ class ActorManager(object):
 
     def _update_requirements_placements(self, actor_id, possible_placements, status=None, move=False, cb=None):
         _log.analyze(self.node.id, "+ BEGIN", {}, tb=True)
+        print "self node id " + str(self.node.id)
+        print "possible placements: " + str(possible_placements)
         if move and len(possible_placements)>1:
             possible_placements.discard(self.node.id)
         actor = self.actors[actor_id]
+
         if not possible_placements:
             actor._replication_data.inhibate(actor_id, False)
             if cb:
@@ -556,34 +560,7 @@ class ActorManager(object):
     def list_actors(self):
         return self.actors.keys()
 
-    def set_health(self, value):
-
-        _log.critical("\nVM: node health set to " + str(value))
-
-        if float(value) < 0.75:
-            value = "bad"
-        else:
-            value = "good"
-        
-
-        self.node.control.log_health_new(value)
-        print "VM: send new health-value to log"
-
-        # get old value to cleanup indexes
-        prefix = "nodeHealth"
-        prefix_index = "health"
-        self.set(prefix, prefix_index, value)
-
-        if value == "bad":
-            self._health_triggered_migration()
-
-        
-
-
-
-
-
-    def _health_triggered_migration(self):
+    def health_triggered_migration(self):
         _log.critical("VM: health triggered migration necessary")
         actor_ids = self.list_actors()
         _log.critical("VM: following actors are deployed: " + str(actor_ids))
@@ -591,71 +568,55 @@ class ActorManager(object):
         # we should migrate the first actor
         if actor_ids:
             actor_id = actor_ids[0]
-            print "VM: The following actor_id will be migrated: " + str(actor_ids[0])
-            # specify the new requirement
-            requirements = [{"op" : "node_attr_match",
-                             "kwargs" : {"index":["health", "good"]},
-                             "type":"+"}]
-            self.update_requirements(actor_id, requirements, extend=True, move=True,
-                                     authorization_check=False, callback=None)
+            self._migrate_actor_to_dc(actor_id)
         else:
             print "VM: no actors to migrate"
 
-    def set(self, prefix, prefix_index, value, cb=None):
-        """
-        Sets a certain resource of a node.
-        Gets the old value to erase from indexes.
-        Parameters:
-        prefix: String used in storage for attribute, e.g. nodeCpuAvail.
-        prefix_index: String used in indexed_public structure for this field, e.g. cpuAvail.
-        value: new value to set.
-        cb: callback to receive response. Signature: cb(value, True/False) 
-        """
-        # print "VM: Entering 'set' with:"
-        # print "VM: prefix: " + str(prefix)
-        # print "VM: prefix_id: " + str(prefix_index)
-        # print "VM: value: " + str(value)
+    def cell_triggered_migration(self, foreign_imei_cells):
+        for foreign_imei_cell in foreign_imei_cells:
+            imei = foreign_imei_cell['imei']
+            cell = foreign_imei_cell['cell']
+            actor_ids = self.node.am._get_actors_with_imei(imei)
+            if actor_ids:
+                for actor_id in actor_ids:
+                    print "Cell migrating: " + str(foreign_imei_cell)
+                    self._migrate_actor_to_cell(actor_id, cell)
 
-        # get old value to cleanup indexes
-        self.node.storage.get(prefix=prefix, key=self.node.id, cb=CalvinCB(self._set_aux,
-            prefix_index=prefix_index, new_value=value))
-        # print "VM: Got the node-storage"
+    def _migrate_actor_to_cell(self, actor_id, cell):
+        requirements = [{"op": "node_attr_match",
+                         "kwargs": {"index": ["health", {"healthy": "yes", "cell": cell}]}, "type": "+"}]
 
-        self.node.storage.set(prefix=prefix, key=self.node.id, value=value, cb=None)
-        # print "VM: Set the node-storage"
-        if cb:
-            async.DelayedCall(0, cb, value, True)
-        
-    def _set_aux(self, key, value, prefix_index, new_value=None):
-        """
-        Auxiliary method to set indexes .
-        Removes old indexes before adding the new ones. Triggered by a get in the database
-        """
-        # print "VM: Entering '_set_aux' with:"
-        # print "VM: key: " + str(key)
-        # print "VM: value: " + str(value)
-        # print "VM: new_value: " + str(new_value)
-        # print "VM: prefix_index: " + str(prefix_index)
-        
-        # if new value is exactly the same, we don't need to change anything..
-        if value is new_value:
-            _log.debug("%s, value: %s. Nothing changed, just return.." % (prefix_index, value))
-            # print("VM: %s, value: %s. Nothing changed, just return.." % (prefix_index, value))
-            return
+        try:
+            self.update_requirements(actor_id, requirements, extend=True, move=True, authorization_check=False,
+                                     callback=CalvinCB(self._migrate_actor_to_cell_cb, actor_id=actor_id))
+        except Exception as ex:
+            print "Failed migration with exception " + str(ex.message)
 
-        # erase indexes related to old value
-        if value is not None:
-            old_data = AttributeResolver({"indexed_public": {prefix_index: str(value)}})
-            _log.debug("Removing " + str(key) + " for " + prefix_index + ": " + str(value))
-            # print("VM: Removing " + str(key) + " for " + prefix_index + ": " + str(value))
-            for index in old_data.get_indexed_public():
-                self.node.storage.remove_index(index=index, value=key, root_prefix_level=2)
+    def _migrate_actor_to_dc(self, actor_id):
+        print "VM: The following actor_id will be migrated: " + str(actor_id)
+        # specify the new requirement
+        requirements = [{"op": "node_attr_match",
+                         "kwargs": {"index": ["health", {"healthy": "yes", "cell": "ludc"}]}, "type": "+"}]
 
-        # insert the new ones
-        if new_value is not None:
-            new_data = AttributeResolver({"indexed_public": {prefix_index: str(new_value)}})
-            _log.debug("After possible removal, adding new node " + str(self.node.id) + " for " + prefix_index + ": " + str(new_value))
-            # print("VM: After possible removal, adding new node " + str(self.node.id) + " for " + prefix_index + ": " + str(new_value))
-            for index in new_data.get_indexed_public():
-                # print "VM: index: " + index
-                self.node.storage.add_index(index=index, value=self.node.id, root_prefix_level=2, cb=None)
+        try:
+            self.update_requirements(actor_id, requirements, extend=True, move=True, authorization_check=False,
+                                     callback=CalvinCB(self._migrate_actor_to_dc_cb, actor_id=actor_id))
+        except Exception as ex:
+            print "Failed migration with exception " + str(ex.message)
+
+    def _migrate_actor_to_cell_cb(self, status, actor_id):
+        print "Migration completed with status " + str(status) +  "and actor id " + str(actor_id)
+        if status == response.CalvinResponse(False):
+            actor = self.actors[actor_id]
+            if actor:
+                self._remove_old_deploy_reqs(actor._deployment_requirements)
+                self._migrate_actor_to_dc(actor_id)
+
+    def _migrate_actor_to_dc_cb(self, status, actor_id):
+        print "Migration completed with status " + str(status) +  "and actor id " + str(actor_id)
+        actor = self.actors[actor_id]
+        if actor:
+            self._remove_old_deploy_reqs(actor._deployment_requirements)
+
+    def _get_actors_with_imei(self, imei):
+        return [actor for actor in self.actors if self.actors[actor]._imei == imei]

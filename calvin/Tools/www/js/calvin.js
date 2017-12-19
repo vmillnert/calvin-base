@@ -593,11 +593,11 @@ function getPeers(peer)
 function getNodeHealth(id)
 {
     send_request("GET",
-                 peers[id].control_uris[0] + '/node/resource/getHealth',
+                 peers[id].control_uris[0] + '/node/attribute/getHealth',
                  null,
                  function(data, kwargs) {
                      if (data) {
-                         setNodeHealth(id, data);
+                         setNodeHealth(id, data.healthy);
                      }
                  },
                  null,
@@ -610,9 +610,11 @@ function setNodeHealth(id, health)
 {
 
 
-    if (health === "good" ){
+    if (health === "yes" ){
         peers[id].healthColor = "LightGreen";
-    } else {
+    }
+
+    if (health === "no" ){
         peers[id].healthColor = "LightPink";
     }
         
@@ -1881,6 +1883,9 @@ function eventHandler(event)
 // Start event stream for graph
 function startGraphEvents(application)
 {
+  for (id in peers) {
+      getNodeHealth(id); // We don't have any info about the health of this node => get it
+  }
   var events = ["actor_new", "actor_replicate", "actor_dereplicate", "health_new"];
   var actors = application.actors;
   for (var index in peers) {
@@ -1977,13 +1982,11 @@ function graphEventHandler(event)
           if (data.node_id === peers[id].id){
               // check so that we don't do uneccessary updates
               // we should only update it if it changes health
-              if (data.value === "good" && peers[id].healthColor !== "LightGreen"){
+              if (data.value === "yes" && peers[id].healthColor !== "LightGreen"){
                   setNodeHealth(id, data.value);
-              } else if (data.value === "bad" && peers[id].healthColor !== "LightPink"){
+              } else if (data.value === "no" && peers[id].healthColor !== "LightPink"){
                   setNodeHealth(id, data.value);
               }
-          } else if (peers[id].healthColor === "LightGray") {
-              getNodeHealth(id); // if we don't have any info about the health of this node => update it
           }
       }
   } else {

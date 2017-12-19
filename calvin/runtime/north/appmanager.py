@@ -589,7 +589,7 @@ class Deployer(object):
         if deploy_info:
             if 'imei' in deploy_info:
                 self.imei = deploy_info['imei']
-                
+
         if name:
             self.name = name
             self.app_id = self.node.app_manager.new(self.name)
@@ -649,8 +649,6 @@ class Deployer(object):
           - 'info' is information about the actor
         """
         actor_type = info['actor_type']
-        # if imei:
-        #     print "[appmanager.py @ lookup_and_verify] imei: " + str(imei)
         try:
             actor_def, signer = self.node.am.lookup_and_verify(actor_type, self.sec)
             info['signer'] = signer
@@ -713,7 +711,6 @@ class Deployer(object):
              info['signature'] is the GlobalStore actor-signature to lookup the actor
           - 'access_decision' is a boolean indicating if access is permitted
         """
-        print "[appmanager.py @ instantiate] imei: " + str(self.imei)
         try:
             if 'port_properties' in self.deployable:
                 port_properties = self.deployable['port_properties'].get(actor_name, None)
@@ -776,11 +773,8 @@ class Deployer(object):
         if not self.deployable['valid']:
             raise Exception("Deploy information is not valid")
 
-        print "[appmanager.py @ deployable] deployable: " + str(self.deployable)
-        print "[appmanager.py @ deployable] imei: " + str(self.imei)
-
         for actor_name, info in self.deployable['actors'].iteritems():
-                self.lookup_and_verify(actor_name, info, cb=CalvinCB(self._deploy_instantiate))
+            self.lookup_and_verify(actor_name, info, cb=CalvinCB(self._deploy_instantiate))
 
     def _deploy_instantiate(self):
         self._deploy_counter += 1
@@ -828,4 +822,3 @@ class Deployer(object):
 
 
         
-

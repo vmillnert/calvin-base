@@ -71,11 +71,9 @@ class ActorManager(object):
         _log.debug("class: %s args: %s state: %s, signature: %s" % (actor_type, args, state, signature))
         _log.analyze(self.node.id, "+", {'actor_type': actor_type, 'state': state})
 
-        if imei:
-            print "[actormanager.py @ new] imei: " + str(imei)
         try:
             if state:
-                a = self._new_from_state(actor_type, state, actor_def, security, access_decision, shadow_actor, imei)
+                a = self._new_from_state(actor_type, state, actor_def, security, access_decision, shadow_actor)
             else:
                 a = self._new(actor_type, args, actor_def, security,
                               access_decision, shadow_actor, port_properties, imei)
@@ -118,7 +116,6 @@ class ActorManager(object):
                 class_, signer = self.lookup_and_verify(actor_type, security)
             except Exception:
                 class_ = ShadowActor
-            
         try:
             # Create a 'bare' instance of the actor
             a = class_(actor_type, actor_id=actor_id, security=security, imei=imei)
@@ -142,9 +139,6 @@ class ActorManager(object):
             a.name = human_readable_name
             self.node.pm.add_ports_of_actor(a)
             self.node.pm.set_script_port_property(a.id, port_properties)
-
-            print "[actormanager.py @_new] args: " + str(args)
-
             a.init(**args)
             a.setup_complete()
         except Exception as e:
@@ -199,13 +193,13 @@ class ActorManager(object):
                                                             state, prev_connections,
                                                             callback=callback,
                                                             actor_def=actor_def,
-                                                            security=security,imei=imei))
+                                                            security=security))
         except Exception:
             # Still want to create shadow actor.
             self.new(actor_type, None, state, prev_connections, callback=callback, shadow_actor=True)
 
     def _new_from_state(self, actor_type, state, actor_def, security,
-                             access_decision=None, shadow_actor=False, imei=None):
+                             access_decision=None, shadow_actor=False):
         """Return a restored actor in PENDING state, raises an exception on failure."""
         try:
             a = self._new_actor(actor_type, actor_def, actor_id=state['private']['_id'], security=security,

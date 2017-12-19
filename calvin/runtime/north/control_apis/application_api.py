@@ -381,6 +381,7 @@ def handle_deploy(self, handle, connection, match, data, hdr):
     Body:
     {
         "name": <application name>,
+        "imei": <application id-number>,
         "script": <calvin script>  # alternativly "app_info"
         "app_info": <compiled script as app_info>  # alternativly "script"
         "sec_sign": {<cert hash>: <security signature of script>, ...} # optional and only with "script"
@@ -487,6 +488,8 @@ def handle_deploy_cont(self, app_info, issuetracker, handle, connection, data, s
                 deploy_info = None
             elif not deploy_info['requirements']:
                 deploy_info = None
+
+        # print "IMEI: " + str(data['deploy_info']['imei'])
 
         d = Deployer(
                 deployable=app_info,

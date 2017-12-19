@@ -55,7 +55,7 @@ class ActorManager(object):
 
     def new(self, actor_type, args, state=None, prev_connections=None, connection_list=None, callback=None,
             signature=None, actor_def=None, security=None, access_decision=None, shadow_actor=False,
-            port_properties=None):
+            port_properties=None, imei=None):
         """
         Instantiate an actor of type 'actor_type'. Parameters are passed in 'args',
         'name' is an optional parameter in 'args', specifying a human readable name.
@@ -71,11 +71,14 @@ class ActorManager(object):
         _log.debug("class: %s args: %s state: %s, signature: %s" % (actor_type, args, state, signature))
         _log.analyze(self.node.id, "+", {'actor_type': actor_type, 'state': state})
 
+        if imei:
+            print "[actormanager.py @ new] imei: " + str(imei)
         try:
             if state:
-                a = self._new_from_state(actor_type, state, actor_def, security, access_decision, shadow_actor)
+                a = self._new_from_state(actor_type, state, actor_def, security, access_decision, shadow_actor, imei)
             else:
-                a = self._new(actor_type, args, actor_def, security, access_decision, shadow_actor, port_properties)
+                a = self._new(actor_type, args, actor_def, security,
+                              access_decision, shadow_actor, port_properties, imei)
         except Exception as e:
             _log.exception("Actor creation failed")
             raise(e)
@@ -103,7 +106,8 @@ class ActorManager(object):
             else:
                 return a.id
 
-    def _new_actor(self, actor_type, class_=None, actor_id=None, security=None, access_decision=None, shadow_actor=False):
+    def _new_actor(self, actor_type, class_=None, actor_id=None, security=None, access_decision=None,
+                   shadow_actor=False, imei=None):
         """Return a 'bare' actor of actor_type, raises an exception on failure."""
         if security_enabled() and not access_decision:
             _log.debug("Security policy check for actor failed, access_decision={}".format(access_decision))
@@ -115,9 +119,10 @@ class ActorManager(object):
                 class_, signer = self.lookup_and_verify(actor_type, security)
             except Exception:
                 class_ = ShadowActor
+            
         try:
             # Create a 'bare' instance of the actor
-            a = class_(actor_type, actor_id=actor_id, security=security)
+            a = class_(actor_type, actor_id=actor_id, security=security, imei=imei)
         except Exception as e:
             _log.error("The actor %s(%s) can't be instantiated." % (actor_type, class_.__init__))
             raise(e)
@@ -128,16 +133,19 @@ class ActorManager(object):
         return a
 
     def _new(self, actor_type, args, actor_def=None, security=None, access_decision=None, shadow_actor=False,
-             port_properties=None):
+             port_properties=None, imei=None):
         """Return an initialized actor in PENDING state, raises an exception on failure."""
         try:
             a = self._new_actor(actor_type, actor_def, security=security,
-                                access_decision=access_decision, shadow_actor=shadow_actor)
+                                access_decision=access_decision, shadow_actor=shadow_actor, imei=imei)
             # Now that required APIs are attached we can call init() which may use the APIs
             human_readable_name = args.pop('name', '')
             a.name = human_readable_name
             self.node.pm.add_ports_of_actor(a)
             self.node.pm.set_script_port_property(a.id, port_properties)
+
+            print "[actormanager.py @_new] args: " + str(args)
+
             a.init(**args)
             a.setup_complete()
         except Exception as e:
@@ -145,7 +153,7 @@ class ActorManager(object):
             raise(e)
         return a
 
-    def new_from_migration(self, actor_type, state, prev_connections=None, callback=None):
+    def new_from_migration(self, actor_type, state, prev_connections=None, callback=None, imei=None):
         """Instantiate an actor of type 'actor_type' and apply the 'state' to the actor."""
         try:
             _log.analyze(self.node.id, "+", state)
@@ -191,17 +199,17 @@ class ActorManager(object):
                                                             state, prev_connections,
                                                             callback=callback,
                                                             actor_def=actor_def,
-                                                            security=security))
+                                                            security=security,imei=imei))
         except Exception:
             # Still want to create shadow actor.
             self.new(actor_type, None, state, prev_connections, callback=callback, shadow_actor=True)
 
     def _new_from_state(self, actor_type, state, actor_def, security,
-                             access_decision=None, shadow_actor=False):
+                             access_decision=None, shadow_actor=False, imei=None):
         """Return a restored actor in PENDING state, raises an exception on failure."""
         try:
             a = self._new_actor(actor_type, actor_def, actor_id=state['private']['_id'], security=security,
-                                access_decision=access_decision, shadow_actor=shadow_actor)
+                                access_decision=access_decision, shadow_actor=shadow_actor, imei=imei)
             if '_shadow_args' in state['managed']:
                 # We were a shadow, do a full init
                 args = state['managed'].pop('_shadow_args')

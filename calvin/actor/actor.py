@@ -329,7 +329,7 @@ class Actor(object):
 
     # What are the arguments, really?
     def __init__(self, actor_type, name='', allow_invalid_transitions=True, disable_transition_checks=False,
-                 disable_state_checks=False, actor_id=None, security=None):
+                 disable_state_checks=False, actor_id=None, security=None, imei=None):
         """Should _not_ be overridden in subclasses."""
         super(Actor, self).__init__()
         self._type = actor_type
@@ -355,7 +355,9 @@ class Actor(object):
         self.authorization_checks = None
         self._replication_data = ReplicationData(initialize=False)
         self._exhaust_cb = None
+        self.imei = imei
 
+        print "[actor.py @ __init__] imei: " + str(imei)
         self.inports = {p: actorport.InPort(p, self, pp) for p, pp in self.inport_properties.items()}
         self.outports = {p: actorport.OutPort(p, self, pp) for p, pp in self.outport_properties.items()}
 

@@ -584,6 +584,21 @@ class Deployer(object):
         self._verified_actors = {}
         self._deploy_counter = 0
         self._instantiate_counter = 0
+        self.imei = None
+
+        if deploy_info:
+            if 'imei' in deploy_info:
+                print "imei exist in deploy_info"
+                self.imei = deploy_info['imei']
+            else:
+                print "imei does not exist"
+        else:
+            print "Deploy info is None"
+            
+        # if 'imei' in deploy_info:
+        #     # print "[appmanager.py] IMEI: " + str(self.deploy_info['imei'])
+        #     self.imei = deploy_info['imei']
+        
         if name:
             self.name = name
             self.app_id = self.node.app_manager.new(self.name)
@@ -643,6 +658,8 @@ class Deployer(object):
           - 'info' is information about the actor
         """
         actor_type = info['actor_type']
+        # if imei:
+        #     print "[appmanager.py @ lookup_and_verify] imei: " + str(imei)
         try:
             actor_def, signer = self.node.am.lookup_and_verify(actor_type, self.sec)
             info['signer'] = signer
@@ -693,13 +710,21 @@ class Deployer(object):
              info['signature'] is the GlobalStore actor-signature to lookup the actor
           - 'access_decision' is a boolean indicating if access is permitted
         """
+        print "[appmanager.py @ instantiate] imei: " + str(self.imei)
         try:
             if 'port_properties' in self.deployable:
                 port_properties = self.deployable['port_properties'].get(actor_name, None)
             else:
                 port_properties = None
             info['args']['name'] = actor_name
-            actor_id = self.node.am.new(actor_type=info['actor_type'], args=info['args'], signature=info['signature'], 
+
+            if self.imei:
+                actor_id = self.node.am.new(actor_type=info['actor_type'], args=info['args'], signature=info['signature'], 
+                                        actor_def=actor_def, security=self.sec, access_decision=access_decision, 
+                                            shadow_actor='shadow_actor' in info, port_properties=port_properties,
+                                            imei=self.imei)
+            else:
+                actor_id = self.node.am.new(actor_type=info['actor_type'], args=info['args'], signature=info['signature'], 
                                         actor_def=actor_def, security=self.sec, access_decision=access_decision, 
                                         shadow_actor='shadow_actor' in info, port_properties=port_properties)
             if not actor_id:
@@ -751,8 +776,11 @@ class Deployer(object):
         if not self.deployable['valid']:
             raise Exception("Deploy information is not valid")
 
+        print "[appmanager.py @ deployable] deployable: " + str(self.deployable)
+        print "[appmanager.py @ deployable] imei: " + str(self.imei)
+
         for actor_name, info in self.deployable['actors'].iteritems():
-            self.lookup_and_verify(actor_name, info, cb=CalvinCB(self._deploy_instantiate))
+                self.lookup_and_verify(actor_name, info, cb=CalvinCB(self._deploy_instantiate))
 
     def _deploy_instantiate(self):
         self._deploy_counter += 1

@@ -196,3 +196,11 @@ class HealthMonitor(object):
             return {"indexed_public": {"health": {"healthy": healthy_value, "cell": cell_value}}}
         elif self._type:
             return {"indexed_public": {"health": {"type": self._type, "healthy": healthy_value}}}
+
+    def stop(self):
+        self.node.storage.delete(prefix="nodeHealth", key=self.node.id, cb=None)
+        if self._cells:
+            for cell in self._cells:
+                self._remove_yes_index(self._healthy, cell)
+        else:
+            self._remove_yes_index(self._healthy)

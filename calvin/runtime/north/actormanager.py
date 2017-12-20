@@ -554,15 +554,15 @@ class ActorManager(object):
     def list_actors(self):
         return self.actors.keys()
 
-    def health_triggered_migration(self):
+    def health_triggered_migration(self, cell=None):
         _log.critical("VM: health triggered migration necessary")
         actor_ids = self.list_actors()
         _log.critical("VM: following actors are deployed: " + str(actor_ids))
-        
-        # we should migrate the first actor
+
+        # TODO: Specify random actor instead of first in list?
         if actor_ids:
             actor_id = actor_ids[0]
-            self._migrate_actor_to_dc(actor_id)
+            self._migrate_actor_to_cell(actor_id, node_type="edge", cell=cell)
         else:
             print "VM: no actors to migrate"
 
@@ -574,43 +574,31 @@ class ActorManager(object):
             if actor_ids:
                 for actor_id in actor_ids:
                     print "Cell migrating: " + str(foreign_imei_cell)
-                    self._migrate_actor_to_cell(actor_id, cell)
+                    self._migrate_actor_to_cell(actor_id, node_type="edge", cell=cell)
 
-    def _migrate_actor_to_cell(self, actor_id, cell):
-        requirements = [{"op": "node_attr_match",
-                         "kwargs": {"index": ["health", {"healthy": "yes", "cell": cell}]}, "type": "+"}]
+    def _migrate_actor_to_cell(self, actor_id, node_type, cell):
+        if cell:
+            requirements = [{"op": "node_attr_match", "kwargs":
+                            {"index": ["health", {"type": node_type, "healthy": "yes", "cell": cell}]}, "type": "+"}]
+        else:
+            requirements = [{"op": "node_attr_match", "kwargs":
+                            {"index": ["health", {"healthy": "yes"}]}, "type": "+"}]
 
         try:
-            self.update_requirements(actor_id, requirements, extend=True, move=True, authorization_check=False,
-                                     callback=CalvinCB(self._migrate_actor_to_cell_cb, actor_id=actor_id))
+            self.update_requirements(actor_id, requirements, extend=True,move=False, authorization_check=False,
+                                     callback=CalvinCB(self._migrate_actor_to_cell_cb,
+                                                       actor_id=actor_id, cell=cell, prev_node_type=node_type))
         except Exception as ex:
             print "Failed migration with exception " + str(ex.message)
 
-    def _migrate_actor_to_dc(self, actor_id):
-        print "VM: The following actor_id will be migrated: " + str(actor_id)
-        # specify the new requirement
-        requirements = [{"op": "node_attr_match",
-                         "kwargs": {"index": ["health", {"healthy": "yes", "cell": "ludc"}]}, "type": "+"}]
+    def _migrate_actor_to_cell_cb(self, status, actor_id, cell, prev_node_type):
+        print "Migration completed with status " + str(status) + " and actor id " + str(actor_id)
 
-        try:
-            self.update_requirements(actor_id, requirements, extend=True, move=True, authorization_check=False,
-                                     callback=CalvinCB(self._migrate_actor_to_dc_cb, actor_id=actor_id))
-        except Exception as ex:
-            print "Failed migration with exception " + str(ex.message)
-
-    def _migrate_actor_to_cell_cb(self, status, actor_id):
-        print "Migration completed with status " + str(status) +  "and actor id " + str(actor_id)
-        if status == response.CalvinResponse(False):
-            actor = self.actors[actor_id]
-            if actor:
-                self._remove_old_deploy_reqs(actor._deployment_requirements)
-                self._migrate_actor_to_dc(actor_id)
-
-    def _migrate_actor_to_dc_cb(self, status, actor_id):
-        print "Migration completed with status " + str(status) +  "and actor id " + str(actor_id)
         actor = self.actors[actor_id]
         if actor:
             self._remove_old_deploy_reqs(actor._deployment_requirements)
+        if status == response.CalvinResponse(False) and prev_node_type == "edge":
+            self._migrate_actor_to_cell(actor_id, node_type="dc", cell=cell)
 
     def _get_actors_with_imei(self, imei):
         return [actor for actor in self.actors if self.actors[actor]._imei == imei]

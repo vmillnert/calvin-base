@@ -53,8 +53,9 @@ cpuAvail_help = {"0": "No CPU available",
                  "100":"100% of CPU available"}
 
 # Acceptable values for health parameter
-health_keys =  ["healthy", "cell"]
-health_help = {"healthy": "yes if healthy, else no",
+health_keys =  ["healthy", "type", "cell"]
+health_help = {"type": "edge or dc",
+               "healthy": "yes if healthy, else no",
                "cell": "id of current cell deployed in"}
 
 cpuAffinity_keys = ["dedicated"]
